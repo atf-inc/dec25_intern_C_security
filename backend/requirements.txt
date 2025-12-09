@@ -1,0 +1,25 @@
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Data Validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# File Handling
+python-multipart==0.0.6
+
+# HTTP Client (for LLM API calls)
+httpx==0.25.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+hypothesis==6.92.1
+
+# Development
+python-dotenv==1.0.0
