@@ -11,29 +11,40 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
         onFilterChange({ ...filters, risk_level: e.target.value || undefined })
     }
 
-    // const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     // Implementation for date filtering
-    // }
+    const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onFilterChange({ ...filters, start_date: e.target.value || undefined })
+    }
+
+    const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onFilterChange({ ...filters, end_date: e.target.value || undefined })
+    }
 
     return (
         <div style={{
             display: 'flex',
-            gap: '1rem',
+            flexWrap: 'wrap',
+            gap: '1.5rem',
             marginBottom: '1.5rem',
-            padding: '1rem',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px'
+            padding: '1.5rem',
+            backgroundColor: '#ffffff',
+            borderRadius: '12px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+            border: '1px solid #eee',
+            alignItems: 'flex-end'
         }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label style={{ marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>Filter by Risk</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 600, color: '#4a5568' }}>Risk Level</label>
                 <select
                     value={filters.risk_level || ''}
                     onChange={handleRiskChange}
                     style={{
-                        padding: '8px',
-                        borderRadius: '4px',
-                        border: '1px solid #ced4da',
-                        minWidth: '150px'
+                        padding: '10px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                        minWidth: '160px',
+                        backgroundColor: '#fff',
+                        fontSize: '0.95rem',
+                        cursor: 'pointer'
                     }}
                 >
                     <option value="">All Levels</option>
@@ -43,7 +54,63 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
                 </select>
             </div>
 
-            {/* Additional filters can go here */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 600, color: '#4a5568' }}>Start Date</label>
+                <input
+                    type="date"
+                    value={filters.start_date || ''}
+                    onChange={handleStartDateChange}
+                    style={{
+                        padding: '9px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                        minWidth: '160px',
+                        backgroundColor: '#fff',
+                        fontSize: '0.95rem',
+                        fontFamily: 'inherit'
+                    }}
+                />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 600, color: '#4a5568' }}>End Date</label>
+                <input
+                    type="date"
+                    value={filters.end_date || ''}
+                    onChange={handleEndDateChange}
+                    style={{
+                        padding: '9px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                        minWidth: '160px',
+                        backgroundColor: '#fff',
+                        fontSize: '0.95rem',
+                        fontFamily: 'inherit'
+                    }}
+                />
+            </div>
+
+            {(filters.risk_level || filters.start_date || filters.end_date) && (
+                <button
+                    onClick={() => onFilterChange({})}
+                    style={{
+                        padding: '10px 16px',
+                        borderRadius: '6px',
+                        border: '1px solid #cbd5e0',
+                        backgroundColor: '#fff',
+                        color: '#4a5568',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                        fontSize: '0.95rem',
+                        transition: 'all 0.2s',
+                        marginBottom: '1px'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f7fafc'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                >
+                    Clear Filters
+                </button>
+            )}
         </div>
     )
 }

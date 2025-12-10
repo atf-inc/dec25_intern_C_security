@@ -107,6 +107,20 @@ export async function getScanHistory(params?: ScanHistoryParams): Promise<ScanHi
         if (params.risk_level) {
             history = history.filter(item => item.risk_level === params.risk_level)
         }
+
+        if (params.start_date) {
+            const startDate = new Date(params.start_date)
+            // Reset time to start of day for accurate comparison
+            startDate.setHours(0, 0, 0, 0)
+            history = history.filter(item => new Date(item.date) >= startDate)
+        }
+
+        if (params.end_date) {
+            const endDate = new Date(params.end_date)
+            // Set time to end of day
+            endDate.setHours(23, 59, 59, 999)
+            history = history.filter(item => new Date(item.date) <= endDate)
+        }
     }
 
     // Simulate async for compatibility
