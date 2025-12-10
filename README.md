@@ -281,62 +281,69 @@ The app will be available at: http://localhost:3000
 - explanation
 - created_at
 
-## 👥 Team Collaboration Guide
-
-### Dividing Work Among 4 Team Members
-
-**Person 1: Backend Database & Models**
-- Implement database models (email_scan.py, voice_scan.py)
-- Implement CRUD operations (crud_email.py, crud_voice.py)
-- Set up database session (session.py)
-- Implement ML models (phishing_model.py, deepfake_model.py)
-
-**Person 2: Backend Services & API Routes**
-- Implement services layer (phishing_service.py, voice_service.py, explanation_service.py)
-- Implement API routes (routes_phishing.py, routes_voice.py, routes_health.py)
-- Create FastAPI main.py setup
-
-**Person 3: Frontend Forms & Components**
-- Implement voice components (AudioUpload.tsx, VoiceResultCard.tsx)
-- Implement voice hook (useVoiceScan.ts)
-
-**Person 4: Integration & Testing**
-- Connect frontend to backend APIs
-- Write backend tests
-- Write frontend tests
-- End-to-end testing
-- Help with integration issues
 
 ### Git Workflow
 
-1. **Pull latest changes** before starting work:
+**🚨 IMPORTANT: Never commit directly to `main` branch!**
+
+**Branch Structure:**
+- `main` - Production-ready code only
+- `develop` - Integration branch for features
+- `feature/*` - Individual feature branches
+
+**Workflow Steps:**
+
+1. **Start from develop branch**:
 ```bash
-git pull origin main
+git checkout develop
+git pull origin develop
 ```
 
-2. **Create a branch** for your feature:
+2. **Create a feature branch**:
 ```bash
 git checkout -b feature/your-feature-name
+# Examples:
+# git checkout -b feature/backend-database-models
+# git checkout -b feature/voice-components
+# git checkout -b feature/api-routes
 ```
 
-3. **Commit your changes**:
+3. **Work on your feature and commit**:
 ```bash
 git add .
-git commit -m "Description of changes"
+git commit -m "Add: description of changes"
 ```
 
-4. **Push to GitHub**:
+4. **Push your feature branch**:
 ```bash
 git push origin feature/your-feature-name
 ```
 
-5. **Create Pull Request** on GitHub for team review
+5. **Create Pull Request**:
+   - Go to GitHub
+   - Create PR from `feature/your-feature-name` → `develop`
+   - Add description of changes
+   - Request team review
+
+6. **After PR approval**:
+   - Merge to `develop`
+   - Delete feature branch
+   - Pull latest develop for next feature
 
 ### Avoiding Merge Conflicts
-- Each person works on different files
+- **Always start from latest `develop`** before creating feature branches
+- Each person works on different files/components
 - Communicate before editing shared files
-- Pull latest changes frequently
+- Pull latest `develop` frequently
 - Commit small, focused changes
+- Use descriptive commit messages: "Add: EmailForm component" or "Fix: API client error handling"
+
+### Branch Naming Convention
+- `feature/backend-database-models` - Database implementation
+- `feature/backend-api-routes` - API endpoints
+- `feature/frontend-voice-components` - Voice UI components
+- `feature/integration-testing` - End-to-end testing
+- `feature/gemini-api-integration` - LLM integration
 
 ## 📚 Key Concepts
 
