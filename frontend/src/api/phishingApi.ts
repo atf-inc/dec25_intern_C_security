@@ -40,10 +40,62 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
                 },
             }
         )
-        return response.data
+        const result = response.data
+        saveToHistory(result, data.subject || 'PDF Scan', 'PDF Upload')
+        return result
     } else {
         // Regular JSON request for manual input
+
         const response = await apiClient.post<PhishingResponse>('/api/v1/phishing/analyze', data)
-        return response.data
+        const result = response.data
+
+        // Save to local history
+        saveToHistory(result, data.subject || 'No Subject', data.sender || 'Unknown Sender')
+
+        return result
     }
+}
+
+// Helper to save history
+import { storage } from '../utils/storage'
+function saveToHistory(response: PhishingResponse, subject: string, sender: string) {
+    const historyItem: ScanHistoryItem = {
+        id: response.id || Date.now(), // Fallback ID if server doesn't provide one unique enough for local
+        date: response.created_at || new Date().toISOString(),
+        subject: subject,
+        sender: sender,
+        risk_score: response.risk_score,
+        risk_level: response.risk_level
+    }
+    storage.saveScan(historyItem)
+}
+
+export interface ScanHistoryItem {
+    id: number
+    date: string
+    subject: string
+    sender: string
+    risk_score: number
+    risk_level: 'low' | 'medium' | 'high'
+}
+
+export interface ScanHistoryParams {
+    risk_level?: string
+    start_date?: string
+    end_date?: string
+}
+
+export async function getScanHistory(params?: ScanHistoryParams): Promise<ScanHistoryItem[]> {
+    // Read from local storage instead of API
+    let history = storage.getHistory()
+
+    // Apply filters locally
+    if (params) {
+        if (params.risk_level) {
+            history = history.filter(item => item.risk_level === params.risk_level)
+        }
+    }
+
+    // Simulate async for compatibility
+    return Promise.resolve(history)
 }
