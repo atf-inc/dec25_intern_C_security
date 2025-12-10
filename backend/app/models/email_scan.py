@@ -12,4 +12,5 @@ class EmailScan(Base):
     label = Column(String(32), nullable=True)
     score = Column(Integer, nullable=True)
     reasons = Column(Text, nullable=True)
+    analysis_metadata = Column(Text, nullable=True)  # Store analysis metadata (AI usage, cost, etc.)
     created_at = Column(DateTime, default=datetime.utcnow)

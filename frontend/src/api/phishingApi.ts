@@ -9,30 +9,22 @@ export interface EmailAnalysisRequest {
 }
 
 export interface PhishingResponse {
-    id: number
-    risk_score: number
-    risk_level: 'low' | 'medium' | 'high'
-    explanation: string
-    highlights: string[]
-    created_at: string
+    request_id: string
+    label: string
+    score: number
+    reasons: string[]
+    evidence?: any[]
+    suggested_action?: string
 }
 
 export async function analyzeEmail(data: EmailAnalysisRequest): Promise<PhishingResponse> {
-    // If PDF file is provided, use multipart/form-data
+    // If EML file is provided, use multipart/form-data
     if (data.pdfFile) {
         const formData = new FormData()
-        formData.append('pdf_file', data.pdfFile)
-
-        // Add other fields if they exist (for hybrid mode)
-        if (data.subject) formData.append('subject', data.subject)
-        if (data.sender) formData.append('sender', data.sender)
-        if (data.body) formData.append('body', data.body)
-        if (data.urls && data.urls.length > 0) {
-            formData.append('urls', JSON.stringify(data.urls))
-        }
+        formData.append('file', data.pdfFile)
 
         const response = await apiClient.post<PhishingResponse>(
-            '/api/v1/phishing/analyze-pdf',
+            '/api/v1/phishing/analyze-eml',
             formData,
             {
                 headers: {
@@ -43,7 +35,17 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
         return response.data
     } else {
         // Regular JSON request for manual input
-        const response = await apiClient.post<PhishingResponse>('/api/v1/phishing/analyze', data)
+        const requestData = {
+            subject: data.subject,
+            from_email: data.sender,
+            raw_text: data.body,
+            visible_links: data.urls?.map(url => ({
+                uri: url,
+                anchor_text: url
+            })) || []
+        }
+
+        const response = await apiClient.post<PhishingResponse>('/api/v1/phishing/analyze', requestData)
         return response.data
     }
 }
