@@ -17,13 +17,13 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "sqlite:///./cyber_defense.db"
     
-    # LLM API Configuration
+    # LLM API Configuration (Gemini)
     llm_api_key: str = ""
-    llm_api_url: str = "https://api.anthropic.com/v1/messages"
-    llm_model: str = "claude-3-haiku-20240307"
+    llm_api_url: str = "https://generativelanguage.googleapis.com/v1beta/models"
+    llm_model: str = "gemini-1.5-flash"
     
     # CORS
-    cors_origins: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: List[str] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:3002"]
     
     # File Upload
     max_upload_size: int = 10 * 1024 * 1024  # 10MB
