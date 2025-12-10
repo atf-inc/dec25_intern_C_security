@@ -30,5 +30,11 @@ export const storage = {
     // Clear all history
     clearHistory: () => {
         localStorage.removeItem(STORAGE_KEY)
+    },
+
+    // Get a single scan by ID
+    getScanById: (id: number): ScanHistoryItem | undefined => {
+        const history = storage.getHistory()
+        return history.find(item => item.id === id)
     }
 }

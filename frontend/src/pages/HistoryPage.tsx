@@ -31,8 +31,8 @@ export function HistoryPage() {
     }
 
     const handleViewDetails = (id: number) => {
-        console.log('View details for id:', id)
-        // TODO: Navigate to details page or open modal
+        // Navigate to the Phishing page with the historyId
+        window.location.href = `/phishing?historyId=${id}`
     }
 
     return (

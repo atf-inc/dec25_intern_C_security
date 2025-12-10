@@ -65,7 +65,13 @@ function saveToHistory(response: PhishingResponse, subject: string, sender: stri
         subject: subject,
         sender: sender,
         risk_score: response.risk_score,
-        risk_level: response.risk_level
+        risk_level: response.risk_level,
+        analysis_result: response,
+        original_input: {
+            subject: subject,
+            sender: sender,
+            body: '' // We might not have body here easily unless passed, for now leaving empty or we need to pass it
+        }
     }
     storage.saveScan(historyItem)
 }
@@ -77,6 +83,13 @@ export interface ScanHistoryItem {
     sender: string
     risk_score: number
     risk_level: 'low' | 'medium' | 'high'
+    // Optional fields for replay
+    analysis_result?: PhishingResponse
+    original_input?: {
+        subject: string
+        body: string
+        sender: string
+    }
 }
 
 export interface ScanHistoryParams {

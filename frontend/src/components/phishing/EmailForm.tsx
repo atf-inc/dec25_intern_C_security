@@ -1,12 +1,27 @@
-import { useState, FormEvent, useRef } from 'react'
+import { useState, FormEvent, useRef, useEffect } from 'react'
 import './EmailForm.css'
 
-interface EmailFormProps {
-    onSubmit: (data: EmailFormData) => void
-    loading: boolean
+// Assuming EmailAnalysisRequest is defined elsewhere or will be defined.
+// Based on the handleSubmit change, it seems to be:
+export interface EmailAnalysisRequest {
+    subject: string
+    sender: string
+    body: string
+    urls?: string[] // Keeping urls as optional based on original EmailFormData
+    pdfFile?: File // Keeping pdfFile as optional based on original EmailFormData
 }
 
-export interface EmailFormData {
+interface EmailFormProps {
+    onSubmit: (data: EmailAnalysisRequest) => Promise<void> // Changed return type to Promise<void>
+    loading: boolean
+    initialData?: { // Added initialData prop
+        subject: string
+        body: string
+        sender: string
+    }
+}
+
+export interface EmailFormData { // This interface is still used internally for handleSubmit before calling onSubmit
     subject: string
     sender: string
     body: string
@@ -14,14 +29,29 @@ export interface EmailFormData {
     pdfFile?: File
 }
 
-export function EmailForm({ onSubmit, loading }: EmailFormProps) {
-    const [subject, setSubject] = useState('')
-    const [sender, setSender] = useState('')
-    const [body, setBody] = useState('')
+export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { // Added initialData to props
+    const [subject, setSubject] = useState(initialData?.subject || '') // Initialized with initialData
+    const [sender, setSender] = useState(initialData?.sender || '') // Initialized with initialData
+    const [body, setBody] = useState(initialData?.body || '') // Initialized with initialData
     const [urls, setUrls] = useState('')
     const [pdfFile, setPdfFile] = useState<File | null>(null)
-    const [inputMode, setInputMode] = useState<'manual' | 'pdf'>('manual')
+    const [inputMode, setInputMode] = useState<'manual' | 'pdf'>('manual') // This was not replaced by scanType in the provided snippet, so keeping it.
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Update state if initialData changes (e.g. loading from history)
+    useEffect(() => {
+        if (initialData) {
+            setSubject(initialData.subject)
+            setSender(initialData.sender)
+            setBody(initialData.body)
+            setInputMode('manual') // Assuming 'manual' is the default for initialData
+            setUrls('') // Clear other fields
+            setPdfFile(null) // Clear other fields
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        }
+    }, [initialData])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
