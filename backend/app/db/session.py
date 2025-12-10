@@ -47,7 +47,6 @@ def init_db() -> None:
     """
     # Import all models to ensure they are registered with Base
     from app.models.email_scan import EmailScan
-    from app.models.voice_scan import VoiceScan
     
     # Create all tables
     Base.metadata.create_all(bind=engine)
