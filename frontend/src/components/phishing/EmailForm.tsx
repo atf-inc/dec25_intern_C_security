@@ -55,15 +55,15 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file && file.type === 'application/pdf') {
+        if (file && (file.type === 'application/pdf' || file.name.endsWith('.eml'))) {
             setPdfFile(file)
-            // Clear manual input when PDF is uploaded
+            // Clear manual input when file is uploaded
             setSubject('')
             setSender('')
             setBody('')
             setUrls('')
         } else if (file) {
-            alert('Please select a PDF file only.')
+            alert('Please select a PDF or EML file only.')
             if (fileInputRef.current) {
                 fileInputRef.current.value = ''
             }
@@ -134,13 +134,13 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                         onClick={() => handleModeSwitch('pdf')}
                         disabled={loading}
                     >
-                        📄 Upload PDF
+                        📄 Upload File
                     </button>
                 </div>
                 <p className="mode-description">
                     {inputMode === 'manual'
                         ? 'Manually enter email details below'
-                        : 'Upload a PDF of the email (use Print → Save as PDF from your email client)'
+                        : 'Upload an email file (EML or PDF format)'
                     }
                 </p>
             </div>
@@ -149,13 +149,13 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
             {inputMode === 'pdf' && (
                 <div className="pdf-upload-section">
                     <div className="form-group">
-                        <label htmlFor="pdf-upload">Upload Email PDF *</label>
+                        <label htmlFor="pdf-upload">Upload Email File *</label>
                         <div className="file-upload-area">
                             <input
                                 type="file"
                                 id="pdf-upload"
                                 ref={fileInputRef}
-                                accept=".pdf"
+                                accept=".pdf,.eml"
                                 onChange={handleFileChange}
                                 disabled={loading}
                                 className="file-input"
@@ -184,14 +184,14 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                                 ) : (
                                     <div className="file-upload-prompt">
                                         <span className="upload-icon">📤</span>
-                                        <p>Click to select PDF file or drag and drop</p>
-                                        <small>PDF files only, max 10MB</small>
+                                        <p>Click to select email file or drag and drop</p>
+                                        <small>EML or PDF files, max 10MB</small>
                                     </div>
                                 )}
                             </div>
                         </div>
                         <small className="form-hint">
-                            💡 Tip: In your email client, click Print → Save as PDF to create a PDF of the email
+                            💡 Tip: Save as EML (File → Save As → EML) or PDF (Print → Save as PDF) from your email client
                         </small>
                     </div>
                 </div>
@@ -261,7 +261,7 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                 className="submit-button"
                 disabled={!isFormValid || loading}
             >
-                {loading ? 'Analyzing...' : inputMode === 'pdf' ? 'Analyze PDF' : 'Analyze Email'}
+                {loading ? 'Analyzing...' : inputMode === 'pdf' ? 'Analyze File' : 'Analyze Email'}
             </button>
         </form>
     )
