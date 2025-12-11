@@ -1,28 +1,45 @@
-# Core Framework
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+# CORE FRAMEWORK
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
 
-# Database
-sqlalchemy==2.0.23
-alembic==1.12.1
+# DATABASE
+sqlalchemy>=2.0.23
+alembic>=1.12.1
 
-# Data Validation
-pydantic==2.5.0
-pydantic-settings==2.1.0
+# DATA VALIDATION & SETTINGS
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
 
-# File Handling
-python-multipart==0.0.6
+# FILE & HTTP UTILITIES
+python-multipart>=0.0.6
+httpx>=0.25.1
 
-# HTTP Client (for LLM API calls)
-httpx==0.25.1
+# AUDIO PROCESSING & ML
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.9.1
+torchaudio==2.9.1
+transformers>=4.35.2
+librosa>=0.10.1
+soundfile>=0.12.1
+pydub>=0.25.1
+audioread>=3.0.1
 
-# Testing
-pytest==7.4.3
-pytest-asyncio==0.21.1
-hypothesis==6.92.1
 
-# Development
+# LLM / GEMINI API
+google-generativeai>=0.3.1
+
+# NUMERIC & SCIENTIFIC UTILITIES
+numpy>=1.26.2
+scipy>=1.11.4
+scikit-learn>=1.3.2
+numba>=0.58.1
 python-dotenv==1.0.0
 
-mailparser
+# TESTING
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+hypothesis>=6.92.1
+
+# EXTRA UTILITIES
+mail-parser
 beautifulsoup4
