@@ -1,15 +1,21 @@
+# backend/app/main.py
 from fastapi import FastAPI
-from app.core.logging_config import setup_logging
+from app.core.config import settings, configure_dotenv
 from app.db.session import init_db
 from app.api.v1.routes_upload import router as upload_router
-from app.core.config import settings
+from app.api.v1.routes_analyze import router as analyze_router
+from app.api.v1.routes_misc import router as misc_router
+
+# load .env early
+configure_dotenv()
 
 def create_application():
-    setup_logging()
-    app = FastAPI(title="CyberX Backend", debug=settings.debug)
-    
+    app = FastAPI(title="ATF CyberX - Phishing Detection MVP")
+
     app.include_router(upload_router)
-    
+    app.include_router(analyze_router)
+    app.include_router(misc_router)
+
     @app.on_event("startup")
     def on_startup():
         init_db()

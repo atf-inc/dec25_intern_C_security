@@ -1,5 +1,5 @@
-# app/schemas/phishing.py
-from pydantic import BaseModel, Field, EmailStr
+# backend/app/schemas/phishing.py
+from pydantic import BaseModel, Field
 from typing import List, Optional, Any
 
 class LinkItem(BaseModel):
@@ -8,7 +8,7 @@ class LinkItem(BaseModel):
     page: Optional[int] = None
 
 class AttachmentItem(BaseModel):
-    filename: str
+    filename: Optional[str] = None
     mimetype: Optional[str] = None
     size: Optional[int] = None
 
