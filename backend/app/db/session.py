@@ -1,53 +1,18 @@
-"""
-Database session management and initialization.
-"""
-
+# backend/app/db/session.py
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
-from typing import Generator
-
+from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 
+DATABASE_URL = settings.DATABASE_URL
 
-# Create declarative base
-class Base(DeclarativeBase):
-    """Base class for all database models."""
-    pass
-
-
-# Create database engine
 engine = create_engine(
-    settings.database_url,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.database_url else {},
-    echo=settings.debug
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 )
-
-# Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-
-def get_db() -> Generator[Session, None, None]:
-    """
-    Dependency function to get database session.
-    
-    Yields:
-        Database session
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def init_db() -> None:
-    """
-    Initialize database by creating all tables.
-    Should be called on application startup.
-    """
-    # Import all models to ensure they are registered with Base
-    from app.models.email_scan import EmailScan
-    from app.models.voice_scan import VoiceScan
-    
-    # Create all tables
+def init_db():
+    # import models to register them on the Base metadata
+    import app.models.email_scan  # noqa: F401
     Base.metadata.create_all(bind=engine)
