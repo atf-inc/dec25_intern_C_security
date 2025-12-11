@@ -25,14 +25,41 @@ export function EmailForm({ onSubmit, loading }: EmailFormProps) {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file && (file.type === 'application/pdf' || file.name.endsWith('.eml'))) {
+
+        if (!file) {
+            return
+        }
+
+        console.log('File selected:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        })
+
+        // Check file size - common issue with OneDrive/cloud placeholders
+        if (file.size === 0) {
+            alert('Selected file is empty (0 bytes). This often happens with OneDrive/cloud files. Try:\n1. Copy the file to Desktop\n2. Right-click → "Always keep on this device"\n3. Or recreate the file locally')
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+            return
+        }
+
+        // Check file type
+        const isEmlFile = file.name.toLowerCase().endsWith('.eml')
+        const isPdfFile = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+
+        if (isEmlFile || isPdfFile) {
+            // File is valid, set it directly
             setPdfFile(file)
             // Clear manual input when file is uploaded
             setSubject('')
             setSender('')
             setBody('')
             setUrls('')
-        } else if (file) {
+            console.log('File accepted:', file.name, file.size, 'bytes')
+        } else {
             alert('Please select a PDF or EML file only.')
             if (fileInputRef.current) {
                 fileInputRef.current.value = ''
@@ -115,21 +142,23 @@ export function EmailForm({ onSubmit, loading }: EmailFormProps) {
                 </p>
             </div>
 
-            {/* PDF Upload Mode */}
+            {/* File Upload Mode */}
             {inputMode === 'pdf' && (
                 <div className="pdf-upload-section">
                     <div className="form-group">
                         <label htmlFor="pdf-upload">Upload Email File *</label>
                         <div className="file-upload-area">
-                            <input
-                                type="file"
-                                id="pdf-upload"
-                                ref={fileInputRef}
-                                accept=".pdf,.eml"
-                                onChange={handleFileChange}
-                                disabled={loading}
-                                className="file-input"
-                            />
+                            {!pdfFile && (
+                                <input
+                                    type="file"
+                                    id="pdf-upload"
+                                    ref={fileInputRef}
+                                    accept=".pdf,.eml"
+                                    onChange={handleFileChange}
+                                    disabled={loading}
+                                    className="file-input"
+                                />
+                            )}
                             <div className="file-upload-content">
                                 {pdfFile ? (
                                     <div className="file-selected">
@@ -145,8 +174,13 @@ export function EmailForm({ onSubmit, loading }: EmailFormProps) {
                                         <button
                                             type="button"
                                             className="remove-file-btn"
-                                            onClick={handleRemovePdf}
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                handleRemovePdf()
+                                            }}
                                             disabled={loading}
+                                            title="Remove file"
                                         >
                                             ✕
                                         </button>
