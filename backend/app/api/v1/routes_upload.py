@@ -1,4 +1,4 @@
-# app/api/v1/routes_upload.py
+# backend/app/api/v1/routes_upload.py
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.schemas.phishing import UploadPreview
 from app.services.extraction_service import parse_eml_bytes, extract_links_from_pdf_bytes
@@ -21,7 +21,7 @@ async def upload_eml(file: UploadFile = File(...)):
         raw_text=parsed.get("raw_text"),
         visible_links=parsed.get("visible_links"),
         hidden_links=parsed.get("hidden_links"),
-        attachments=parsed.get("attachments"),
+        attachments=parsed.get("attachments")
     )
 
 @router.post("/pdf", response_model=UploadPreview)
@@ -31,7 +31,6 @@ async def upload_pdf(file: UploadFile = File(...)):
         parsed_pdf = extract_links_from_pdf_bytes(content)
     except Exception as e:
         raise HTTPException(status_code=422, detail=f"Failed to parse PDF: {str(e)}")
-    # build UploadPreview with available info
     preview = UploadPreview(
         subject=None,
         from_name=None,
@@ -41,7 +40,11 @@ async def upload_pdf(file: UploadFile = File(...)):
         raw_text=parsed_pdf.get("raw_text"),
         visible_links=parsed_pdf.get("visible_links"),
         hidden_links=[],
-        attachments=[],
+        attachments=[]
     )
-    # include quality info via hidden field? our schema doesn't include it - we can rely on logs
     return preview
+
+@router.post("/manual", response_model=UploadPreview)
+async def parse_manual(payload: UploadPreview):
+    # simple pass-through: frontend sanitized & sends manual fields
+    return payload

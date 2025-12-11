@@ -24,5 +24,8 @@ hypothesis==6.92.1
 # Development
 python-dotenv==1.0.0
 
-beautifulsoup4
-pymupdf
+beautifulsoup4==4.12.2
+pymupdf==1.22.5
+requests==2.31.0
+tldextract==4.0.0
+
