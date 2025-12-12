@@ -136,63 +136,29 @@ def _llm_analyze(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
     heur = _heuristic_signals(payload)
-    
-    # Cost estimation constants (based on Gemini API pricing)
-    GEMINI_COST_PER_REQUEST = 0.02  # Estimated cost per Gemini API call
-    HEURISTIC_COST = 0.0  # Heuristics are free
-    
-    # Determine if we should use LLM based on heuristic threshold
-    use_llm = heur["score"] >= HEURISTIC_THRESHOLD and LLM_PROVIDER == "gemini"
-    
-    if use_llm:
+    # if heuristics below threshold, skip LLM
+    if heur["score"] < HEURISTIC_THRESHOLD and LLM_PROVIDER == "gemini":
+        # run mock LLM (or you could still run gemini if you prefer)
+        merged = _llm_analyze(payload)  # for simplicity, call llm function which will fallback or mock
+        heur_score = heur["score"]
+        final_score = int(round(0.6 * merged.get("score", 50) + 0.4 * heur_score))
+    else:
         merged = _llm_analyze(payload)
         final_score = int(round(0.6 * merged.get("score", 50) + 0.4 * heur["score"]))
-        cost_estimate = GEMINI_COST_PER_REQUEST  # We used Gemini
-        analysis_method = "hybrid"
-    else:
-        # Use heuristics only
-        merged = {
-            "label": "SAFE",
-            "score": heur["score"],
-            "reasons": heur["reasons"],
-            "evidence": heur["evidence"],
-            "model_meta": {"llm": "heuristics_only"}
-        }
-        final_score = heur["score"]
-        cost_estimate = HEURISTIC_COST  # No LLM cost
-        analysis_method = "heuristics_only"
-    
-    # Determine final label
     if final_score >= 70:
         label = "PHISHING"
     elif final_score >= 40:
         label = "SUSPICIOUS"
     else:
         label = "SAFE"
-    
-    # Merge reasons and evidence
     reasons = list(dict.fromkeys((merged.get("reasons") or []) + heur.get("reasons", [])))
     evidence = _dedupe_evidence((merged.get("evidence") or []) + (heur.get("evidence") or []))
-    
-    # Calculate cost savings vs full LLM approach
-    cost_reduction_vs_full_llm = 1 - (cost_estimate / GEMINI_COST_PER_REQUEST)
-    
-    # Enhanced model metadata with cost information
-    model_meta = merged.get("model_meta", {})
-    model_meta.update({
-        "cost_estimate": cost_estimate,
-        "cost_reduction_vs_full_llm": cost_reduction_vs_full_llm,
-        "analysis_method": analysis_method,
-        "heuristic_score": heur["score"],
-        "llm_used": use_llm,
-        "threshold": HEURISTIC_THRESHOLD
-    })
 
     return {
         "label": label,
         "score": final_score,
         "reasons": reasons,
         "evidence": evidence,
-        "model_meta": model_meta,
+        "model_meta": merged.get("model_meta", {}),
         "timestamp": datetime.utcnow().isoformat()
     }

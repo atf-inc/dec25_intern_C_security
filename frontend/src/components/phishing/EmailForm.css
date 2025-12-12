@@ -151,13 +151,6 @@
     height: 100%;
     opacity: 0;
     cursor: pointer;
-    z-index: 1;
-}
-
-/* Hide file input when file is selected to prevent interference */
-.file-upload-area:has(.file-selected) .file-input {
-    pointer-events: none;
-    z-index: 0;
 }
 
 .file-input:disabled {
@@ -199,8 +192,6 @@
     background-color: #f0f9ff;
     border: 1px solid #0ea5e9;
     border-radius: 6px;
-    position: relative;
-    z-index: 10; /* Ensure it's above the file input */
 }
 
 .file-info {
@@ -238,9 +229,6 @@
     padding: 0.25rem;
     border-radius: 4px;
     transition: background-color 0.2s;
-    position: relative;
-    z-index: 20; /* Ensure button is above everything */
-    pointer-events: auto; /* Ensure button receives clicks */
 }
 
 .remove-file-btn:hover:not(:disabled) {
