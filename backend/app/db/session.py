@@ -12,7 +12,15 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 def init_db():
     # import models to register them on the Base metadata
     import app.models.email_scan  # noqa: F401
+    import app.models.voice_scan  # noqa: F401
     Base.metadata.create_all(bind=engine)

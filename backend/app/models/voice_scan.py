@@ -1,9 +1,7 @@
 
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, JSON
-from sqlalchemy.ext.declarative import declarative_base
+from app.db.session import Base
 from datetime import datetime
-
-Base = declarative_base()
 
 class VoiceScan(Base):
     """Database model for voice deepfake scan results."""

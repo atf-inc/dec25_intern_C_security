@@ -2,8 +2,8 @@
 import os
 import logging
 from typing import Dict, Any
-from google import genai
-from google.genai import types
+import google.generativeai as genai
+from google.generativeai import types
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +20,10 @@ class ExplanationService:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if not self.api_key:
             logger.warning("No Gemini API key provided. Explanations will be rule-based.")
-            self.client = None
+            self.model = None
         else:
-            self.client = genai.Client(api_key=self.api_key)
+            genai.configure(api_key=self.api_key)
+            self.model = genai.GenerativeModel('gemini-pro')
             logger.info("Gemini client initialized successfully")
     
     
@@ -41,7 +42,7 @@ class ExplanationService:
         Returns:
             Explanation string
         """
-        if self.client is None:
+        if self.model is None:
             return self._generate_fallback_explanation(analysis_result)
         
         try:
@@ -49,13 +50,11 @@ class ExplanationService:
             prompt = self._create_explanation_prompt(analysis_result, include_technical)
             
             # Call Gemini API
-            response = self.client.models.generate_content(
-                model="gemini-2.0-flash-exp",
+            response = self.model.generate_content(
                 contents=prompt,
-                config=types.GenerateContentConfig(
+                generation_config=types.GenerationConfig(
                     temperature=0.3,  # Low temperature for consistent explanations
-                    max_output_tokens=300,
-                    response_mime_type="text/plain"
+                    max_output_tokens=300
                 )
             )
             
