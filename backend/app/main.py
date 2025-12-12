@@ -10,6 +10,8 @@ from app.api.v1.routes_misc import router as misc_router
 # load .env early
 configure_dotenv()
 
+from app.api.v1 import routes_voice
+
 def create_application():
     app = FastAPI(title="ATF CyberX - Phishing Detection MVP")
 
@@ -29,6 +31,8 @@ def create_application():
     @app.on_event("startup")
     def on_startup():
         init_db()
+
+    app.include_router(routes_voice.router, prefix="/api/v1")
 
     @app.get("/health")
     def health():
