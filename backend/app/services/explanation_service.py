@@ -20,6 +20,7 @@ class ExplanationService:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if not self.api_key:
             logger.warning("No Gemini API key provided. Explanations will be rule-based.")
+
             self.client = None
         else:
             self.client = genai.Client(api_key=self.api_key)
@@ -41,6 +42,7 @@ class ExplanationService:
         Returns:
             Explanation string
         """
+
         if self.client is None:
             return self._generate_fallback_explanation(analysis_result)
         
@@ -49,6 +51,7 @@ class ExplanationService:
             prompt = self._create_explanation_prompt(analysis_result, include_technical)
             
             # Call Gemini API
+
             response = self.client.models.generate_content(
                 model="gemini-2.0-flash-exp",
                 contents=prompt,
@@ -56,6 +59,7 @@ class ExplanationService:
                     temperature=0.3,  # Low temperature for consistent explanations
                     max_output_tokens=300,
                     response_mime_type="text/plain"
+
                 )
             )
             
