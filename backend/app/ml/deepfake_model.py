@@ -27,32 +27,49 @@ class DeepfakeDetector:
             model_name: Hugging Face model identifier
             device: torch device (cuda/cpu)
         """
+        self.model_name = model_name
+        
         # Auto-detect device
         if device is None:
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
             self.device = device
         
-        logger.info(f"Initializing DeepfakeDetector on {self.device}")
+        logger.info(f"Initialized DeepfakeDetector config on {self.device}")
         
-        # Load feature extractor and model
-        self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(model_name)
-        
-        # Load with optimizations for GPU
-        if self.device.type == "cuda":
-            self.wavlm_model = WavLMModel.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16,  # Half precision for speed
-            ).to(self.device)
-        else:
-            self.wavlm_model = WavLMModel.from_pretrained(model_name).to(self.device)
-        
-        self.wavlm_model.eval()  # Set to evaluation mode
+        # Initialize model attributes to None (Lazy Loading)
+        self.feature_extractor = None
+        self.wavlm_model = None
         
         # Classifier head (to be trained)
         self.classifier = None
         self.artifact_detector = None
         self.is_trained = False
+        
+    def _ensure_model_loaded(self):
+        """Load the model if it hasn't been loaded yet."""
+        if self.wavlm_model is not None:
+            return
+
+        logger.info(f"Loading WavLM model: {self.model_name}...")
+        try:
+            # Load feature extractor and model
+            self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(self.model_name)
+            
+            # Load with optimizations for GPU
+            if self.device.type == "cuda":
+                self.wavlm_model = WavLMModel.from_pretrained(
+                    self.model_name,
+                    torch_dtype=torch.float16,  # Half precision for speed
+                ).to(self.device)
+            else:
+                self.wavlm_model = WavLMModel.from_pretrained(self.model_name).to(self.device)
+            
+            self.wavlm_model.eval()  # Set to evaluation mode
+            logger.info("WavLM model loaded successfully.")
+        except Exception as e:
+            logger.error(f"Failed to load WavLM model: {e}")
+            raise
     
     
     def extract_embeddings(self, waveform: np.ndarray, sample_rate: int = 16000) -> torch.Tensor:
@@ -66,6 +83,9 @@ class DeepfakeDetector:
         Returns:
             embeddings: Pooled embeddings tensor
         """
+        # Ensure model is loaded
+        self._ensure_model_loaded()
+        
         # Preprocess audio
         inputs = self.feature_extractor(
             waveform,
@@ -226,6 +246,9 @@ class DeepfakeDetector:
         Returns:
             result: Dictionary with prediction and confidence
         """
+        # Ensure model is loaded (Lazy Loading)
+        self._ensure_model_loaded()
+
         if not self.is_trained:
             # Use simple heuristic for MVP if not trained
             return self._heuristic_prediction(waveform, sample_rate)

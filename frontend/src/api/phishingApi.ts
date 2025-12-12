@@ -1,4 +1,6 @@
+
 import apiClient from './client'
+import { storage } from '../utils/storage'
 
 export interface EmailAnalysisRequest {
     subject: string
@@ -50,6 +52,7 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
         return result
     } else {
         // Regular JSON request for manual input
+        // MERGED: Use the updated request structure from 'develop' branch
         const requestData = {
             subject: data.subject,
             from_email: data.sender,
@@ -63,7 +66,7 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
         const response = await apiClient.post<PhishingResponse>('/api/v1/phishing/analyze', requestData)
         const result = response.data
 
-        // Save to local history
+        // MERGED: Keep the history saving from 'feature/scan-history-dashboard' branch
         saveToHistory(result, data.subject || 'No Subject', data.sender || 'Unknown Sender', data.body || '')
 
         return result
@@ -71,11 +74,10 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
 }
 
 // Helper to save history
-import { storage } from '../utils/storage'
 function saveToHistory(response: PhishingResponse, subject: string, sender: string, body: string) {
     const historyItem: ScanHistoryItem = {
         id: Date.now(), // Use timestamp for local ID
-        date: new Date().toISOString(),
+        date: new Date().toISOString(), // Use current time
         subject: subject,
         sender: sender,
         risk_score: response.score,
