@@ -68,5 +68,5 @@ export function usePhishingScan() {
         setResult(null)
     }
 
-    return { analyze, loading, error, result, reset }
+    return { analyze, loading, error, result, reset, setResult }
 }
