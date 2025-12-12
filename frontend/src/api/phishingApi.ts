@@ -20,7 +20,9 @@ export interface PhishingResponse {
 }
 
 export async function analyzeEmail(data: EmailAnalysisRequest): Promise<PhishingResponse> {
-    // If file is provided (EML or PDF), use multipart/form-data with appropriate endpoint
+    // If file is provided (EML or PDF), first upload to parse, then analyze
+    let requestData: any;
+
     if (data.pdfFile) {
         const formData = new FormData()
         formData.append('file', data.pdfFile)
@@ -29,31 +31,38 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
         const isEmlFile = data.pdfFile.name.endsWith('.eml')
         const isPdfFile = data.pdfFile.type === 'application/pdf'
 
-        let endpoint: string
+        let uploadEndpoint: string
         if (isEmlFile) {
-            endpoint = '/api/v1/upload/eml'
+            uploadEndpoint = '/api/v1/upload/eml'
         } else if (isPdfFile) {
-            endpoint = '/api/v1/upload/pdf'
+            uploadEndpoint = '/api/v1/upload/pdf'
         } else {
             throw new Error('Unsupported file type. Please upload EML or PDF files only.')
         }
 
-        const response = await apiClient.post<PhishingResponse>(
-            endpoint,
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
+        // Step 1: Upload and parse file
+        const uploadResponse = await apiClient.post<any>( // Returns UploadPreview
+            uploadEndpoint,
+            formData
         )
-        const result = response.data
-        saveToHistory(result, data.subject || 'PDF Scan', 'PDF Upload', '')
-        return result
+        const parsed = uploadResponse.data
+
+        // Step 2: Prepare data for analysis
+        requestData = {
+            subject: parsed.subject,
+            from_email: parsed.from_email,
+            raw_text: parsed.raw_text,
+            visible_links: parsed.visible_links?.map((url: string) => ({
+                uri: url,
+                anchor_text: url
+            })) || [],
+            // Fallback for manual inputs if parsing failed to get them but they were somehow provided?
+            // For now, we trust the parser output.
+        }
+
     } else {
-        // Regular JSON request for manual input
-        // MERGED: Use the updated request structure from 'develop' branch
-        const requestData = {
+        // Regular manual input
+        requestData = {
             subject: data.subject,
             from_email: data.sender,
             raw_text: data.body,
@@ -62,15 +71,15 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
                 anchor_text: url
             })) || []
         }
-
-        const response = await apiClient.post<PhishingResponse>('/api/v1/phishing/analyze', requestData)
-        const result = response.data
-
-        // MERGED: Keep the history saving from 'feature/scan-history-dashboard' branch
-        saveToHistory(result, data.subject || 'No Subject', data.sender || 'Unknown Sender', data.body || '')
-
-        return result
     }
+
+    // Step 3: Perform Analysis
+    const response = await apiClient.post<PhishingResponse>('/api/v1/phishing/analyze', requestData)
+    const result = response.data
+
+    saveToHistory(result, requestData.subject || 'No Subject', requestData.from_email || 'Unknown Sender', requestData.raw_text || '')
+
+    return result
 }
 
 // Helper to save history
