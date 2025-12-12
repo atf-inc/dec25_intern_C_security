@@ -1,151 +1,211 @@
-
-.audio-upload {
-    border: 2px dashed #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 3rem;
-    text-align: center;
-    background-color: #f9fafb;
-    transition: all 0.2s;
-    cursor: pointer;
-    margin-bottom: 2rem;
+.voice-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
-.audio-upload:hover, .audio-upload.dragging {
-    border-color: #3b82f6;
-    background-color: #eff6ff;
-}
-
-.upload-icon {
-    font-size: 3rem;
-    color: #9ca3af;
-    margin-bottom: 1rem;
-}
-
-.upload-text {
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.5rem;
-}
-
-.upload-subtext {
-    font-size: 0.875rem;
-    color: #6b7280;
-}
-
-.selected-file {
-    padding: 1rem;
-    background-color: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 0.5rem;
+/* Header */
+.page-header-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    margin-bottom: 3rem;
 }
 
-.file-info {
+.header-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background-color: #eff6ff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+}
+
+.page-header-container h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    margin-bottom: 0.25rem;
+}
+
+.page-header-container p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+/* Grid Layout */
+.voice-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .voice-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Left Column */
+.section-header {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-bottom: 0.75rem;
 }
 
-.file-name {
-    font-weight: 500;
-    color: #166534;
+.wave-icon {
+    color: #3b82f6;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
-.remove-file {
-    color: #ef4444;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.875rem;
+.upload-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
 }
 
-.remove-file:hover {
-    text-decoration: underline;
+.section-description {
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
 }
 
 .analyze-btn {
     width: 100%;
-    padding: 1rem;
-    background-color: #3b82f6;
+    padding: 0.875rem;
+    background-color: #6384d6;
+    /* Matching the purple-ish blue from image */
     color: white;
     border: none;
     border-radius: 0.5rem;
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-bottom: 2rem;
 }
 
 .analyze-btn:hover:not(:disabled) {
-    background-color: #2563eb;
+    background-color: #4f46e5;
 }
 
 .analyze-btn:disabled {
     background-color: #9ca3af;
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
-/* Results */
-.analysis-result {
-    margin-top: 3rem;
-    padding: 2rem;
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.result-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #f3f4f6;
-}
-
-.result-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
-}
-
-.confidence-meter {
-    display: flex;
-    align-items: center;
+.info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
 }
 
-.confidence-label {
+.info-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+.info-card h3 {
     font-size: 0.875rem;
-    color: #6b7280;
-}
-
-.confidence-value {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #111827;
-}
-
-.explanation-box {
-    background-color: #f8fafc;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-}
-
-.explanation-title {
-    font-size: 1rem;
     font-weight: 600;
-    color: #334155;
-    margin-bottom: 0.75rem;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
 }
 
-.explanation-text {
-    line-height: 1.6;
-    color: #475569;
-    white-space: pre-wrap;
+.info-card p {
+    font-size: 0.825rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Right Column */
+.results-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.75rem 0;
+}
+
+.results-description {
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.results-container {
+    background-color: #f8fafc;
+    /* Very light gray/blue background */
+    border: 1px dashed #e2e8f0;
+    border-radius: 1rem;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Center placeholder content */
+}
+
+/* Remove padding/centering when showing results so the result component can fill it */
+.results-container:has(.analysis-result) {
+    display: block;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    height: 100%;
+    color: #64748b;
+}
+
+.empty-icon-wrapper {
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+}
+
+/* Overrides for AudioUpload component to match design */
+.audio-upload {
+    background-color: white;
+    /* White bg instead of light gray */
+    border: 1px dashed #e5e7eb;
+    /* Thinner dashed border */
+    padding: 4rem 2rem;
+    /* More vertical padding */
+    margin-bottom: 1.5rem;
+}
+
+.upload-icon {
+    font-size: 2rem;
+    color: #4b5563;
+}
+
+.upload-text {
+    font-size: 1rem;
 }
