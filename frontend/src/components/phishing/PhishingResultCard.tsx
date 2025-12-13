@@ -19,6 +19,12 @@ interface PhishingResultCardProps {
             heuristic_score?: number
             llm_used?: boolean
             threshold?: number
+            llm_confidence?: number
+            email_complexity?: number
+            blending_weights?: {
+                llm_weight: number
+                heuristic_weight: number
+            }
         }
     }
 }
@@ -52,7 +58,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                     <div className="summary-item">
                         <span className="summary-label">Analysis:</span>
                         <span className="summary-value">
-                            {result.model_meta.llm === 'gemini-http' ? 'AI + Heuristics' : 'Heuristics Only'}
+                            {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'AI + Heuristics' : 'Heuristics Only'}
                         </span>
                     </div>
                 )}
@@ -220,26 +226,140 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
 
             {result.model_meta && (
                 <div className="result-section">
+                    <h3>Advanced Analytics</h3>
+                    <div className="behavioral-patterns-grid">
+                        {/* Heuristic Score Explanation */}
+                        {result.model_meta.heuristic_score !== undefined && (
+                            <div className="pattern-card">
+                                <div className="pattern-header">
+                                    <div className="pattern-icon">🔍</div>
+                                    <span className="pattern-title">Heuristic Score: {result.model_meta.heuristic_score}</span>
+                                </div>
+                                <div className="pattern-description">
+                                    {result.model_meta.heuristic_score >= 80
+                                        ? "Our rule-based system detected multiple red flags (urgent language, suspicious links, etc.)"
+                                        : result.model_meta.heuristic_score >= 40
+                                            ? "Moderate suspicious patterns detected by rule-based analysis"
+                                            : "Few or no traditional phishing indicators found"
+                                    }
+                                </div>
+                            </div>
+                        )}
+
+                        {/* LLM Confidence Explanation */}
+                        {result.model_meta.llm_confidence !== undefined && (
+                            <div className="pattern-card">
+                                <div className="pattern-header">
+                                    <div className="pattern-icon">🤖</div>
+                                    <span className="pattern-title">LLM Confidence: {(result.model_meta.llm_confidence * 100).toFixed(0)}%</span>
+                                </div>
+                                <div className="pattern-description">
+                                    {result.model_meta.llm_confidence >= 0.85
+                                        ? "Our AI model is highly confident in its analysis (excellent reliability)"
+                                        : result.model_meta.llm_confidence >= 0.6
+                                            ? "Good confidence level - not too low, not overconfident"
+                                            : "Lower confidence - analysis may need human review"
+                                    }
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Email Complexity Explanation */}
+                        {result.model_meta.email_complexity !== undefined && (
+                            <div className="pattern-card">
+                                <div className="pattern-header">
+                                    <div className="pattern-icon">📊</div>
+                                    <span className="pattern-title">Email Complexity: {(result.model_meta.email_complexity * 100).toFixed(0)}%</span>
+                                </div>
+                                <div className="pattern-description">
+                                    {result.model_meta.email_complexity >= 0.7
+                                        ? "Highly complex email - triggered our advanced hybrid analysis (LLM + heuristics)"
+                                        : result.model_meta.email_complexity >= 0.4
+                                            ? "Medium complexity - required enhanced analysis techniques"
+                                            : "Simple email structure - basic analysis sufficient"
+                                    }
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Blending Weights Explanation */}
+                        {result.model_meta.blending_weights && (
+                            <div className="pattern-card">
+                                <div className="pattern-header">
+                                    <div className="pattern-icon">⚖️</div>
+                                    <span className="pattern-title">
+                                        Blending Weights: LLM {(result.model_meta.blending_weights.llm_weight * 100).toFixed(0)}%,
+                                        Heuristic {(result.model_meta.blending_weights.heuristic_weight * 100).toFixed(0)}%
+                                    </span>
+                                </div>
+                                <div className="pattern-description">
+                                    Our system weighted the {result.model_meta.blending_weights.llm_weight > 0.5 ? 'AI analysis' : 'rule-based analysis'} more heavily.
+                                    This shows the hybrid system is working as designed for optimal accuracy.
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Analysis Method Explanation */}
+                        {result.model_meta.analysis_method && (
+                            <div className="pattern-card">
+                                <div className="pattern-header">
+                                    <div className="pattern-icon">🔬</div>
+                                    <span className="pattern-title">Analysis Method: {result.model_meta.analysis_method.replace('_', ' ').toUpperCase()}</span>
+                                </div>
+                                <div className="pattern-description">
+                                    {result.model_meta.analysis_method === 'hybrid_advanced'
+                                        ? "Advanced hybrid analysis combining AI reasoning with rule-based detection for optimal accuracy"
+                                        : result.model_meta.analysis_method === 'heuristics_only'
+                                            ? "Fast rule-based analysis - sufficient for clear cases, zero AI cost"
+                                            : "Specialized analysis method tailored to email characteristics"
+                                    }
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Cost Reduction Explanation */}
+                        {result.model_meta.cost_reduction_vs_full_llm !== undefined && (
+                            <div className="pattern-card">
+                                <div className="pattern-header">
+                                    <div className="pattern-icon">💰</div>
+                                    <span className="pattern-title">Cost Efficiency: {(result.model_meta.cost_reduction_vs_full_llm * 100).toFixed(1)}% Savings</span>
+                                </div>
+                                <div className="pattern-description">
+                                    {result.model_meta.cost_reduction_vs_full_llm >= 0.8
+                                        ? "Excellent cost optimization - achieved high accuracy with minimal AI usage"
+                                        : result.model_meta.cost_reduction_vs_full_llm >= 0.5
+                                            ? "Good cost efficiency while maintaining analysis quality"
+                                            : "Full AI analysis used - maximum accuracy for complex threats"
+                                    }
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {result.model_meta && (
+                <div className="result-section">
                     <h3>AI Analysis Details</h3>
                     <div className="ai-analysis-container">
                         <div className="ai-engine-card">
                             <div className="ai-engine-header">
                                 <div className="ai-engine-icon">
-                                    {result.model_meta.llm === 'gemini-http' ? '🤖' : '⚡'}
+                                    {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? '🤖' : '⚡'}
                                 </div>
                                 <div className="ai-engine-info">
                                     <div className="ai-engine-name">
-                                        {result.model_meta.llm === 'gemini-http' ? 'Gemini AI' :
+                                        {result.model_meta.llm?.includes('gemini') ? 'Gemini AI' :
                                             result.model_meta.llm === 'mock' ? 'Heuristics Engine' :
                                                 result.model_meta.llm === 'fallback' ? 'Fallback Mode' :
                                                     result.model_meta.llm || 'Unknown Engine'}
                                     </div>
                                     <div className="ai-engine-type">
-                                        {result.model_meta.llm === 'gemini-http' ? 'Hybrid Analysis' : 'Rule-Based Analysis'}
+                                        {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'Hybrid Analysis' : 'Rule-Based Analysis'}
                                     </div>
                                 </div>
-                                <div className={`ai-status-badge ${result.model_meta.llm === 'gemini-http' ? 'ai-active' : 'ai-heuristic'}`}>
-                                    {result.model_meta.llm === 'gemini-http' ? 'AI Enhanced' : 'Fast Mode'}
+                                <div className={`ai-status-badge ${result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'ai-active' : 'ai-heuristic'}`}>
+                                    {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'AI Enhanced' : 'Fast Mode'}
                                 </div>
                             </div>
                         </div>
@@ -260,7 +380,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                                 <div className="metric-content">
                                     <div className="metric-label">Analysis Method</div>
                                     <div className="metric-value">
-                                        {result.model_meta.llm === 'gemini-http' ? 'AI + Heuristics' : 'Heuristics Only'}
+                                        {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'AI + Heuristics' : 'Heuristics Only'}
                                     </div>
                                 </div>
                             </div>
@@ -272,7 +392,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                                     <div className="metric-value">
                                         {result.model_meta.cost_reduction_vs_full_llm !== undefined
                                             ? `${(result.model_meta.cost_reduction_vs_full_llm * 100).toFixed(0)}% Savings`
-                                            : result.model_meta.llm === 'gemini-http' ? '~75% Savings' : 'Zero Cost'
+                                            : result.model_meta.llm?.includes('gemini') ? '~75% Savings' : 'Zero Cost'
                                         }
                                     </div>
                                     {result.model_meta.cost_estimate !== undefined && (

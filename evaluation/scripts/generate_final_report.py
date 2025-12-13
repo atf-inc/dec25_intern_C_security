@@ -1,11 +1,72 @@
-# 🚀 COMPLETE EVALUATION MODULE DOCUMENTATION
+#!/usr/bin/env python3
+"""
+Final Report Generator for Hybrid Phishing Detection System
+
+This script generates a comprehensive evaluation report including:
+- Complete methodology documentation
+- Dataset descriptions and sources
+- Performance analysis across all methods
+- Technical implementation details
+- Future roadmap and recommendations
+- Everything about the evaluation module
+
+Usage:
+    python generate_final_report.py
+"""
+
+import json
+import time
+from pathlib import Path
+from datetime import datetime
+import sys
+
+def load_evaluation_results():
+    """Load the latest evaluation results."""
+    results_path = Path(__file__).parent.parent / "results" / "evaluation_results.json"
+    if results_path.exists():
+        with open(results_path, 'r') as f:
+            return json.load(f)
+    return None
+
+def generate_comprehensive_report():
+    """Generate the most comprehensive evaluation report possible."""
+    
+    # Load results
+    results = load_evaluation_results()
+    if not results:
+        print("❌ No evaluation results found. Run evaluation first.")
+        return
+    
+    # Get current timestamp
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Generate report content (will be created in parts)
+    report_content = create_report_content(results, timestamp)
+    
+    # Write report to file
+    report_path = Path(__file__).parent.parent / "results" / "FINAL_EVALUATION_REPORT.md"
+    with open(report_path, 'w', encoding='utf-8') as f:
+        f.write(report_content)
+    
+    print(f"✅ Comprehensive evaluation report generated!")
+    print(f"📁 Location: {report_path}")
+    print(f"📊 Dataset size: {results.get('metadata', {}).get('dataset_size', 'N/A')} samples")
+    print(f"🏆 Best F1 Score: {max([results.get(method, {}).get('f1_score', 0) for method in ['heuristics', 'embeddings', 'gemini_only', 'hybrid']]):.1%}")
+    print(f"💰 Hybrid Cost Reduction: {results.get('hybrid', {}).get('cost_reduction_vs_full_llm', 0):.1%}")
+    print(f"📄 Report size: {len(report_content):,} characters")
+    
+    return report_path
+
+def create_report_content(results, timestamp):
+    """Create the comprehensive report content."""
+    return f"""# 🚀 COMPLETE EVALUATION MODULE DOCUMENTATION
 ## Advanced Hybrid Phishing Detection System - Team C Security MVP
 
-**Generated:** 2025-12-13 20:04:40  
+**Generated:** {timestamp}  
 **Team:** Akash Paloju, Arnav Goyal, Alark Kumar, Ashish Prasad  
 **Mentor:** Divyansh Modi  
 **Project:** ATF CyberX - AI × Security Theme  
-**Dataset Size:** 500 samples
+**Dataset Size:** {results.get('metadata', {}).get('dataset_size', 'N/A')} samples
 
 ---
 
@@ -19,19 +80,19 @@ We developed and evaluated an **Advanced Hybrid Phishing Detection System** that
 - **Hybrid System:** Intelligent combination of all methods
 
 ### Key Achievements
-- ✅ **Embeddings Model:** 92.0% F1 score (production-ready)
-- ✅ **Advanced Hybrid:** 77.8% F1 score with 81.8% cost reduction
+- ✅ **Embeddings Model:** {results.get('embeddings', {}).get('f1_score', 0):.1%} F1 score (production-ready)
+- ✅ **Advanced Hybrid:** {results.get('hybrid', {}).get('f1_score', 0):.1%} F1 score with {results.get('hybrid', {}).get('cost_reduction_vs_full_llm', 0):.1%} cost reduction
 - ✅ **Comprehensive Evaluation:** 4-method comparison with statistical significance
 - ✅ **Production System:** Full end-to-end implementation with UI
 
-### Final Performance Results (500 samples)
+### Final Performance Results ({results.get('metadata', {}).get('dataset_size', 'N/A')} samples)
 
 | Method | Precision | Recall | F1 Score | Cost/500 | LLM Usage | Status |
 |--------|-----------|--------|----------|----------|-----------|---------|
-| **🏆 Embeddings** | 90.2% | 93.8% | **92.0%** | $0.50 | 0% | ⭐ **RECOMMENDED** |
-| **🥈 Advanced Hybrid** | 100.0% | 63.6% | **77.8%** | $1.82 | 18.2% | ⭐ **EXPLAINABLE** |
-| **🥉 Heuristics** | 50.0% | 100.0% | 66.7% | $0.00 | 0% | ✅ **BASELINE** |
-| **❌ LLM Only** | 48.4% | 47.2% | 47.8% | $10.00 | 100% | ❌ **NEEDS WORK** |
+| **🏆 Embeddings** | {results.get('embeddings', {}).get('precision', 0):.1%} | {results.get('embeddings', {}).get('recall', 0):.1%} | **{results.get('embeddings', {}).get('f1_score', 0):.1%}** | ${results.get('embeddings', {}).get('total_cost', 0):.2f} | 0% | ⭐ **RECOMMENDED** |
+| **🥈 Advanced Hybrid** | {results.get('hybrid', {}).get('precision', 0):.1%} | {results.get('hybrid', {}).get('recall', 0):.1%} | **{results.get('hybrid', {}).get('f1_score', 0):.1%}** | ${results.get('hybrid', {}).get('total_cost', 0):.2f} | {results.get('hybrid', {}).get('ai_usage_rate', 0):.1%} | ⭐ **EXPLAINABLE** |
+| **🥉 Heuristics** | {results.get('heuristics', {}).get('precision', 0):.1%} | {results.get('heuristics', {}).get('recall', 0):.1%} | {results.get('heuristics', {}).get('f1_score', 0):.1%} | ${results.get('heuristics', {}).get('total_cost', 0):.2f} | 0% | ✅ **BASELINE** |
+| **❌ LLM Only** | {results.get('gemini_only', {}).get('precision', 0):.1%} | {results.get('gemini_only', {}).get('recall', 0):.1%} | {results.get('gemini_only', {}).get('f1_score', 0):.1%} | ${results.get('gemini_only', {}).get('total_cost', 0):.2f} | 100% | ❌ **NEEDS WORK** |
 
 ---
 
@@ -55,34 +116,34 @@ We evaluated four distinct approaches:
 - **Purpose:** Establish free, fast baseline performance
 - **Implementation:** Rule-based pattern matching (35+ rules)
 - **Features:** URL analysis, keyword detection, domain validation, entropy calculation
-- **Results:** 66.7% F1, perfect recall, high false positives
+- **Results:** {results.get('heuristics', {}).get('f1_score', 0):.1%} F1, perfect recall, high false positives
 
 **Method 2: Embeddings-Only Classifier**
 - **Purpose:** Test state-of-the-art ML approach
 - **Implementation:** Sentence transformers (all-MiniLM-L6-v2) + logistic regression
 - **Features:** 5-fold cross-validation, 384-dimensional embeddings
-- **Results:** 92.0% F1, excellent balance, production-ready
+- **Results:** {results.get('embeddings', {}).get('f1_score', 0):.1%} F1, excellent balance, production-ready
 
 **Method 3: LLM-Only Analysis**
 - **Purpose:** Test pure AI reasoning capability
 - **Implementation:** Gemini 2.5 Flash with few-shot prompting
 - **Features:** Natural language understanding, structured JSON output
-- **Results:** 47.8% F1, inconsistent, needs improvement
+- **Results:** {results.get('gemini_only', {}).get('f1_score', 0):.1%} F1, inconsistent, needs improvement
 
 **Method 4: Advanced Hybrid System**
 - **Purpose:** Optimize performance-cost trade-off
 - **Implementation:** Intelligent combination with complexity-aware triggering
 - **Features:** Dynamic thresholds, confidence blending, cost optimization
-- **Results:** 77.8% F1, 81.8% cost reduction
+- **Results:** {results.get('hybrid', {}).get('f1_score', 0):.1%} F1, {results.get('hybrid', {}).get('cost_reduction_vs_full_llm', 0):.1%} cost reduction
 
 ---
 
 ## 📊 DATASET DOCUMENTATION
 
 ### Dataset Composition
-- **Total Samples:** 500
-- **Phishing Samples:** 250 (50%)
-- **Benign Samples:** 250 (50%)
+- **Total Samples:** {results.get('metadata', {}).get('dataset_size', 500)}
+- **Phishing Samples:** {results.get('metadata', {}).get('phishing_samples', 250)} (50%)
+- **Benign Samples:** {results.get('metadata', {}).get('benign_samples', 250)} (50%)
 - **Perfect Balance:** 1.00 ratio for unbiased evaluation
 
 ### Dataset Sources
@@ -184,12 +245,12 @@ Enhanced prompts with 3 concrete examples:
 |-------------------|----------|----------|-----------|------------|
 | Original Hybrid | 66.7% | $10.00 | 100% | ❌ Basic |
 | Basic Fix | 79.5% | $0.67 | 67% | ✅ Working |
-| **Advanced System** | **77.8%** | **$1.82** | **18.2%** | 🚀 **Optimized** |
+| **Advanced System** | **{results.get('hybrid', {}).get('f1_score', 0):.1%}** | **${results.get('hybrid', {}).get('total_cost', 0):.2f}** | **{results.get('hybrid', {}).get('ai_usage_rate', 0):.1%}** | 🚀 **Optimized** |
 
 ### Key Achievements
-- **81.8% cost reduction** while maintaining performance
-- **Perfect precision** (100.0%) - zero false positives
-- **Intelligent triggering** - only 18.2% LLM usage
+- **{results.get('hybrid', {}).get('cost_reduction_vs_full_llm', 0):.1%} cost reduction** while maintaining performance
+- **Perfect precision** ({results.get('hybrid', {}).get('precision', 0):.1%}) - zero false positives
+- **Intelligent triggering** - only {results.get('hybrid', {}).get('ai_usage_rate', 0):.1%} LLM usage
 - **Production ready** - comprehensive error handling and fallbacks
 
 ---
@@ -216,8 +277,8 @@ Enhanced prompts with 3 concrete examples:
 ## 🚧 LIMITATIONS & NEXT STEPS
 
 ### Known Limitations
-1. **Recall Gap:** 63.6% recall (target: 80%+)
-2. **LLM Performance:** 47.8% F1 (needs prompt engineering)
+1. **Recall Gap:** {results.get('hybrid', {}).get('recall', 0):.1%} recall (target: 80%+)
+2. **LLM Performance:** {results.get('gemini_only', {}).get('f1_score', 0):.1%} F1 (needs prompt engineering)
 3. **Language Support:** English-only (need multilingual)
 4. **Complexity Model:** Rule-based (need ML-driven)
 
@@ -285,8 +346,8 @@ python evaluation/scripts/generate_final_report.py
 
 This evaluation demonstrates that:
 
-1. **Embeddings models provide superior performance** (92.0% F1)
-2. **Hybrid systems enable cost-effective explainability** (77.8% F1, 81.8% cost reduction)
+1. **Embeddings models provide superior performance** ({results.get('embeddings', {}).get('f1_score', 0):.1%} F1)
+2. **Hybrid systems enable cost-effective explainability** ({results.get('hybrid', {}).get('f1_score', 0):.1%} F1, {results.get('hybrid', {}).get('cost_reduction_vs_full_llm', 0):.1%} cost reduction)
 3. **Intelligent resource allocation** makes expensive AI practical
 4. **Comprehensive evaluation** reveals important trade-offs
 
@@ -295,9 +356,13 @@ This evaluation demonstrates that:
 - **Secondary:** Advanced hybrid (explainable decisions)
 - **Fallback:** Heuristics only (zero cost backup)
 
-The **Advanced Hybrid System** achieves 77.8% F1 with perfect precision and 81.8% cost reduction, making it ideal for production deployment where explainability and cost control are priorities.
+The **Advanced Hybrid System** achieves {results.get('hybrid', {}).get('f1_score', 0):.1%} F1 with perfect precision and {results.get('hybrid', {}).get('cost_reduction_vs_full_llm', 0):.1%} cost reduction, making it ideal for production deployment where explainability and cost control are priorities.
 
 ---
 
 *Generated by Team C Security MVP - December 2025*  
 *Complete evaluation framework ready for production deployment and academic publication*
+"""
+
+if __name__ == "__main__":
+    generate_comprehensive_report()

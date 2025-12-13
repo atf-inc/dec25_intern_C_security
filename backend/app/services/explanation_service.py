@@ -2,8 +2,15 @@
 import os
 import logging
 from typing import Dict, Any
-from google import genai
-from google.genai import types
+try:
+    import google.generativeai as genai
+    from google.generativeai import types
+    GENAI_AVAILABLE = True
+except ImportError:
+    print("⚠️ Google Generative AI not available, using mock responses")
+    GENAI_AVAILABLE = False
+    genai = None
+    types = None
 
 logger = logging.getLogger(__name__)
 
@@ -18,13 +25,21 @@ class ExplanationService:
             api_key: Gemini API key (or from environment)
         """
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        if not self.api_key:
+        
+        if not GENAI_AVAILABLE:
+            logger.warning("Google Generative AI not available. Using mock explanations.")
+            self.client = None
+        elif not self.api_key:
             logger.warning("No Gemini API key provided. Explanations will be rule-based.")
-
             self.client = None
         else:
-            self.client = genai.Client(api_key=self.api_key)
-            logger.info("Gemini client initialized successfully")
+            try:
+                genai.configure(api_key=self.api_key)
+                self.client = genai.GenerativeModel('gemini-pro')
+                logger.info("Gemini client initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize Gemini client: {e}")
+                self.client = None
     
     
     async def generate_voice_explanation(

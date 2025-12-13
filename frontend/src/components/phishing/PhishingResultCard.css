@@ -927,3 +927,116 @@
         margin-bottom: 1.5rem;
     }
 }
+
+/* Behavioral Patterns Grid */
+.behavioral-patterns-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .behavioral-patterns-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .behavioral-patterns-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.pattern-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.pattern-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.pattern-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.pattern-icon {
+    font-size: 1.25rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.pattern-title {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    line-height: 1.2;
+}
+
+.pattern-description {
+    color: #6b7280;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Responsive adjustments for pattern cards */
+@media (max-width: 640px) {
+    .pattern-card {
+        padding: 0.75rem;
+    }
+    
+    .pattern-title {
+        font-size: 0.8rem;
+    }
+    
+    .pattern-description {
+        font-size: 0.75rem;
+    }
+    
+    .pattern-icon {
+        font-size: 1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+/* Enhanced styling for different pattern types */
+.pattern-card:has(.pattern-icon:contains("🔍")) {
+    border-left: 3px solid #3b82f6;
+}
+
+.pattern-card:has(.pattern-icon:contains("🤖")) {
+    border-left: 3px solid #10b981;
+}
+
+.pattern-card:has(.pattern-icon:contains("📊")) {
+    border-left: 3px solid #f59e0b;
+}
+
+.pattern-card:has(.pattern-icon:contains("⚖️")) {
+    border-left: 3px solid #8b5cf6;
+}
+
+.pattern-card:has(.pattern-icon:contains("🔬")) {
+    border-left: 3px solid #ef4444;
+}
+
+.pattern-card:has(.pattern-icon:contains("💰")) {
+    border-left: 3px solid #06b6d4;
+}

@@ -15,10 +15,18 @@ from app.api.v1 import routes_voice
 def create_application():
     app = FastAPI(title="ATF CyberX - Phishing Detection MVP")
 
-    # Add CORS middleware
+    # Add CORS middleware - MUST be added BEFORE including routers
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS + ["http://localhost:3000", "http://localhost:3002"],
+        allow_origins=[
+            "http://localhost:5173",  # Vite dev server
+            "http://127.0.0.1:5173",  # Alternative localhost format
+            "http://localhost:5174",  # Vite backup port
+            "http://127.0.0.1:5174",  # Alternative localhost format
+            "http://localhost:3000",  # React dev server
+            "http://localhost:3002",  # Alternative React port
+            "*"  # Allow all origins for development
+        ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
