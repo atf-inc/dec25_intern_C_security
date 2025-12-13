@@ -133,7 +133,15 @@ class DeepfakeDetector:
         
         # 2. Periodicity detection (synthetic speech has unusual periodicity)
         autocorr = librosa.autocorrelate(waveform)
-        artifacts['autocorr_peak'] = float(np.max(autocorr[1:100]))
+        if len(autocorr) > 1:
+            end_idx = min(100, len(autocorr))
+            slice_ = autocorr[1:end_idx]
+            if len(slice_) > 0:
+                artifacts['autocorr_peak'] = float(np.max(slice_))
+            else:
+                artifacts['autocorr_peak'] = 0.0
+        else:
+            artifacts['autocorr_peak'] = 0.0
         
         # 3. High-frequency content analysis (vocoders often have artifacts >8kHz)
         stft = librosa.stft(waveform)

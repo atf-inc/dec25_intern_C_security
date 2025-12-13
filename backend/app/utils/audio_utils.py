@@ -32,7 +32,12 @@ def load_and_preprocess_audio(file_path_or_bytes, target_sr=TARGET_SAMPLE_RATE):
         waveform = librosa.to_mono(waveform)
     
     # Normalize amplitude to [-1, 1]
-    waveform = waveform / np.max(np.abs(waveform) + 1e-8)
+    if len(waveform) == 0:
+        # If waveform is empty, return as is (validation should catch this, but safe fallthrough)
+        return waveform, target_sr
+
+    peak = np.max(np.abs(waveform)) + 1e-8
+    waveform = waveform / peak
     
     # Resample if needed
     if sample_rate != target_sr:
