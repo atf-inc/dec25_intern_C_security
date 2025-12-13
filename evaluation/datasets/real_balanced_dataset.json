@@ -1,0 +1,2316 @@
+{
+  "metadata": {
+    "total_samples": 200,
+    "phishing_samples": 100,
+    "benign_samples": 100,
+    "balance_ratio": 1.0,
+    "collection_date": "2025-12-13T12:32:01.445051",
+    "sources": [
+      "phishtank",
+      "enron_style"
+    ],
+    "purpose": "comprehensive_4_method_evaluation"
+  },
+  "samples": [
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "james.wilson@corp.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "michael.davis@business.org",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nMichael Davis",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "john.smith@solutions.biz",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "patricia.martinez@solutions.biz",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nPatricia Martinez",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "sarah.johnson@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nSarah Johnson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "john.smith@consulting.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "james.wilson@enron.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "jennifer.taylor@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "mary.anderson@enron.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nMary Anderson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "lisa.wilson@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "james.wilson@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "christopher.lee@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "robert.miller@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "john.smith@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "christopher.lee@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "lisa.wilson@enron.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "john.smith@enron.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "jennifer.taylor@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "sarah.johnson@enterprise.co",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nSarah Johnson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "amanda.garcia@consulting.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Action Items from Today's Call",
+      "from_email": "john.smith@consulting.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "christopher.lee@corp.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "robert.miller@consulting.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "patricia.martinez@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nPatricia Martinez",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "lisa.wilson@enron.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "jennifer.taylor@consulting.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "lisa.wilson@solutions.biz",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "sarah.johnson@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nSarah Johnson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "james.wilson@consulting.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "michael.davis@corp.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nMichael Davis",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "christopher.lee@solutions.biz",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "michael.davis@solutions.biz",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nMichael Davis",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "robert.miller@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "john.smith@corp.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Action Items from Today's Call",
+      "from_email": "christopher.lee@company.net",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "james.wilson@company.net",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "john.smith@enterprise.co",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "christopher.lee@business.org",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "james.wilson@solutions.biz",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "robert.miller@consulting.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "patricia.martinez@solutions.biz",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nPatricia Martinez",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "robert.miller@consulting.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "sarah.johnson@enterprise.co",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nSarah Johnson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "james.wilson@corp.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "jennifer.taylor@solutions.biz",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "john.smith@corp.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "amanda.garcia@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "john.smith@consulting.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "lisa.wilson@company.net",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "lisa.wilson@enron.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "jennifer.taylor@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "sarah.johnson@business.org",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nSarah Johnson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "john.smith@enterprise.co",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "amanda.garcia@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "david.brown@company.net",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nDavid Brown",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "jennifer.taylor@solutions.biz",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "jennifer.taylor@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "jennifer.taylor@corp.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Action Items from Today's Call",
+      "from_email": "robert.miller@corp.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Action Items from Today's Call",
+      "from_email": "sarah.johnson@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nSarah Johnson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "james.wilson@corp.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "amanda.garcia@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "patricia.martinez@consulting.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nPatricia Martinez",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "christopher.lee@enterprise.co",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "lisa.wilson@consulting.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "christopher.lee@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "john.smith@enterprise.co",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Action Items from Today's Call",
+      "from_email": "robert.miller@company.net",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "amanda.garcia@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "amanda.garcia@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "james.wilson@solutions.biz",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "amanda.garcia@solutions.biz",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "michael.davis@consulting.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nMichael Davis",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "mary.anderson@solutions.biz",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nMary Anderson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "mary.anderson@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nMary Anderson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "robert.miller@solutions.biz",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "jennifer.taylor@corp.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "christopher.lee@solutions.biz",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nChristopher Lee",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "mary.anderson@solutions.biz",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nMary Anderson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "mary.anderson@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nMary Anderson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "robert.miller@solutions.biz",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "michael.davis@corp.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nMichael Davis",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "patricia.martinez@consulting.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nPatricia Martinez",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "amanda.garcia@enterprise.co",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "robert.miller@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nRobert Miller",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Meeting Notes - Strategy Session",
+      "from_email": "jennifer.taylor@company.net",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity",
+      "from_email": "security@amazon-security.org",
+      "raw_text": "Dear Amazon Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://amazon-security.org/verify\\n\\nThank you,\\nAmazon Security Team",
+      "visible_links": [
+        {
+          "uri": "https://amazon-security.org/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "james.wilson@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Contract Review - Please Advise",
+      "from_email": "lisa.wilson@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nLisa Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Q3 Budget Review Meeting",
+      "from_email": "michael.davis@solutions.biz",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nMichael Davis",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "john.smith@enron.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "jennifer.taylor@company.net",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJennifer Taylor",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "mary.anderson@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nMary Anderson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Account verification required",
+      "from_email": "security@appleid-verification.com",
+      "raw_text": "Dear Apple Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://appleid-verification.com/verify\\n\\nThank you,\\nApple Security Team",
+      "visible_links": [
+        {
+          "uri": "https://appleid-verification.com/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Budget Allocation for Next Quarter",
+      "from_email": "john.smith@business.org",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "FW: Project Timeline Update",
+      "from_email": "james.wilson@consulting.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nJames Wilson",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Vendor Selection Committee Update",
+      "from_email": "amanda.garcia@enron.com",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Re: Client Presentation Materials",
+      "from_email": "john.smith@enron.com",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nJohn Smith",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "david.brown@enron.com",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nDavid Brown",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Weekly Status Report",
+      "from_email": "amanda.garcia@enterprise.co",
+      "raw_text": "Dear Colleagues,\\n\\nAttached please find the latest project update. We're on track to meet our deliverables for this quarter.\\n\\nKey highlights:\\n- Budget is within target\\n- Timeline remains on schedule\\n- Client feedback has been positive\\n\\nThanks for your continued hard work.\\n\\nAmanda Garcia",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Action Items from Today's Call",
+      "from_email": "patricia.martinez@business.org",
+      "raw_text": "Hello,\\n\\nI hope this email finds you well. I'm writing to update you on the status of our current initiatives.\\n\\nWe've made significant progress and I'm confident we'll achieve our goals. Please review the attached documents and provide your feedback by Friday.\\n\\nThank you,\\nPatricia Martinez",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Team Performance Metrics",
+      "from_email": "david.brown@company.net",
+      "raw_text": "Hi Team,\\n\\nI wanted to follow up on our discussion from yesterday's meeting. The key action items are:\\n\\n1. Review the Q3 numbers\\n2. Prepare presentation for client\\n3. Schedule follow-up meeting\\n\\nPlease let me know if you have any questions.\\n\\nBest regards,\\nDavid Brown",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Microsoft: Suspicious activity detected",
+      "from_email": "security@microsoft-security.net",
+      "raw_text": "Dear Microsoft Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://microsoft-security.net/verify\\n\\nThank you,\\nMicrosoft Security Team",
+      "visible_links": [
+        {
+          "uri": "https://microsoft-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    },
+    {
+      "subject": "Your PayPal account has been limited",
+      "from_email": "security@paypal-security.net",
+      "raw_text": "Dear PayPal Customer,\\n\\nWe have detected unusual activity on your account. Please verify your account immediately to prevent suspension.\\n\\nVerify Now: https://paypal-security.net/verify\\n\\nThank you,\\nPayPal Security Team",
+      "visible_links": [
+        {
+          "uri": "https://paypal-security.net/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "fallback_phishing"
+    }
+  ]
+}

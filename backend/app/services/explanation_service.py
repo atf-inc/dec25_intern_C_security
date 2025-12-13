@@ -17,9 +17,9 @@ class ExplanationService:
             api_key: Gemini API key (or from environment)
         """
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+        
         if not self.api_key:
             logger.warning("No Gemini API key provided. Explanations will be rule-based.")
-
             self.model = None
         else:
             try:

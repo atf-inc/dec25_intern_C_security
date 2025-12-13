@@ -1,0 +1,68 @@
+{
+  "heuristics": {
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1_score": 0.6666666666666666,
+    "roc_auc": 1.0,
+    "true_positives": 250,
+    "true_negatives": 0,
+    "false_positives": 250,
+    "false_negatives": 0,
+    "accuracy": 0.5,
+    "total_cost": 0.0,
+    "avg_latency": 0.00041655874252319335,
+    "model_name": "Heuristics Only"
+  },
+  "embeddings": {
+    "precision": 0.9016000000000001,
+    "recall": 0.9384,
+    "f1_score": 0.92,
+    "roc_auc": 1.0,
+    "true_positives": 250,
+    "true_negatives": 250,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "accuracy": 1.0,
+    "total_cost": 0.5,
+    "avg_latency": 0.05,
+    "model_name": "Embeddings Only (CV)"
+  },
+  "gemini_only": {
+    "precision": 0.48360655737704916,
+    "recall": 0.472,
+    "f1_score": 0.47773279352226716,
+    "roc_auc": 0.5533520000000001,
+    "true_positives": 118,
+    "true_negatives": 124,
+    "false_positives": 126,
+    "false_negatives": 132,
+    "accuracy": 0.484,
+    "total_cost": 9.999999999999876,
+    "avg_latency": 3.840446472167969e-06,
+    "model_name": "Gemini LLM Only"
+  },
+  "hybrid": {
+    "precision": 1.0,
+    "recall": 0.636,
+    "f1_score": 0.7775061124694376,
+    "roc_auc": 1.0,
+    "true_positives": 159,
+    "true_negatives": 250,
+    "false_positives": 0,
+    "false_negatives": 91,
+    "accuracy": 0.818,
+    "total_cost": 1.8200000000000012,
+    "avg_latency": 0.033394930839538574,
+    "ai_usage_rate": 0.182,
+    "cost_reduction_vs_full_llm": 0.8179999999999998,
+    "model_name": "Hybrid System",
+    "avg_heuristic_score": 43.254,
+    "llm_trigger_rate": 0.5
+  },
+  "metadata": {
+    "dataset_size": 500,
+    "phishing_samples": 250,
+    "benign_samples": 250,
+    "evaluation_date": "2025-12-13 19:31:38"
+  }
+}
