@@ -13,9 +13,10 @@ import { ScanHistoryItem } from '../../api/phishingApi'
 
 interface HistoryChartProps {
     data: ScanHistoryItem[]
+    title?: string
 }
 
-export function HistoryChart({ data }: HistoryChartProps) {
+export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartProps) {
     if (!data || data.length === 0) return null
 
     // Process data for the chart - sort by date
@@ -37,7 +38,7 @@ export function HistoryChart({ data }: HistoryChartProps) {
 
     return (
         <div style={{ height: '300px', width: '100%', marginBottom: '2rem' }}>
-            <h3 style={{ marginBottom: '1rem', color: '#333' }}>Risk Score Trend</h3>
+            <h3 style={{ marginBottom: '1rem', color: '#333' }}>{title}</h3>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={chartData}

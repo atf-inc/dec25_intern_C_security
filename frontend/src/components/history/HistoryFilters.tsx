@@ -19,6 +19,10 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
         onFilterChange({ ...filters, end_date: e.target.value || undefined })
     }
 
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onFilterChange({ ...filters, search_query: e.target.value || undefined })
+    }
+
     return (
         <div style={{
             display: 'flex',
@@ -32,6 +36,25 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
             border: '1px solid #eee',
             alignItems: 'flex-end'
         }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flexGrow: 1 }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 600, color: '#4a5568' }}>Search</label>
+                <input
+                    type="text"
+                    value={filters.search_query || ''}
+                    onChange={handleSearchChange}
+                    placeholder="Search by subject or sender..."
+                    style={{
+                        padding: '9px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                        minWidth: '200px',
+                        backgroundColor: '#fff',
+                        fontSize: '0.95rem',
+                        fontFamily: 'inherit'
+                    }}
+                />
+            </div>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: 600, color: '#4a5568' }}>Risk Level</label>
                 <select
@@ -90,7 +113,7 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
                 />
             </div>
 
-            {(filters.risk_level || filters.start_date || filters.end_date) && (
+            {(filters.risk_level || filters.start_date || filters.end_date || filters.search_query) && (
                 <button
                     onClick={() => onFilterChange({})}
                     style={{

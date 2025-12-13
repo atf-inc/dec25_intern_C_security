@@ -23,6 +23,7 @@ export interface PhishingResponse {
 export interface ScanHistoryItem {
     id: number
     date: string
+    type: 'email' | 'voice'
     subject: string
     sender: string
     risk_score: number
@@ -120,6 +121,7 @@ function saveToHistory(response: PhishingResponse, subject: string, sender: stri
     const historyItem: ScanHistoryItem = {
         id: Date.now(),
         date: new Date().toISOString(),
+        type: 'email',
         subject,
         sender,
         risk_score: response.score,
@@ -138,6 +140,7 @@ export interface ScanHistoryParams {
     risk_level?: string
     start_date?: string
     end_date?: string
+    search_query?: string
 }
 
 export async function getScanHistory(params?: ScanHistoryParams): Promise<ScanHistoryItem[]> {
@@ -158,6 +161,14 @@ export async function getScanHistory(params?: ScanHistoryParams): Promise<ScanHi
             const endDate = new Date(params.end_date)
             endDate.setHours(23, 59, 59, 999)
             history = history.filter(item => new Date(item.date) <= endDate)
+        }
+
+        if (params.search_query) {
+            const query = params.search_query.toLowerCase()
+            history = history.filter(item =>
+                (item.subject && item.subject.toLowerCase().includes(query)) ||
+                (item.sender && item.sender.toLowerCase().includes(query))
+            )
         }
     }
 

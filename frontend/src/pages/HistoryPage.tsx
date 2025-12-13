@@ -8,6 +8,7 @@ import { VoiceHistoryTable } from '../components/history/VoiceHistoryTable'
 
 import { HistoryChart } from '../components/history/HistoryChart'
 import { HistoryFilters } from '../components/history/HistoryFilters'
+import { storage } from '../utils/storage'
 import { Loader } from '../components/common/Loader'
 import { ErrorAlert } from '../components/common/ErrorAlert'
 
@@ -17,11 +18,11 @@ export function HistoryPage() {
     const [activeTab, setActiveTab] = useState<TabType>('email')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    
+
     // Data States
     const [emailData, setEmailData] = useState<ScanHistoryItem[]>([])
     const [voiceData, setVoiceData] = useState<VoiceAnalysisResponse[]>([])
-    
+
     const [filters, setFilters] = useState<ScanHistoryParams>({})
 
     useEffect(() => {
@@ -59,8 +60,15 @@ export function HistoryPage() {
         // Implementation depend on VoicePage: window.location.href = `/voice?id=${item.id}`
     }
 
+    const handleEmailDelete = (id: number) => {
+        if (window.confirm('Are you sure you want to delete this scan log?')) {
+            storage.deleteScan(id)
+            fetchData() // Refresh list
+        }
+    }
+
     const handleVoiceDelete = async (id: number) => {
-        if(!confirm('Are you sure you want to delete this scan log?')) return;
+        if (!confirm('Are you sure you want to delete this scan log?')) return;
         try {
             await deleteScan(id)
             fetchData() // Refresh list
@@ -122,6 +130,21 @@ export function HistoryPage() {
                 </>
             )}
 
+            {activeTab === 'voice' && (
+                <div style={{ marginBottom: "2rem" }}>
+                    <HistoryChart title="Deepfake Confidence Trend" data={voiceData.map(item => ({
+                        id: item.id || 0,
+                        date: item.created_at || new Date().toISOString(),
+                        type: 'voice',
+                        // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
+                        risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
+                        risk_level: item.risk_level,
+                        subject: item.file_name, // Map filename to subject for the tooltip
+                        sender: 'Voice Scan' // Placeholder for sender
+                    }))} />
+                </div>
+            )}
+
             {isLoading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
                     <Loader />
@@ -129,10 +152,14 @@ export function HistoryPage() {
             ) : (
                 <>
                     {activeTab === 'email' ? (
-                        <HistoryTable data={emailData} onViewDetails={handleEmailView} />
+                        <HistoryTable
+                            data={emailData}
+                            onViewDetails={handleEmailView}
+                            onDelete={handleEmailDelete}
+                        />
                     ) : (
-                        <VoiceHistoryTable 
-                            data={voiceData} 
+                        <VoiceHistoryTable
+                            data={voiceData}
                             onViewDetails={handleVoiceView}
                             onDelete={handleVoiceDelete}
                         />
