@@ -57,6 +57,8 @@ async def analyze_voice(
                 status_code=400,
                 detail=f"File too large. Maximum size: {max_size / (1024*1024):.0f}MB"
             )
+            
+        await file.seek(0)  # Reset file pointer after reading
         
         logger.info(f"Analyzing file: {file.filename} ({len(file_bytes)} bytes)")
         
