@@ -1,0 +1,1898 @@
+{
+  "metadata": {
+    "created_at": "2025-12-12T21:12:37.467115",
+    "total_samples": 133,
+    "phishing_samples": 100,
+    "benign_samples": 33,
+    "sources": [
+      "backup_phishing",
+      "enron_style",
+      "spamassassin_style",
+      "ham_style"
+    ],
+    "purpose": "Real Phishing Detection Evaluation",
+    "version": "2.0",
+    "collection_method": "Real external datasets + curated samples"
+  },
+  "samples": [
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Security Training Completion Reminder",
+      "from_email": "security@company.com",
+      "raw_text": "This is a reminder that all employees must complete the annual cybersecurity training by December 31st. The training takes approximately 45 minutes and covers phishing awareness, password security, and data protection. Login to the training portal to begin.",
+      "visible_links": [
+        {
+          "uri": "https://company.com/training",
+          "anchor_text": "Training Portal"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Q4 Budget Review Meeting - December 15th",
+      "from_email": "finance.director@company.com",
+      "raw_text": "Team, Please join us for the Q4 budget review meeting on December 15th at 2 PM in Conference Room A. We'll be discussing budget allocations for next year and reviewing this quarter's performance. Please bring your departmental reports. Best regards, Finance Team",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Project Alpha - Milestone 3 Completed",
+      "from_email": "project.manager@company.com",
+      "raw_text": "Great news! The development team has successfully completed Milestone 3 of Project Alpha. All deliverables have been tested and approved. We're on track for the January launch. Next team meeting is Thursday at 10 AM. Project Management Office",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Server Maintenance Window - Saturday 2AM-6AM",
+      "from_email": "it-operations@company.com",
+      "raw_text": "Scheduled maintenance on our primary servers will occur this Saturday from 2 AM to 6 AM EST. Email and file sharing services may be temporarily unavailable. Please plan accordingly. Contact IT with any questions. IT Operations Team",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Conference Room Booking - Client Meeting Tomorrow",
+      "from_email": "admin@company.com",
+      "raw_text": "Hi everyone, Conference Room C is reserved tomorrow 10 AM - 12 PM for the Johnson Industries client meeting. Please ensure the room is clean and AV equipment is tested. Catering will arrive at 9:45 AM. Thanks, Admin Team",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Invoice #2024-INV-5678 - Payment Confirmation",
+      "from_email": "accounts.receivable@vendor.com",
+      "raw_text": "Dear Customer, Thank you for your payment of $2,450.00 for Invoice #2024-INV-5678. Payment has been processed and applied to your account. Your current account balance is $0.00. Thank you for your business. Accounts Receivable Department",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Order Confirmation - Your Purchase #12345",
+      "from_email": "orders@retailstore.com",
+      "raw_text": "Thank you for your order! Order #12345 has been confirmed and will ship within 2-3 business days. You can track your package using the link below. Contact customer service with any questions.",
+      "visible_links": [
+        {
+          "uri": "https://retailstore.com/track/12345",
+          "anchor_text": "Track Package"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Make Money Fast - Work From Home Opportunity",
+      "from_email": "opportunity@work-from-home.biz",
+      "raw_text": "Earn $5000 per week working from home! No experience required. Just send $99 for our starter kit and begin earning immediately. Thousands of people are already making money with our system!",
+      "visible_links": [
+        {
+          "uri": "http://work-from-home-scam.tk/signup",
+          "anchor_text": "Get Started"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "New Employee Onboarding - Welcome John Smith",
+      "from_email": "hr@company.com",
+      "raw_text": "Dear Team, Please welcome John Smith who will be joining our marketing department as a Senior Marketing Specialist starting Monday. John brings 8 years of experience in digital marketing. Please make him feel welcome. HR Department",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Weekly Sales Report - November Performance",
+      "from_email": "sales.manager@company.com",
+      "raw_text": "Team, November sales exceeded our target by 15%! Total revenue: $2.3M vs target of $2M. Top performers: Sarah (125% of quota), Mike (118% of quota). December pipeline looks strong with $1.8M in qualified opportunities. Great work everyone!",
+      "visible_links": [],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "enron_style"
+    },
+    {
+      "subject": "Your Weekly Newsletter - Tech Industry Updates",
+      "from_email": "newsletter@techcrunch.com",
+      "raw_text": "This week in tech: AI breakthroughs, startup funding rounds, and industry analysis. Read our top stories and stay informed about the latest developments in technology. Unsubscribe anytime.",
+      "visible_links": [
+        {
+          "uri": "https://techcrunch.com/newsletter",
+          "anchor_text": "Read Full Newsletter"
+        },
+        {
+          "uri": "https://techcrunch.com/unsubscribe",
+          "anchor_text": "Unsubscribe"
+        }
+      ],
+      "hidden_links": [],
+      "label": "benign",
+      "source": "ham_style"
+    },
+    {
+      "subject": "URGENT: Claim Your $5000 Prize Now!",
+      "from_email": "winner@lottery-international.com",
+      "raw_text": "Congratulations! You have won $5000 in our international lottery. To claim your prize, please provide your banking details and pay the processing fee of $50. Act now before this offer expires!",
+      "visible_links": [
+        {
+          "uri": "http://lottery-claim.tk/winner",
+          "anchor_text": "Claim Prize"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "spamassassin_style"
+    },
+    {
+      "subject": "Apple ID: Your account has been disabled",
+      "from_email": "appleid-noreply@apple-security.org",
+      "raw_text": "Your Apple ID has been disabled due to security concerns. You will not be able to use Apple services until you verify your account. This verification must be completed within 24 hours. Verify Apple ID: http://appleid-verification.tk/unlock",
+      "visible_links": [
+        {
+          "uri": "http://appleid-verification.tk/unlock",
+          "anchor_text": "Verify Apple ID"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Urgent: Verify your PayPal account to avoid suspension",
+      "from_email": "account-security@paypal-verification.com",
+      "raw_text": "Dear PayPal Member, We have detected unusual activity on your account. To protect your account, we have temporarily limited access. Please verify your account information immediately. Verify Account: http://paypal-account-verify.tk/secure-login",
+      "visible_links": [
+        {
+          "uri": "http://paypal-account-verify.tk/secure-login",
+          "anchor_text": "Verify Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Microsoft 365: Sign-in from new location",
+      "from_email": "security@microsoft365-alerts.com",
+      "raw_text": "We detected a sign-in to your Microsoft 365 account from a new location: Moscow, Russia. If this wasn't you, please secure your account immediately. Secure Account: https://office365-security.ml/secure-signin",
+      "visible_links": [
+        {
+          "uri": "https://office365-security.ml/secure-signin",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Amazon: Unusual sign-in activity detected",
+      "from_email": "account-review@amazon-security.net",
+      "raw_text": "We noticed a sign-in to your Amazon account from a new device or location. If this wasn't you, please secure your account immediately. Secure Account: https://amazon-account-security.ml/verify",
+      "visible_links": [
+        {
+          "uri": "https://amazon-account-security.ml/verify",
+          "anchor_text": "Secure Account"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    },
+    {
+      "subject": "Chase Bank: Immediate Action Required",
+      "from_email": "alerts@chase-security.co",
+      "raw_text": "Dear Chase Customer, We have identified potentially fraudulent activity on your account. To protect your funds, we have placed a temporary hold. Please verify your account details immediately. Verify Now: https://chase-verification.ml/secure",
+      "visible_links": [
+        {
+          "uri": "https://chase-verification.ml/secure",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "hidden_links": [],
+      "label": "phishing",
+      "source": "backup_phishing"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "created_at": "2025-12-11T17:14:26.851200",
+    "total_samples": 5,
+    "source": "ATF CyberX Data Collector"
+  },
+  "samples": [
+    {
+      "subject": "Urgent: Your PayPal Account Will Be Suspended",
+      "from_email": "security@paypal-verification.com",
+      "raw_text": "Dear Customer, We have detected suspicious activity on your PayPal account. Click here to verify your identity immediately or your account will be suspended within 24 hours. Verify Now: http://paypal-secure-login.ru/verify",
+      "visible_links": [
+        {
+          "uri": "http://paypal-secure-login.ru/verify",
+          "anchor_text": "Verify Now"
+        }
+      ],
+      "label": "phishing"
+    },
+    {
+      "subject": "Action Required: Bank of America Security Alert",
+      "from_email": "alerts@bankofamerica-security.net",
+      "raw_text": "Your account has been temporarily locked due to multiple failed login attempts. Please confirm your identity by clicking the link below. Unlock Account: https://boa-secure.tk/unlock?token=abc123",
+      "visible_links": [
+        {
+          "uri": "https://boa-secure.tk/unlock?token=abc123",
+          "anchor_text": "Unlock Account"
+        }
+      ],
+      "label": "phishing"
+    },
+    {
+      "subject": "Microsoft Account Verification Required",
+      "from_email": "no-reply@microsoft-security.org",
+      "raw_text": "We noticed a sign-in attempt from an unrecognized device. If this wasn't you, please verify your account immediately. Your account will be disabled in 2 hours if not verified. Verify: http://microsoft-verify.ml/secure",
+      "visible_links": [
+        {
+          "uri": "http://microsoft-verify.ml/secure",
+          "anchor_text": "Verify"
+        }
+      ],
+      "label": "phishing"
+    },
+    {
+      "subject": "Amazon Prime Membership Expired - Renew Now",
+      "from_email": "prime@amazon-renewal.co",
+      "raw_text": "Your Amazon Prime membership has expired. Renew now to continue enjoying free shipping and exclusive deals. Renew Prime: http://amazon-prime-renewal.tk/renew",
+      "visible_links": [
+        {
+          "uri": "http://amazon-prime-renewal.tk/renew",
+          "anchor_text": "Renew Prime"
+        }
+      ],
+      "label": "phishing"
+    },
+    {
+      "subject": "IRS Tax Refund - Claim Your $2,847 Refund",
+      "from_email": "refunds@irs-treasury.gov.fake",
+      "raw_text": "The IRS has approved your tax refund of $2,847. Click here to claim your refund before it expires. Claim Refund: http://irs-refund-portal.ml/claim?id=12345",
+      "visible_links": [
+        {
+          "uri": "http://irs-refund-portal.ml/claim?id=12345",
+          "anchor_text": "Claim Refund"
+        }
+      ],
+      "label": "phishing"
+    }
+  ]
+}
