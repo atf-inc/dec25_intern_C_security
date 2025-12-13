@@ -1,8 +1,8 @@
+
 import os
 import logging
 from typing import Dict, Any
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +19,16 @@ class ExplanationService:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if not self.api_key:
             logger.warning("No Gemini API key provided. Explanations will be rule-based.")
-            self.client = None
+
+            self.model = None
         else:
-            self.client = genai.Client(api_key=self.api_key)
-            logger.info("Gemini client initialized successfully")
+            try:
+                genai.configure(api_key=self.api_key)
+                self.model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-2.5-flash"))
+                logger.info("Gemini client initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize Gemini client: {e}")
+                self.model = None
     
     
     async def generate_voice_explanation(
@@ -40,7 +46,8 @@ class ExplanationService:
         Returns:
             Explanation string
         """
-        if self.client is None:
+
+        if self.model is None:
             return self._generate_fallback_explanation(analysis_result)
         
         try:
@@ -48,13 +55,12 @@ class ExplanationService:
             prompt = self._create_explanation_prompt(analysis_result, include_technical)
             
             # Call Gemini API
-            response = self.client.models.generate_content(
-                model="gemini-2.0-flash-exp",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.3,  # Low temperature for consistent explanations
+
+            response = self.model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=0.3,
                     max_output_tokens=300,
-                    response_mime_type="text/plain"
                 )
             )
             
@@ -189,6 +195,6 @@ Task: Explain this analysis in 2-3 clear sentences for a general audience. Focus
         summary += f"- {total - deepfakes} appear genuine\n"
         
         if high_risk > 0:
-            summary += "\n⚠️ WARNING: High-risk deepfakes detected. Review flagged samples immediately."
+            summary += "\n ⚠️ WARNING: High-risk deepfakes detected. Review flagged samples immediately."
         
         return summary

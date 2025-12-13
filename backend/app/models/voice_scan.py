@@ -1,4 +1,3 @@
-
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, JSON
 from app.db.session import Base
 from datetime import datetime
@@ -22,7 +21,7 @@ class VoiceScan(Base):
     confidence = Column(Float, nullable=False)  # 0-1 scale
     risk_level = Column(String, nullable=False)  # low, medium, high
     
-    # Detailed scores (NOVELTY: artifact detection)
+    # Detailed scores
     raw_model_confidence = Column(Float)
     artifact_score = Column(Float)
     artifacts = Column(JSON)  # Store artifact details as JSON
