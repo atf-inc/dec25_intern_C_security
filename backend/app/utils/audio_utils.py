@@ -29,6 +29,9 @@ def load_and_preprocess_audio(file_path_or_bytes, target_sr=TARGET_SAMPLE_RATE):
     
     # Convert stereo to mono if needed
     if len(waveform.shape) > 1:
+        # Transpose because sf.read gives (samples, channels) 
+        # but librosa.to_mono expects (channels, samples)
+        waveform = waveform.T
         waveform = librosa.to_mono(waveform)
     
     # Normalize amplitude to [-1, 1]
