@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, JSON
 from app.db.session import Base
 from datetime import datetime
 
+
 class VoiceScan(Base):
     """Database model for voice deepfake scan results."""
     

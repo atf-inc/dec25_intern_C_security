@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # CORS (optional)
-    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
 
     # File upload
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024
