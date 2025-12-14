@@ -11,6 +11,7 @@ import { HistoryFilters } from '../components/history/HistoryFilters'
 import { storage } from '../utils/storage'
 import { Loader } from '../components/common/Loader'
 import { ErrorAlert } from '../components/common/ErrorAlert'
+import { ConfirmationModal } from '../components/common/ConfirmationModal'
 
 type TabType = 'email' | 'voice'
 
@@ -24,6 +25,10 @@ export function HistoryPage() {
     const [voiceData, setVoiceData] = useState<VoiceAnalysisResponse[]>([])
 
     const [filters, setFilters] = useState<ScanHistoryParams>({})
+
+    // Modal State
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [deleteTarget, setDeleteTarget] = useState<{ id: number, type: 'email' | 'voice' } | null>(null)
 
     useEffect(() => {
         fetchData()
@@ -61,19 +66,31 @@ export function HistoryPage() {
     }
 
     const handleEmailDelete = (id: number) => {
-        if (window.confirm('Are you sure you want to delete this scan log?')) {
-            storage.deleteScan(id)
-            fetchData() // Refresh list
-        }
+        setDeleteTarget({ id, type: 'email' })
+        setIsModalOpen(true)
     }
 
-    const handleVoiceDelete = async (id: number) => {
-        if (!confirm('Are you sure you want to delete this scan log?')) return;
+    const handleVoiceDelete = (id: number) => {
+        setDeleteTarget({ id, type: 'voice' })
+        setIsModalOpen(true)
+    }
+
+    const confirmDelete = async () => {
+        if (!deleteTarget) return
+
         try {
-            await deleteScan(id)
+            if (deleteTarget.type === 'email') {
+                storage.deleteScan(deleteTarget.id)
+            } else {
+                await deleteScan(deleteTarget.id)
+            }
             fetchData() // Refresh list
         } catch (err) {
+            console.error('Delete failed', err)
             alert('Failed to delete scan')
+        } finally {
+            setIsModalOpen(false)
+            setDeleteTarget(null)
         }
     }
 
@@ -166,6 +183,14 @@ export function HistoryPage() {
                     )}
                 </>
             )}
+
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmDelete}
+                title="Delete Scan"
+                message="Are you sure you want to delete this scan log? This action cannot be undone."
+            />
         </div>
     )
 }

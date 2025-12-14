@@ -35,7 +35,7 @@ ENV/
 
 # Environment Variables
 .env.local
-
+.env
 # Database
 *.db
 *.sqlite
