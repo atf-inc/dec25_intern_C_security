@@ -43,6 +43,6 @@ hypothesis>=6.92.1
 # EXTRA UTILITIES
 mail-parser
 beautifulsoup4==4.12.2
-pymupdf==1.22.5
+pymupdf
 requests==2.31.0
 tldextract==4.0.0
