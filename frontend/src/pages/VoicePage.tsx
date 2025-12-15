@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { AudioUpload } from '../components/voice/AudioUpload'
 import { VoiceResultCard } from '../components/voice/VoiceResultCard'
 import { VoiceStats } from '../components/voice/VoiceStats'
 import { Loader } from '../components/common/Loader'
 import { ErrorAlert } from '../components/common/ErrorAlert'
 import { Toast, useToast } from '../components/common/Toast'
-import { 
-    analyzeVoice, 
-    getVoiceStatistics, 
-    VoiceAnalysisResponse, 
-    VoiceStatistics as VoiceStatsType 
+import {
+    analyzeVoice,
+    getVoiceStatistics,
+    VoiceAnalysisResponse,
+    VoiceStatistics as VoiceStatsType
 } from '../api/voiceApi'
 import './VoicePage.css'
 
@@ -17,7 +18,7 @@ export function VoicePage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [result, setResult] = useState<VoiceAnalysisResponse | null>(null)
-    
+
     // Stats State
     const [stats, setStats] = useState<VoiceStatsType | null>(null)
     const [refreshTrigger, setRefreshTrigger] = useState(0) // To trigger re-fetches of stats
@@ -37,6 +38,35 @@ export function VoicePage() {
         }
         fetchStats()
     }, [refreshTrigger])
+
+    // Handle History View (Load specific scan from URL param)
+    const [searchParams] = useSearchParams()
+
+    useEffect(() => {
+        const id = searchParams.get('id')
+        if (id) {
+            loadScan(Number(id))
+        }
+    }, [searchParams])
+
+    const loadScan = async (id: number) => {
+        setLoading(true)
+        try {
+            // Dynamically import to avoid circular dependencies if any, or just use the API
+            const { getVoiceScan } = await import('../api/voiceApi')
+            const data = await getVoiceScan(id)
+            setResult(data)
+            // Optional: Scroll to results
+            setTimeout(() => {
+                document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })
+            }, 500)
+        } catch (err: any) {
+            console.error("Failed to load historical scan:", err)
+            setError("Could not load the requested scan. It may have been deleted.")
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const handleAnalyze = async (file: File, useCache: boolean) => {
         setLoading(true)
@@ -61,10 +91,10 @@ export function VoicePage() {
     return (
         <div className="voice-page">
             {toast && (
-                <Toast 
-                    message={toast.message} 
-                    type={toast.type} 
-                    onClose={closeToast} 
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={closeToast}
                 />
             )}
 

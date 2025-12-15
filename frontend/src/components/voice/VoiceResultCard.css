@@ -335,6 +335,56 @@
     transform: rotate(180deg);
 }
 
+/* Audio Player Styling */
+.audio-player-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.audio-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.audio-label {
+    font-size: 0.95rem;
+    color: #475569;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.custom-audio-player {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    outline: none;
+}
+
+/* Chrome/Edge specific styling */
+.custom-audio-player::-webkit-media-controls-panel {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.custom-audio-player::-webkit-media-controls-play-button,
+.custom-audio-player::-webkit-media-controls-mute-button,
+.custom-audio-player::-webkit-media-controls-timeline,
+.custom-audio-player::-webkit-media-controls-current-time-display,
+.custom-audio-player::-webkit-media-controls-time-remaining-display {
+    filter: none;
+    color: #0f172a;
+}
+
 .technical-content {
     margin-top: 1rem;
     padding: 1.5rem;

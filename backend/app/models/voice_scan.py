@@ -14,6 +14,7 @@ class VoiceScan(Base):
     # File information
     file_hash = Column(String, unique=True, index=True, nullable=False)
     file_name = Column(String, nullable=False)
+    file_path = Column(String, nullable=True)  # Path to saved audio file
     file_size = Column(Integer)  # in bytes
     duration = Column(Float)  # in seconds
     
@@ -45,6 +46,7 @@ class VoiceScan(Base):
             "id": self.id,
             "file_hash": self.file_hash,
             "file_name": self.file_name,
+            "file_path": self.file_path,
             "file_size": self.file_size,
             "duration": self.duration,
             "is_deepfake": self.is_deepfake,
