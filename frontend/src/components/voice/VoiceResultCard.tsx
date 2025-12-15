@@ -43,6 +43,19 @@ export function VoiceResultCard({ result }: VoiceResultCardProps) {
                 />
             </div>
 
+            {/* Audio Player Section */}
+            {result.audio_url && (
+                <div className="voice-section audio-player-section">
+                    <div className="audio-wrapper">
+                        <span className="audio-label">🔊 Recorded Audio</span>
+                        <audio controls className="custom-audio-player">
+                            <source src={result.audio_url} type="audio/wav" />
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                </div>
+            )}
+
             {/* AI Explanation Section - Premium Dark Card */}
             {result.explanation && (
                 <div className="voice-section">

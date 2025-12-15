@@ -105,13 +105,36 @@ class VoiceAnalysisService:
             "cached": False
         }
         
-        # Step 9: Save to database if provided
+        # Step 9: Save file to disk
+        file_path = None
+        if db is not None:
+             try:
+                import os
+                # Create uploads directory if not exists
+                upload_dir = "uploads/voice"
+                os.makedirs(upload_dir, exist_ok=True)
+                
+                # Generate unique filename to avoid collisions
+                import uuid
+                safe_filename = f"{uuid.uuid4()}_{filename}"
+                file_path = os.path.join(upload_dir, safe_filename)
+                
+                # Write file
+                with open(file_path, "wb") as f:
+                    f.write(file_bytes)
+                    
+                logger.info(f"Saved audio file to {file_path}")
+             except Exception as e:
+                 logger.error(f"Failed to save audio file: {e}")
+
+        # Step 10: Save to database if provided
         if db is not None:
             try:
                 voice_scan = create_voice_scan(
                     db=db,
                     file_hash=file_hash,
                     file_name=filename,
+                    file_path=file_path,
                     file_size=len(file_bytes),
                     duration=duration,
                     is_deepfake=result['is_deepfake'],

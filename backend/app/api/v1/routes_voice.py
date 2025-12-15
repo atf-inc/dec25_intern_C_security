@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 import logging
@@ -158,6 +158,65 @@ async def get_model_info():
     except Exception as e:
         logger.error(f"Error fetching model info: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch model info")
+
+
+@router.get("/scan/{scan_id}", response_model=VoiceAnalysisResponse)
+async def get_voice_scan(scan_id: int, db: Session = Depends(get_db)):
+    """
+    Get a specific voice scan result by ID.
+    
+    Args:
+        scan_id: ID of the scan
+        db: Database session
+    
+    Returns:
+        VoiceAnalysisResponse
+    """
+    try:
+        from ...db.crud_voice import get_voice_scan_by_id
+        
+        scan = get_voice_scan_by_id(db, scan_id)
+        if not scan:
+            raise HTTPException(status_code=404, detail="Scan not found")
+            
+        response_data = scan.to_dict()
+        
+        # Add audio URL if file exists
+        if scan.file_path:
+            response_data["audio_url"] = f"/api/v1/voice/audio/{scan_id}"
+            
+        return VoiceAnalysisResponse(**response_data)
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching scan details: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch scan details")
+
+
+@router.get("/audio/{scan_id}")
+async def get_scan_audio(scan_id: int, db: Session = Depends(get_db)):
+    """
+    Stream the audio file for a specific scan.
+    """
+    try:
+        from ...db.crud_voice import get_voice_scan_by_id
+        import os
+        
+        scan = get_voice_scan_by_id(db, scan_id)
+        if not scan:
+            raise HTTPException(status_code=404, detail="Scan not found")
+            
+        if not scan.file_path or not os.path.exists(scan.file_path):
+            raise HTTPException(status_code=404, detail="Audio file not found")
+            
+        return FileResponse(scan.file_path, media_type="audio/wav", filename=scan.file_name)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error streaming audio: {e}")
+        raise HTTPException(status_code=500, detail="Failed to stream audio")
 
 
 @router.delete("/scan/{scan_id}")

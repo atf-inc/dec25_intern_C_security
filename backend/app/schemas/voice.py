@@ -30,7 +30,9 @@ class VoiceAnalysisResponse(BaseModel):
     file_name: str = Field(description="Original filename")
     file_hash: str = Field(description="MD5 hash of file content")
     file_size: int = Field(description="File size in bytes")
+    file_size: int = Field(description="File size in bytes")
     duration: float = Field(description="Audio duration in seconds")
+    audio_url: Optional[str] = Field(default=None, description="URL to access audio file")
     
     # Detection results
     is_deepfake: bool = Field(description="Whether audio is detected as AI-generated")

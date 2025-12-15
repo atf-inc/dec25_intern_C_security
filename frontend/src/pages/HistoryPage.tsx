@@ -59,10 +59,9 @@ export function HistoryPage() {
     }
 
     const handleVoiceView = (item: VoiceAnalysisResponse) => {
-        // Assuming VoicePage can handle a query param or state to load a specific result
-        // For now, we might just redirect to /voice, or you can implement a view mode there
-        console.log("View voice scan:", item)
-        // Implementation depend on VoicePage: window.location.href = `/voice?id=${item.id}`
+        if (item.id) {
+            window.location.href = `/voice?id=${item.id}`
+        }
     }
 
     const handleEmailDelete = (id: number) => {

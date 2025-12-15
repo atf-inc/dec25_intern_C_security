@@ -13,6 +13,7 @@ def create_voice_scan(
     is_deepfake: bool,
     confidence: float,
     risk_level: str,
+    file_path: str = None,
     raw_model_confidence: float = None,
     artifact_score: float = None,
     artifacts: dict = None,
@@ -33,6 +34,7 @@ def create_voice_scan(
         is_deepfake: Detection result
         confidence: Overall confidence score (0-1)
         risk_level: Risk classification (low/medium/high)
+        file_path: Path to saved audio file
         raw_model_confidence: Raw model output
         artifact_score: Artifact detection score
         artifacts: Dictionary of artifact measurements
@@ -47,6 +49,7 @@ def create_voice_scan(
     voice_scan = VoiceScan(
         file_hash=file_hash,
         file_name=file_name,
+        file_path=file_path,
         file_size=file_size,
         duration=duration,
         is_deepfake=is_deepfake,

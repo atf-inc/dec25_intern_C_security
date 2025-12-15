@@ -25,6 +25,7 @@ export interface VoiceAnalysisResponse {
     cached: boolean
     id?: number
     created_at?: string
+    audio_url?: string
 }
 
 export interface VoiceHistoryResponse {
@@ -96,6 +97,17 @@ export async function getVoiceHistory(
     const response = await axios.get<VoiceHistoryResponse>(
         `${API_BASE_URL}/voice/history`,
         { params: { skip, limit } }
+    )
+    return response.data
+    return response.data
+}
+
+/**
+ * Get specific voice scan by ID
+ */
+export async function getVoiceScan(scanId: number): Promise<VoiceAnalysisResponse> {
+    const response = await axios.get<VoiceAnalysisResponse>(
+        `${API_BASE_URL}/voice/scan/${scanId}`
     )
     return response.data
 }
