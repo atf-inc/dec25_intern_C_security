@@ -71,6 +71,7 @@ def analyze(req: AnalyzeRequest):
         "evidence": result.get("evidence") or [],
         "suggested_action": "Do not click links; verify the sender via official channels.",
         "suggested_reply": "I will confirm via official channels; please do not share credentials.",
+        "ai_explanation": result.get("ai_explanation"),  # 🚀 NEW: Include AI explanation
         "model_meta": result.get("model_meta", {})
     }
     return response
