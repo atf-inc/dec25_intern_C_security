@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import { storage } from '../utils/storage'
 import { EmailForm } from '../components/phishing/EmailForm'
 import { PhishingResultCard } from '../components/phishing/PhishingResultCard'
-import { Loader } from '../components/common/Loader'
 import { ErrorAlert } from '../components/common/ErrorAlert'
+import { ForensicScanner } from '../components/common/ForensicScanner'
 import { usePhishingScan } from '../hooks/usePhishingScan'
 import './PhishingPage.css'
 
@@ -42,7 +42,7 @@ export function PhishingPage() {
 
             <EmailForm onSubmit={analyze} loading={loading} initialData={initialData} />
 
-            {loading && <Loader />}
+            {loading && <ForensicScanner />}
 
             {error && <ErrorAlert message={error} />}
 
