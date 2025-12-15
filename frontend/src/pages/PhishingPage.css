@@ -19,3 +19,16 @@
     max-width: 600px;
     margin: 0 auto;
 }
+
+/* Loading State */
+.loader-wrapper {
+    margin: 3rem 0;
+    text-align: center;
+}
+
+.loading-text {
+    margin-top: 1rem;
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+}

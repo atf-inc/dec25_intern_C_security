@@ -4,7 +4,7 @@ import { storage } from '../utils/storage'
 import { EmailForm } from '../components/phishing/EmailForm'
 import { PhishingResultCard } from '../components/phishing/PhishingResultCard'
 import { ErrorAlert } from '../components/common/ErrorAlert'
-import { ForensicScanner } from '../components/common/ForensicScanner'
+import { Loader } from '../components/common/Loader'
 import { usePhishingScan } from '../hooks/usePhishingScan'
 import './PhishingPage.css'
 
@@ -42,7 +42,12 @@ export function PhishingPage() {
 
             <EmailForm onSubmit={analyze} loading={loading} initialData={initialData} />
 
-            {loading && <ForensicScanner />}
+            {loading && (
+                <div className="loader-wrapper">
+                    <Loader />
+                    <p className="loading-text">Analyzing email content and security headers...</p>
+                </div>
+            )}
 
             {error && <ErrorAlert message={error} />}
 
