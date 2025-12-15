@@ -35,6 +35,15 @@ class AnalyzeRequest(BaseModel):
     sanitization: Optional[List[Any]] = None
     meta: Optional[dict] = None
 
+class AIExplanation(BaseModel):
+    summary: str
+    suspicious_indicators: List[str]
+    ai_reasoning: str
+    technical_indicators: List[str]
+    final_assessment: str
+    recommended_action: str
+    full_explanation: str
+
 class AnalyzeResponse(BaseModel):
     request_id: str
     label: str
@@ -43,5 +52,6 @@ class AnalyzeResponse(BaseModel):
     evidence: Optional[List[dict]] = []
     suggested_action: Optional[str] = None
     suggested_reply: Optional[str] = None
+    ai_explanation: Optional[AIExplanation] = None
     model_meta: Optional[dict] = None
 

@@ -1,0 +1,208 @@
+/* 🌙 Theme Toggle Styles */
+
+.theme-toggle {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-full);
+  transition: all var(--anim-duration-normal) var(--anim-ease);
+}
+
+.theme-toggle:hover {
+  background: var(--color-slate-100);
+}
+
+.theme-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.theme-toggle-track {
+  width: 48px;
+  height: 24px;
+  background: var(--color-slate-300);
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: all var(--anim-duration-normal) var(--anim-ease);
+  overflow: hidden;
+}
+
+.theme-toggle.dark .theme-toggle-track {
+  background: var(--color-slate-600);
+}
+
+.theme-toggle-thumb {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all var(--anim-duration-normal) var(--anim-spring);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle.dark .theme-toggle-thumb {
+  transform: translateX(24px);
+  background: var(--color-slate-800);
+}
+
+.theme-icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--anim-duration-normal) var(--anim-ease);
+}
+
+.sun-icon {
+  color: #fbbf24;
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.moon-icon {
+  color: #60a5fa;
+  opacity: 0;
+  transform: rotate(180deg) scale(0.5);
+}
+
+.theme-toggle.dark .sun-icon {
+  opacity: 0;
+  transform: rotate(-180deg) scale(0.5);
+}
+
+.theme-toggle.dark .moon-icon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Animation states */
+.theme-toggle.animating .theme-toggle-thumb {
+  animation: thumbBounce var(--anim-duration-slow) var(--anim-spring);
+}
+
+@keyframes thumbBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.theme-toggle.animating.dark .theme-toggle-thumb {
+  animation: thumbBounceDark var(--anim-duration-slow) var(--anim-spring);
+}
+
+@keyframes thumbBounceDark {
+  0% { transform: translateX(24px) scale(1); }
+  50% { transform: translateX(24px) scale(1.2); }
+  100% { transform: translateX(24px) scale(1); }
+}
+
+/* Ripple effect */
+.theme-ripple {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-slate-900) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: rippleExpand 0.6s ease-out forwards;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes rippleExpand {
+  to {
+    width: 200vmax;
+    height: 200vmax;
+  }
+}
+
+/* Focus styles */
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Hover effects */
+.theme-toggle:hover .theme-toggle-track {
+  background: var(--color-slate-400);
+}
+
+.theme-toggle.dark:hover .theme-toggle-track {
+  background: var(--color-slate-500);
+}
+
+.theme-toggle:hover .theme-toggle-thumb {
+  box-shadow: var(--shadow-md);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .theme-toggle:hover {
+    background: var(--color-slate-800);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle-thumb,
+  .theme-toggle-track,
+  .theme-icon {
+    transition: none;
+  }
+  
+  .theme-ripple {
+    animation: none;
+    opacity: 0;
+  }
+  
+  .theme-toggle.animating .theme-toggle-thumb {
+    animation: none;
+  }
+}
+
+/* Size variants */
+.theme-toggle.sm {
+  padding: var(--space-1);
+}
+
+.theme-toggle.sm .theme-toggle-track {
+  width: 36px;
+  height: 18px;
+}
+
+.theme-toggle.sm .theme-toggle-thumb {
+  width: 14px;
+  height: 14px;
+}
+
+.theme-toggle.sm.dark .theme-toggle-thumb {
+  transform: translateX(18px);
+}
+
+.theme-toggle.lg {
+  padding: var(--space-3);
+}
+
+.theme-toggle.lg .theme-toggle-track {
+  width: 60px;
+  height: 30px;
+}
+
+.theme-toggle.lg .theme-toggle-thumb {
+  width: 26px;
+  height: 26px;
+}
+
+.theme-toggle.lg.dark .theme-toggle-thumb {
+  transform: translateX(30px);
+}

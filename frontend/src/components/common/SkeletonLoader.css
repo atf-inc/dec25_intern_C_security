@@ -1,0 +1,163 @@
+/* 💀 Skeleton Loading Styles */
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-slate-200) 25%, var(--color-slate-100) 50%, var(--color-slate-200) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-text:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+.skeleton-rectangle {
+  border-radius: var(--radius-lg);
+}
+
+.skeleton-card {
+  border-radius: var(--radius-xl);
+  height: 200px;
+}
+
+.skeleton-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Skeleton Card Components */
+.skeleton-card-container {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-slate-200);
+}
+
+.skeleton-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.skeleton-card-title {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Skeleton Result Card */
+.skeleton-result-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-slate-200);
+  max-width: 900px;
+  margin: var(--space-8) auto;
+}
+
+.skeleton-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.skeleton-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  padding: var(--space-5);
+  background: var(--color-slate-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-slate-200);
+}
+
+.skeleton-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.skeleton-ai-section {
+  margin-bottom: var(--space-6);
+}
+
+.skeleton-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.skeleton-evidence-card {
+  background: white;
+  border: 1px solid var(--color-slate-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.skeleton-evidence-card .skeleton-card-header {
+  margin-bottom: var(--space-3);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .skeleton-result-card {
+    margin: var(--space-4);
+    padding: var(--space-4);
+  }
+  
+  .skeleton-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+  
+  .skeleton-cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-slate-700) 25%, var(--color-slate-600) 50%, var(--color-slate-700) 75%);
+    background-size: 200% 100%;
+  }
+  
+  .skeleton-card-container,
+  .skeleton-result-card,
+  .skeleton-evidence-card {
+    background: var(--color-slate-800);
+    border-color: var(--color-slate-700);
+  }
+  
+  .skeleton-summary-grid {
+    background: var(--color-slate-900);
+    border-color: var(--color-slate-700);
+  }
+}
