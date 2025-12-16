@@ -1,153 +1,252 @@
 """
-Quick test script to verify feature extractors work.
-Run this to test on a single audio file before full pipeline.
+Test Script for Feature Extractors
+
+Tests all three expert branches:
+1. WavLM (Acoustic)
+2. Whisper (Semantic)
+3. DSP (Signal)
 """
 
-import os
 import sys
+import os
+sys.path.append(os.path.dirname(__file__))
 
-# Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from features.wavlm_extractor import WavLMFeatureExtractor
-from features.whisper_extractor import WhisperFeatureExtractor
-from features.dsp_features import DSPFeatureExtractor
+import numpy as np
+from src.features import WavLMExtractor, WhisperExtractor, DSPExtractor
+import time
 
 
-def test_single_file(audio_path):
-    """Test all extractors on a single audio file."""
+def generate_test_audio(duration=3.0, sample_rate=16000):
+    """Generate simple test audio."""
+    t = np.linspace(0, duration, int(sample_rate * duration))
     
+    # Generate a tone with harmonics
+    frequency = 440  # A4 note
+    audio = np.sin(2 * np.pi * frequency * t)
+    audio += 0.5 * np.sin(2 * np.pi * frequency * 2 * t)  # Octave
+    audio += 0.25 * np.sin(2 * np.pi * frequency * 3 * t)  # Fifth
+    
+    # Normalize
+    audio = audio / np.max(np.abs(audio))
+    
+    return audio, sample_rate
+
+
+def test_wavlm():
+    """Test WavLM extractor."""
     print("\n" + "="*60)
-    print(f"Testing extractors on: {audio_path}")
+    print("TEST 1: WavLM Extractor (Acoustic Expert)")
     print("="*60)
     
-    if not os.path.exists(audio_path):
-        print(f"❌ File not found: {audio_path}")
-        return
-    
-    # Test WavLM
-    print("\n--- Testing WavLM Extractor ---")
     try:
-        wavlm_extractor = WavLMFeatureExtractor()
-        wavlm_features = wavlm_extractor.extract(audio_path)
-        print(f"✓ WavLM features extracted!")
-        print(f"  Shape: {wavlm_features.shape}")
-        print(f"  Expected: (768,)")
-        print(f"  Mean: {wavlm_features.mean():.4f}")
-        print(f"  Std: {wavlm_features.std():.4f}")
+        audio, sr = generate_test_audio()
+        
+        print("Initializing WavLM extractor...")
+        extractor = WavLMExtractor()
+        
+        print("Extracting features...")
+        start_time = time.time()
+        embeddings = extractor.extract(audio, sr)
+        elapsed = time.time() - start_time
+        
+        print(f"✅ WavLM extraction successful!")
+        print(f"   Embedding shape: {embeddings.shape}")
+        print(f"   Expected shape: (768,)")
+        print(f"   Embedding mean: {embeddings.mean():.4f}")
+        print(f"   Embedding std: {embeddings.std():.4f}")
+        print(f"   Extraction time: {elapsed:.2f}s")
+        print(f"   Model info: {extractor.get_info()}")
+        
+        assert embeddings.shape == (768,), f"Wrong shape: {embeddings.shape}"
+        
+        return True, embeddings
+        
     except Exception as e:
         print(f"❌ WavLM extraction failed: {e}")
-        return
+        import traceback
+        traceback.print_exc()
+        return False, None
+
+
+def test_whisper():
+    """Test Whisper extractor."""
+    print("\n" + "="*60)
+    print("TEST 2: Whisper Extractor (Semantic Expert)")
+    print("="*60)
     
-    # Test Whisper
-    print("\n--- Testing Whisper Extractor ---")
     try:
-        whisper_extractor = WhisperFeatureExtractor()
-        whisper_features = whisper_extractor.extract(audio_path)
-        print(f"✓ Whisper features extracted!")
-        print(f"  Shape: {whisper_features.shape}")
-        print(f"  Expected: (768,)")
-        print(f"  Mean: {whisper_features.mean():.4f}")
-        print(f"  Std: {whisper_features.std():.4f}")
+        audio, sr = generate_test_audio()
+        
+        print("Initializing Whisper extractor...")
+        extractor = WhisperExtractor()
+        
+        print("Extracting features...")
+        start_time = time.time()
+        embeddings = extractor.extract(audio, sr)
+        elapsed = time.time() - start_time
+        
+        print(f"✅ Whisper extraction successful!")
+        print(f"   Embedding shape: {embeddings.shape}")
+        print(f"   Expected shape: (768,)")
+        print(f"   Embedding mean: {embeddings.mean():.4f}")
+        print(f"   Embedding std: {embeddings.std():.4f}")
+        print(f"   Extraction time: {elapsed:.2f}s")
+        print(f"   Model info: {extractor.get_info()}")
+        
+        assert embeddings.shape == (768,), f"Wrong shape: {embeddings.shape}"
+        
+        return True, embeddings
+        
     except Exception as e:
         print(f"❌ Whisper extraction failed: {e}")
-        return
+        import traceback
+        traceback.print_exc()
+        return False, None
+
+
+def test_dsp():
+    """Test DSP extractor."""
+    print("\n" + "="*60)
+    print("TEST 3: DSP Extractor (Signal Expert)")
+    print("="*60)
     
-    # Test DSP
-    print("\n--- Testing DSP Extractor ---")
     try:
-        dsp_extractor = DSPFeatureExtractor()
-        dsp_features = dsp_extractor.extract(audio_path)
-        print(f"✓ DSP features extracted!")
-        print(f"  Shape: {dsp_features.shape}")
-        print(f"  Expected: (6,)")
+        audio, sr = generate_test_audio()
         
-        # Show DSP features with labels
-        dsp_labels = ['pitch_mean', 'pitch_std', 'pitch_range', 
-                      'energy_mean', 'energy_std', 'silence_ratio']
-        print(f"\n  DSP Feature Values:")
-        for label, value in zip(dsp_labels, dsp_features):
-            print(f"    {label:20s}: {value:.4f}")
+        print("Initializing DSP extractor...")
+        extractor = DSPExtractor()
+        
+        print("Extracting features...")
+        start_time = time.time()
+        features = extractor.extract(audio, sr)
+        elapsed = time.time() - start_time
+        
+        print(f"✅ DSP extraction successful!")
+        print(f"   Feature shape: {features.shape}")
+        print(f"   Expected shape: (8,)")
+        print(f"   Extraction time: {elapsed:.2f}s")
+        print(f"\n   Feature values:")
+        for name, value in zip(extractor.get_feature_names(), features):
+            print(f"   {name:20s}: {value:.6f}")
+        
+        assert features.shape == (8,), f"Wrong shape: {features.shape}"
+        
+        return True, features
+        
     except Exception as e:
         print(f"❌ DSP extraction failed: {e}")
-        return
-    
-    print("\n" + "="*60)
-    print("✓ ALL EXTRACTORS WORKING!")
-    print("="*60)
+        import traceback
+        traceback.print_exc()
+        return False, None
 
 
-def test_folder(folder_path):
-    """Test extractors on all files in a folder."""
-    
+def test_fusion():
+    """Test fusion of all three extractors."""
     print("\n" + "="*60)
-    print(f"Testing extractors on folder: {folder_path}")
+    print("TEST 4: Fusion (All Three Experts)")
     print("="*60)
     
-    # Get all audio files
-    audio_files = [f for f in os.listdir(folder_path) 
-                   if f.endswith(('.wav', '.mp3', '.flac'))]
-    
-    if len(audio_files) == 0:
-        print(f"❌ No audio files found in {folder_path}")
-        return
-    
-    print(f"\nFound {len(audio_files)} audio files")
-    
-    # Initialize extractors
-    print("\nInitializing extractors...")
-    wavlm_extractor = WavLMFeatureExtractor()
-    whisper_extractor = WhisperFeatureExtractor()
-    dsp_extractor = DSPFeatureExtractor()
-    
-    # Process each file
-    for i, filename in enumerate(audio_files):
-        audio_path = os.path.join(folder_path, filename)
-        print(f"\n[{i+1}/{len(audio_files)}] Processing: {filename}")
+    try:
+        audio, sr = generate_test_audio()
         
-        try:
-            wavlm_feat = wavlm_extractor.extract(audio_path)
-            whisper_feat = whisper_extractor.extract(audio_path)
-            dsp_feat = dsp_extractor.extract(audio_path)
-            
-            print(f"  ✓ WavLM: {wavlm_feat.shape}")
-            print(f"  ✓ Whisper: {whisper_feat.shape}")
-            print(f"  ✓ DSP: {dsp_feat.shape}")
-        except Exception as e:
-            print(f"  ❌ Error: {e}")
-    
+        print("Initializing all extractors...")
+        wavlm_ext = WavLMExtractor()
+        whisper_ext = WhisperExtractor()
+        dsp_ext = DSPExtractor()
+        
+        print("\nExtracting all features...")
+        start_time = time.time()
+        
+        wavlm_emb = wavlm_ext.extract(audio, sr)
+        whisper_emb = whisper_ext.extract(audio, sr)
+        dsp_features = dsp_ext.extract(audio, sr)
+        
+        # Concatenate all features
+        fusion_vector = np.concatenate([wavlm_emb, whisper_emb, dsp_features])
+        
+        elapsed = time.time() - start_time
+        
+        print(f"✅ Fusion successful!")
+        print(f"\n   Feature dimensions:")
+        print(f"   ├─ WavLM (Acoustic):  {wavlm_emb.shape[0]}")
+        print(f"   ├─ Whisper (Semantic): {whisper_emb.shape[0]}")
+        print(f"   ├─ DSP (Signal):       {dsp_features.shape[0]}")
+        print(f"   └─ Total (Fusion):     {fusion_vector.shape[0]}")
+        print(f"\n   Expected total: 1544 (768 + 768 + 8)")
+        print(f"   Actual total: {fusion_vector.shape[0]}")
+        print(f"   Total extraction time: {elapsed:.2f}s")
+        
+        assert fusion_vector.shape[0] == 1544, f"Wrong fusion size: {fusion_vector.shape[0]}"
+        
+        return True, fusion_vector
+        
+    except Exception as e:
+        print(f"❌ Fusion failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False, None
+
+
+def print_summary(results):
+    """Print test summary."""
     print("\n" + "="*60)
-    print("✓ FOLDER PROCESSING COMPLETE!")
+    print("TEST SUMMARY")
+    print("="*60)
+    
+    total = len(results)
+    passed = sum(results.values())
+    
+    for test_name, passed_test in results.items():
+        status = "✅ PASS" if passed_test else "❌ FAIL"
+        print(f"{status} - {test_name}")
+    
+    print("\n" + "-"*60)
+    print(f"Total: {passed}/{total} tests passed")
+    
+    if passed == total:
+        print("\n🎉 All extractors working! Ready for training.")
+        print("\nNext steps:")
+        print("1. Download dataset (ASVspoof 2021)")
+        print("2. Extract features for all samples")
+        print("3. Train fusion classifier")
+    else:
+        print(f"\n⚠️  {total - passed} test(s) failed. Check errors above.")
+    
     print("="*60)
 
 
-if __name__ == "__main__":
-    import argparse
+def main():
+    """Run all tests."""
+    print("\n🎙️  FUSION FEATURE EXTRACTORS - TEST SUITE")
+    print("="*60)
+    print("Testing all three expert branches:")
+    print("1. WavLM (Acoustic Expert)")
+    print("2. Whisper (Semantic Expert)")
+    print("3. DSP (Signal Expert)")
+    print("4. Fusion (Combined)")
+    print("="*60)
     
-    parser = argparse.ArgumentParser(description="Test feature extractors")
-    parser.add_argument("--file", type=str, help="Test on single audio file")
-    parser.add_argument("--folder", type=str, help="Test on folder of audio files")
+    results = {}
     
-    args = parser.parse_args()
+    # Test 1: WavLM
+    success, _ = test_wavlm()
+    results['WavLM Extractor'] = success
     
-    if args.file:
-        test_single_file(args.file)
-    elif args.folder:
-        test_folder(args.folder)
-    else:
-        # Default: test on first file in data/real/
-        default_path = "data/real"
-        if os.path.exists(default_path):
-            files = [f for f in os.listdir(default_path) if f.endswith(('.wav', '.mp3', '.flac'))]
-            if files:
-                test_single_file(os.path.join(default_path, files[0]))
-            else:
-                print("❌ No audio files found in data/real/")
-                print("\nUsage:")
-                print("  python test_extractors.py --file path/to/audio.wav")
-                print("  python test_extractors.py --folder data/real")
-        else:
-            print("❌ data/real/ folder not found")
-            print("\nUsage:")
-            print("  python test_extractors.py --file path/to/audio.wav")
-            print("  python test_extractors.py --folder data/real")
+    # Test 2: Whisper
+    success, _ = test_whisper()
+    results['Whisper Extractor'] = success
+    
+    # Test 3: DSP
+    success, _ = test_dsp()
+    results['DSP Extractor'] = success
+    
+    # Test 4: Fusion
+    success, _ = test_fusion()
+    results['Fusion'] = success
+    
+    # Summary
+    print_summary(results)
+
+
+if __name__ == '__main__':
+    main()
