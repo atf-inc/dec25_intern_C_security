@@ -33,11 +33,15 @@ export function PhishingPage() {
     return (
         <div className="phishing-page">
             <div className="page-header">
-                <h1>Phishing Email Detection</h1>
-                <p>
-                    Analyze email content to detect potential phishing attempts and
-                    security threats
-                </p>
+                <div className="header-content">
+                    <div>
+                        <h1>Phishing Email Detection</h1>
+                        <p>
+                            Analyze email content to detect potential phishing attempts and
+                            security threats
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <EmailForm onSubmit={analyze} loading={loading} initialData={initialData} />

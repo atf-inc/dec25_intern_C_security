@@ -17,6 +17,15 @@ export interface PhishingResponse {
     evidence?: any[]
     suggested_action?: string
     suggested_reply?: string
+    ai_explanation?: {
+        summary: string
+        suspicious_indicators: string[]
+        ai_reasoning: string
+        technical_indicators: string[]
+        final_assessment: string
+        recommended_action: string
+        full_explanation: string
+    }
     model_meta?: any
 }
 
