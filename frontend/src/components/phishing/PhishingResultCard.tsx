@@ -1,5 +1,4 @@
 import { RiskBadge } from '../common/RiskBadge'
-import { SkeletonResultCard } from '../common/SkeletonLoader'
 import './PhishingResultCard.css'
 
 interface PhishingResultCardProps {
