@@ -51,7 +51,17 @@ def call_gemini_raw(
         if cands and isinstance(cands, list):
             first = cands[0]
             content = first.get("content") or first.get("message") or first.get("output")
-            if isinstance(content, list):
+            
+            # Handle content as dict with parts (Gemini 2.0 format)
+            if isinstance(content, dict) and "parts" in content:
+                parts = content.get("parts", [])
+                if parts and isinstance(parts, list):
+                    for part in parts:
+                        if isinstance(part, dict) and "text" in part:
+                            text_out = part.get("text", "")
+                            break
+            # Handle content as list (legacy format)
+            elif isinstance(content, list):
                 for part in content:
                     if isinstance(part, dict) and "text" in part:
                         text_out = part.get("text", "")

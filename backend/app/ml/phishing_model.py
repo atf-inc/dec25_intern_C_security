@@ -527,6 +527,71 @@ Provide specific, actionable reasons."""
         label = "PHISHING" if base >= 70 else ("SUSPICIOUS" if base >= 40 else "SAFE")
         return {"label": label, "score": base, "reasons": heur["reasons"], "evidence": heur["evidence"], "model_meta": {"llm": "error_fallback"}}
 
+def _generate_gemini_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str, raw_text: str) -> str:
+    """Generate AI reasoning using Gemini API for human-friendly explanations."""
+    
+    # Create a focused prompt for Gemini to explain the email analysis
+    explanation_prompt = f"""You are a cybersecurity expert explaining email analysis results to a non-technical user. 
+
+Email Analysis Results:
+- Classification: {label}
+- Confidence Score: {score}%
+- Subject: "{subject}"
+- From: {from_email}
+- Detected Issues: {', '.join(reasons[:3])}
+
+Your task: Explain in 2-3 sentences WHY this email was classified as {label}. Be conversational, clear, and helpful.
+
+Guidelines:
+- Use simple language, avoid technical jargon
+- Explain the specific threats or safety indicators found
+- Focus on WHY the user should be concerned (or not concerned)
+- Be like a friendly security expert talking to a friend
+
+Examples:
+- For PHISHING: "This email is trying to trick you by pretending to be from PayPal, but the sender's address doesn't match PayPal's real domain. The message also creates fake urgency to pressure you into clicking malicious links before you have time to think."
+- For SAFE: "This email appears legitimate because it comes from Chase's official domain, uses professional language, and provides legitimate contact methods instead of pressuring you to click suspicious links."
+
+Your explanation:"""
+
+    try:
+        # Only call Gemini if we have an API key, otherwise use fallback
+        if LLM_PROVIDER == "gemini" and os.getenv("GEMINI_API_KEY"):
+            res = call_gemini_raw(
+                explanation_prompt, 
+                api_key=os.getenv("GEMINI_API_KEY"), 
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"), 
+                max_output_tokens=200, 
+                temperature=0.3  # Slightly more creative for explanations
+            )
+            gemini_explanation = res.get("text", "").strip()
+            
+            # Validate the response is reasonable
+            if gemini_explanation and len(gemini_explanation) > 20 and len(gemini_explanation) < 500:
+                return gemini_explanation
+        
+        # Fallback to intelligent hardcoded explanations if Gemini fails
+        return _generate_fallback_reasoning(label, score, reasons, subject, from_email)
+        
+    except Exception as ex:
+        logger.warning(f"Gemini explanation failed: {ex}, using fallback")
+        return _generate_fallback_reasoning(label, score, reasons, subject, from_email)
+
+def _generate_fallback_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str) -> str:
+    """Fallback reasoning when Gemini API is unavailable."""
+    
+    if label == "PHISHING":
+        if "impersonation" in " ".join(reasons).lower():
+            return f"This email is impersonating a trusted organization to deceive you. The sender's email address ({from_email}) doesn't match the legitimate domain of the company they claim to represent. Combined with urgency tactics and requests for sensitive information, this is a classic phishing attack designed to steal your credentials or personal data."
+        elif "urgency" in " ".join(reasons).lower() and "credential" in " ".join(reasons).lower():
+            return f"This email uses psychological manipulation by creating a false sense of urgency to pressure you into revealing sensitive information. Legitimate companies rarely ask for passwords or credentials via email, and they don't threaten account suspension to force immediate action."
+        else:
+            return f"Multiple red flags indicate this is a phishing attempt. The combination of suspicious sender address, deceptive links, and social engineering tactics are hallmarks of cybercriminal activity designed to compromise your security."
+    elif label == "SUSPICIOUS":
+        return f"While not definitively malicious, this email exhibits several concerning patterns. You should verify the sender's identity through official channels before taking any action or clicking any links."
+    else:  # SAFE
+        return f"This email shows characteristics of legitimate business communication. The sender's domain appears authentic, the message doesn't employ pressure tactics, and it provides legitimate contact methods. However, always remain vigilant and verify unexpected requests through official channels."
+
 def _generate_human_explanation(label: str, score: int, reasons: List[str], evidence: List[Dict], payload: Dict[str, Any]) -> Dict[str, Any]:
     """Generate human-friendly AI explanation of the analysis."""
     
@@ -574,18 +639,9 @@ def _generate_human_explanation(label: str, score: int, reasons: List[str], evid
             # Keep original if we can't translate it
             suspicious_indicators.append(reason)
     
-    # Generate AI reasoning based on the analysis
-    if label == "PHISHING":
-        if "impersonation" in " ".join(reasons).lower():
-            ai_reasoning = f"This email is impersonating a trusted organization to deceive you. The sender's email address ({from_email}) doesn't match the legitimate domain of the company they claim to represent. Combined with urgency tactics and requests for sensitive information, this is a classic phishing attack designed to steal your credentials or personal data."
-        elif "urgency" in " ".join(reasons).lower() and "credential" in " ".join(reasons).lower():
-            ai_reasoning = f"This email uses psychological manipulation by creating a false sense of urgency to pressure you into revealing sensitive information. Legitimate companies rarely ask for passwords or credentials via email, and they don't threaten account suspension to force immediate action."
-        else:
-            ai_reasoning = f"Multiple red flags indicate this is a phishing attempt. The combination of suspicious sender address, deceptive links, and social engineering tactics are hallmarks of cybercriminal activity designed to compromise your security."
-    elif label == "SUSPICIOUS":
-        ai_reasoning = f"While not definitively malicious, this email exhibits several concerning patterns. The presence of {len(suspicious_indicators)} suspicious indicators suggests you should verify the sender's identity through official channels before taking any action or clicking any links."
-    else:  # SAFE
-        ai_reasoning = f"This email shows characteristics of legitimate business communication. The sender's domain appears authentic, the message doesn't employ pressure tactics, and it provides legitimate contact methods. However, always remain vigilant and verify unexpected requests through official channels."
+    # 🚀 NEW: Generate AI reasoning using Gemini API
+    raw_text = payload.get("raw_text", "")
+    ai_reasoning = _generate_gemini_reasoning(label, score, reasons, subject, from_email, raw_text)
     
     # Generate technical indicators in human-friendly format
     technical_indicators = []
