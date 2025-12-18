@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './ForensicScanner.css'
 
-const SCAN_STEPS = [
+const EMAIL_SCAN_STEPS = [
     "Initializing security protocols...",
     "Extracting email metadata & headers...",
     "Scanning for deceptive patterns...",
@@ -11,9 +11,25 @@ const SCAN_STEPS = [
     "Compiling risk assessment report..."
 ]
 
-export function ForensicScanner() {
+const VOICE_SCAN_STEPS = [
+    "Initializing deepfake detection protocols...",
+    "Loading WavLM neural network models...",
+    "Extracting acoustic embeddings & features...",
+    "Analyzing spectral artifacts & anomalies...",
+    "Running vocoder detection algorithms...",
+    "Processing AI-generated voice signatures...",
+    "Compiling authenticity assessment..."
+]
+
+interface ForensicScannerProps {
+    type?: 'email' | 'voice'
+}
+
+export function ForensicScanner({ type = 'email' }: ForensicScannerProps) {
     const [currentStep, setCurrentStep] = useState(0)
     const [logs, setLogs] = useState<string[]>([])
+
+    const SCAN_STEPS = type === 'voice' ? VOICE_SCAN_STEPS : EMAIL_SCAN_STEPS
 
     useEffect(() => {
         // Reset state on mount
@@ -30,13 +46,13 @@ export function ForensicScanner() {
         }, 800) // Advance step every 800ms
 
         return () => clearInterval(stepInterval)
-    }, [])
+    }, [type])
 
     useEffect(() => {
         if (currentStep < SCAN_STEPS.length) {
             setLogs(prev => [...prev, `> ${SCAN_STEPS[currentStep]}`])
         }
-    }, [currentStep])
+    }, [currentStep, SCAN_STEPS])
 
     return (
         <div className="forensic-scanner-overlay">
@@ -45,7 +61,9 @@ export function ForensicScanner() {
                     <div className="terminal-dot red"></div>
                     <div className="terminal-dot yellow"></div>
                     <div className="terminal-dot green"></div>
-                    <span className="terminal-title">CYBER_X_FORENSICS // ACTIVE_SCAN</span>
+                    <span className="terminal-title">
+                        CYBER_X_FORENSICS // {type === 'voice' ? 'DEEPFAKE_SCAN' : 'ACTIVE_SCAN'}
+                    </span>
                 </div>
                 <div className="terminal-content">
                     <div className="scan-grid">

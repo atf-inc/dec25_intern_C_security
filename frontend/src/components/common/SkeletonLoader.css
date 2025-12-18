@@ -1,5 +1,11 @@
 /* 💀 Skeleton Loading Styles */
 
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .skeleton {
   background: linear-gradient(90deg, var(--color-slate-200) 25%, var(--color-slate-100) 50%, var(--color-slate-200) 75%);
   background-size: 200% 100%;
@@ -142,6 +148,57 @@
   }
 }
 
+/* Voice Skeleton Components */
+.skeleton-file-meta {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.skeleton-audio-section {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--color-slate-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-slate-200);
+}
+
+.skeleton-ai-card {
+  background: var(--card-bg);
+  border: 1px solid var(--color-slate-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.skeleton-artifacts-section {
+  margin-bottom: var(--space-6);
+}
+
+.skeleton-artifacts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.skeleton-artifact-card {
+  background: var(--card-bg);
+  border: 1px solid var(--color-slate-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton-technical-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-slate-200);
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .skeleton {
@@ -151,13 +208,20 @@
 
   .skeleton-card-container,
   .skeleton-result-card,
-  .skeleton-evidence-card {
+  .skeleton-evidence-card,
+  .skeleton-ai-card,
+  .skeleton-artifact-card {
     background: var(--color-slate-800);
     border-color: var(--color-slate-700);
   }
 
-  .skeleton-summary-grid {
+  .skeleton-summary-grid,
+  .skeleton-audio-section {
     background: var(--color-slate-900);
+    border-color: var(--color-slate-700);
+  }
+
+  .skeleton-technical-section {
     border-color: var(--color-slate-700);
   }
 }

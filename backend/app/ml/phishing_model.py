@@ -857,33 +857,65 @@ def _generate_human_explanation(label: str, score: int, reasons: List[str], evid
             # Keep original if we can't translate it
             suspicious_indicators.append(reason)
     
-    # Generate technical indicators in human-friendly format
+    # Generate technical indicators in human-friendly format (language-specific)
     technical_indicators = []
-    technical_indicators.append(f"Threat confidence: {score}% ({_get_confidence_description(score)})")
     
-    # Add evidence-based technical details
-    for ev in evidence[:3]:
-        ev_type = ev.get("type", "")
-        if ev_type == "urgency" or ev_type == "high_urgency":
-            count = ev.get("count", 1)
-            technical_indicators.append(f"Detected {count} urgency manipulation tactic{'s' if count > 1 else ''}")
-        elif ev_type == "brand_impersonation":
-            brand = ev.get("brand", "unknown")
-            technical_indicators.append(f"Brand impersonation detected: {brand.title()}")
-        elif ev_type == "character_substitution":
-            domain = ev.get("domain", "")
-            target = ev.get("target", "")
-            technical_indicators.append(f"Fake domain detected: {domain} (mimicking {target})")
-        elif ev_type == "link_mismatch":
-            technical_indicators.append(f"Deceptive link: displays '{ev.get('anchor', '')}' but links to different site")
-    
-    # Final assessment
-    if label == "PHISHING":
-        final_assessment = f"HIGH RISK - Do not click any links or provide any information. This is very likely a phishing attack."
-    elif label == "SUSPICIOUS":
-        final_assessment = f"MEDIUM RISK - Exercise caution. Verify the sender through official channels before proceeding."
+    if language == "ja":
+        # Japanese technical indicators
+        technical_indicators.append(f"脅威の信頼度: {score}% ({_get_confidence_description(score, language)})")
+        
+        # Add evidence-based technical details in Japanese
+        for ev in evidence[:3]:
+            ev_type = ev.get("type", "")
+            if ev_type == "urgency" or ev_type == "high_urgency":
+                count = ev.get("count", 1)
+                technical_indicators.append(f"{count}つの緊急性操作戦術を検出しました")
+            elif ev_type == "brand_impersonation":
+                brand = ev.get("brand", "unknown")
+                technical_indicators.append(f"ブランドなりすましを検出: {brand.title()}")
+            elif ev_type == "character_substitution":
+                domain = ev.get("domain", "")
+                target = ev.get("target", "")
+                technical_indicators.append(f"偽ドメインを検出: {domain} ({target}を模倣)")
+            elif ev_type == "link_mismatch":
+                technical_indicators.append(f"欺瞞的リンク: '{ev.get('anchor', '')}'と表示されているが、異なるサイトにリンク")
     else:
-        final_assessment = f"LOW RISK - Email appears legitimate, but always verify unexpected requests independently."
+        # English technical indicators (original)
+        technical_indicators.append(f"Threat confidence: {score}% ({_get_confidence_description(score, language)})")
+        
+        # Add evidence-based technical details
+        for ev in evidence[:3]:
+            ev_type = ev.get("type", "")
+            if ev_type == "urgency" or ev_type == "high_urgency":
+                count = ev.get("count", 1)
+                technical_indicators.append(f"Detected {count} urgency manipulation tactic{'s' if count > 1 else ''}")
+            elif ev_type == "brand_impersonation":
+                brand = ev.get("brand", "unknown")
+                technical_indicators.append(f"Brand impersonation detected: {brand.title()}")
+            elif ev_type == "character_substitution":
+                domain = ev.get("domain", "")
+                target = ev.get("target", "")
+                technical_indicators.append(f"Fake domain detected: {domain} (mimicking {target})")
+            elif ev_type == "link_mismatch":
+                technical_indicators.append(f"Deceptive link: displays '{ev.get('anchor', '')}' but links to different site")
+    
+    # Final assessment (language-specific)
+    if language == "ja":
+        # Japanese final assessments
+        if label == "PHISHING":
+            final_assessment = f"高リスク - リンクをクリックしたり、情報を提供したりしないでください。これはフィッシング攻撃の可能性が非常に高いです。"
+        elif label == "SUSPICIOUS":
+            final_assessment = f"中リスク - 注意してください。続行する前に公式チャネルを通じて送信者を確認してください。"
+        else:
+            final_assessment = f"低リスク - メールは正当に見えますが、予期しないリクエストは常に独自に確認してください。"
+    else:
+        # English final assessments (original)
+        if label == "PHISHING":
+            final_assessment = f"HIGH RISK - Do not click any links or provide any information. This is very likely a phishing attack."
+        elif label == "SUSPICIOUS":
+            final_assessment = f"MEDIUM RISK - Exercise caution. Verify the sender through official channels before proceeding."
+        else:
+            final_assessment = f"LOW RISK - Email appears legitimate, but always verify unexpected requests independently."
     
     # Recommended action (language-specific)
     if language == "ja":
@@ -916,15 +948,74 @@ def _generate_human_explanation(label: str, score: int, reasons: List[str], evid
         "full_explanation": full_explanation
     }
 
-def _get_confidence_description(score: int) -> str:
+def _get_confidence_description(score: int, language: str = "en") -> str:
     """Get human-readable confidence description."""
-    if score >= 90:
-        return "Very High Confidence"
-    elif score >= 70:
-        return "High Confidence"
-    elif score >= 50:
-        return "Medium Confidence"
-    elif score >= 30:
-        return "Low Confidence"
+    if language == "ja":
+        # Japanese confidence descriptions
+        if score >= 90:
+            return "非常に高い信頼度"
+        elif score >= 70:
+            return "高い信頼度"
+        elif score >= 50:
+            return "中程度の信頼度"
+        elif score >= 30:
+            return "低い信頼度"
+        else:
+            return "非常に低い信頼度"
     else:
-        return "Very Low Confidence"
+        # English confidence descriptions (original)
+        if score >= 90:
+            return "Very High Confidence"
+        elif score >= 70:
+            return "High Confidence"
+        elif score >= 50:
+            return "Medium Confidence"
+        elif score >= 30:
+            return "Low Confidence"
+        else:
+            return "Very Low Confidence"
+
+def retranslate_explanation(original_result: Dict[str, Any], target_language: str) -> Dict[str, Any]:
+    """
+    Re-translate AI explanation and other dynamic content to a different language without re-analyzing the email.
+    
+    Args:
+        original_result: The original analysis result
+        target_language: Target language code (en, ja)
+    
+    Returns:
+        Updated result with translated AI explanation and dynamic content
+    """
+    
+    # Extract original analysis data
+    label = original_result.get("label", "SAFE")
+    score = original_result.get("score", 0)
+    reasons = original_result.get("reasons", [])
+    evidence = original_result.get("evidence", [])
+    
+    # Create a minimal payload for explanation generation
+    payload = {
+        "language": target_language,
+        "subject": "Re-translation request",
+        "raw_text": "Re-translation of existing analysis",
+        "from_email": ""
+    }
+    
+    # Generate new AI explanation in target language
+    ai_explanation = _generate_human_explanation(label, score, reasons, evidence, payload)
+    
+    # Translate suggested actions based on language
+    if target_language == "ja":
+        suggested_action = "リンクをクリックしたり、情報を提供したりしないでください。公式チャネルを通じて送信者を確認してください。"
+        suggested_reply = "公式チャネルを通じて確認いたします。認証情報は共有しないでください。"
+    else:
+        suggested_action = "Do not click links; verify the sender via official channels."
+        suggested_reply = "I will confirm via official channels; please do not share credentials."
+    
+    # Return updated result with new explanation and translated content
+    updated_result = original_result.copy()
+    updated_result["ai_explanation"] = ai_explanation
+    updated_result["suggested_action"] = suggested_action
+    updated_result["suggested_reply"] = suggested_reply
+    
+    return updated_result
