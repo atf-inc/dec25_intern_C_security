@@ -29,7 +29,7 @@ TARGET_SAMPLE_RATE = 16000  # Standard for Wav2Vec2/WavLM
 
 def load_and_preprocess_audio(file_path_or_bytes, target_sr=TARGET_SAMPLE_RATE):
     """
-    Load audio file and preprocess for model input.
+    Load audio file and preprocess for model input (supports all formats).
     
     Args:
         file_path_or_bytes: Path to audio file or bytes object
@@ -41,27 +41,33 @@ def load_and_preprocess_audio(file_path_or_bytes, target_sr=TARGET_SAMPLE_RATE):
     """
     # Load audio
     if isinstance(file_path_or_bytes, bytes):
-        # Handle bytes from upload
-        waveform, sample_rate = sf.read(io.BytesIO(file_path_or_bytes))
+        # Handle bytes from upload - use librosa via temp file
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.audio') as temp_file:
+            temp_file.write(file_path_or_bytes)
+            temp_path = temp_file.name
+        
+        try:
+            waveform, sample_rate = librosa.load(temp_path, sr=target_sr)
+        finally:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
     else:
         waveform, sample_rate = librosa.load(file_path_or_bytes, sr=target_sr)
     
     # Convert stereo to mono if needed
     if len(waveform.shape) > 1:
-        # Transpose because sf.read gives (samples, channels) 
-        # but librosa.to_mono expects (channels, samples)
-        waveform = waveform.T
-        waveform = librosa.to_mono(waveform)
+        waveform = librosa.to_mono(waveform.T)
     
     # Normalize amplitude to [-1, 1]
     if len(waveform) == 0:
-        # If waveform is empty, return as is (validation should catch this, but safe fallthrough)
         return waveform, target_sr
 
     peak = np.max(np.abs(waveform)) + 1e-8
     waveform = waveform / peak
     
-    # Resample if needed
+    # Resample if needed (librosa.load already resamples to target_sr)
+    # This is just a safety check
     if sample_rate != target_sr:
         waveform = librosa.resample(waveform, orig_sr=sample_rate, target_sr=target_sr)
     
