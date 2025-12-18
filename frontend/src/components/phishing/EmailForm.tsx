@@ -1,4 +1,5 @@
 import { useState, FormEvent, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import './EmailForm.css'
 
 // Assuming EmailAnalysisRequest is defined elsewhere or will be defined.
@@ -30,6 +31,7 @@ export interface EmailFormData { // This interface is still used internally for 
 }
 
 export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { // Added initialData to props
+    const { t } = useTranslation()
     const [subject, setSubject] = useState(initialData?.subject || '') // Initialized with initialData
     const [sender, setSender] = useState(initialData?.sender || '') // Initialized with initialData
     const [body, setBody] = useState(initialData?.body || '') // Initialized with initialData
@@ -153,7 +155,7 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                         onClick={() => handleModeSwitch('manual')}
                         disabled={loading}
                     >
-                        📝 Manual Input
+                        📝 {t('phishing.manualInput')}
                     </button>
                     <button
                         type="button"
@@ -161,13 +163,13 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                         onClick={() => handleModeSwitch('pdf')}
                         disabled={loading}
                     >
-                        📄 Upload File
+                        📄 {t('phishing.uploadFile')}
                     </button>
                 </div>
                 <p className="mode-description">
                     {inputMode === 'manual'
-                        ? 'Manually enter email details below'
-                        : 'Upload an email file (EML or PDF format)'
+                        ? t('phishing.manualInputDesc')
+                        : t('phishing.uploadFileDesc')
                     }
                 </p>
             </div>
@@ -176,7 +178,7 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
             {inputMode === 'pdf' && (
                 <div className="pdf-upload-section">
                     <div className="form-group">
-                        <label htmlFor="pdf-upload">Upload Email File *</label>
+                        <label htmlFor="pdf-upload">{t('phishing.uploadEmailFile')} *</label>
                         <div className="file-upload-area">
                             {!pdfFile && (
                                 <input
@@ -218,14 +220,14 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                                 ) : (
                                     <div className="file-upload-prompt">
                                         <span className="upload-icon">📤</span>
-                                        <p>Click to select email file or drag and drop</p>
-                                        <small>EML or PDF files, max 10MB</small>
+                                        <p>{t('phishing.clickToSelect')}</p>
+                                        <small>{t('phishing.emlOrPdf')}</small>
                                     </div>
                                 )}
                             </div>
                         </div>
                         <small className="form-hint">
-                            💡 Tip: Save as EML (File → Save As → EML) or PDF (Print → Save as PDF) from your email client
+                            💡 {t('phishing.tipSaveAs')}
                         </small>
                     </div>
                 </div>
@@ -235,38 +237,38 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
             {inputMode === 'manual' && (
                 <div className="manual-input-section">
                     <div className="form-group">
-                        <label htmlFor="subject">Email Subject *</label>
+                        <label htmlFor="subject">{t('phishing.emailSubject')} *</label>
                         <input
                             type="text"
                             id="subject"
                             value={subject}
                             onChange={(e) => setSubject(e.target.value)}
-                            placeholder="e.g., Urgent: Verify your account"
+                            placeholder={t('phishing.subjectPlaceholder')}
                             required
                             disabled={loading}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="sender">Sender Email *</label>
+                        <label htmlFor="sender">{t('phishing.senderEmail')} *</label>
                         <input
                             type="email"
                             id="sender"
                             value={sender}
                             onChange={(e) => setSender(e.target.value)}
-                            placeholder="e.g., noreply@example.com"
+                            placeholder={t('phishing.senderPlaceholder')}
                             required
                             disabled={loading}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="body">Email Body *</label>
+                        <label htmlFor="body">{t('phishing.emailBody')} *</label>
                         <textarea
                             id="body"
                             value={body}
                             onChange={(e) => setBody(e.target.value)}
-                            placeholder="Paste the email content here..."
+                            placeholder={t('phishing.bodyPlaceholder')}
                             rows={8}
                             required
                             disabled={loading}
@@ -274,17 +276,17 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="urls">URLs (Optional)</label>
+                        <label htmlFor="urls">{t('phishing.urls')}</label>
                         <textarea
                             id="urls"
                             value={urls}
                             onChange={(e) => setUrls(e.target.value)}
-                            placeholder="Enter URLs found in the email (one per line or comma-separated)"
+                            placeholder={t('phishing.urlsPlaceholder')}
                             rows={3}
                             disabled={loading}
                         />
                         <small className="form-hint">
-                            Enter any suspicious links found in the email
+                            {t('phishing.urlsHint')}
                         </small>
                     </div>
                 </div>
@@ -295,7 +297,7 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                 className="submit-button"
                 disabled={!isFormValid || loading}
             >
-                {loading ? 'Analyzing...' : inputMode === 'pdf' ? 'Analyze File' : 'Analyze Email'}
+                {loading ? t('phishing.analyzing') : inputMode === 'pdf' ? t('phishing.analyzeFile') : t('phishing.analyzeEmail')}
             </button>
         </form>
     )

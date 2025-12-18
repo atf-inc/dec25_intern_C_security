@@ -673,11 +673,49 @@ def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
         "llm_confidence": merged.get("model_meta", {}).get("confidence", 0.8) if use_llm else None
     })
 
-def _generate_gemini_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str, raw_text: str) -> str:
-    """Generate AI reasoning using Gemini API for human-friendly explanations."""
+    # 🚀 GEMINI-POWERED: Full AI explanation system
+    ai_explanation = _generate_human_explanation(label, final_score, reasons, evidence, payload)
     
-    # Create a focused prompt for Gemini to explain the email analysis
-    explanation_prompt = f"""You are a cybersecurity expert explaining email analysis results to a non-technical user. 
+    return {
+        "label": label,
+        "score": final_score,
+        "reasons": reasons,
+        "evidence": evidence,
+        "model_meta": model_meta,
+        "ai_explanation": ai_explanation,  # 🚀 NEW: AI-generated explanation
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+def _generate_gemini_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str, raw_text: str, language: str = "en") -> str:
+    """Generate AI reasoning using Gemini API for human-friendly explanations in specified language."""
+    
+    # Create language-specific prompts
+    if language == "ja":
+        explanation_prompt = f"""あなたは、技術的でないユーザーにメール分析結果を説明するサイバーセキュリティの専門家です。
+
+メール分析結果:
+- 分類: {label}
+- 信頼度スコア: {score}%
+- 件名: "{subject}"
+- 送信者: {from_email}
+- 検出された問題: {', '.join(reasons[:3])}
+
+あなたの任務: このメールが{label}として分類された理由を2-3文で説明してください。会話的で、明確で、役に立つように説明してください。
+
+ガイドライン:
+- 簡単な言葉を使い、専門用語を避ける
+- 発見された具体的な脅威や安全性の指標を説明する
+- ユーザーがなぜ心配すべきか（または心配する必要がないか）に焦点を当てる
+- 友人に話しかけるような親しみやすいセキュリティ専門家のように振る舞う
+- 丁寧で専門的な日本語を使用する
+
+例:
+- フィッシングの場合: "このメールは、PayPalを装ってあなたを騙そうとしていますが、送信者のアドレスはPayPalの本物のドメインと一致しません。また、メッセージは偽の緊急性を作り出して、考える時間を与えずに悪意のあるリンクをクリックするよう圧力をかけています。"
+- 安全な場合: "このメールは、Chaseの公式ドメインから送信され、専門的な言語を使用し、疑わしいリンクをクリックするよう圧力をかける代わりに正当な連絡方法を提供しているため、正当なものと思われます。"
+
+あなたの説明:"""
+    else:
+        explanation_prompt = f"""You are a cybersecurity expert explaining email analysis results to a non-technical user. 
 
 Email Analysis Results:
 - Classification: {label}
@@ -717,14 +755,30 @@ Your explanation:"""
                 return gemini_explanation
         
         # Fallback to intelligent hardcoded explanations if Gemini fails
-        return _generate_fallback_reasoning(label, score, reasons, subject, from_email)
+        return _generate_fallback_reasoning(label, score, reasons, subject, from_email, language)
         
     except Exception as ex:
         logger.warning(f"Gemini explanation failed: {ex}, using fallback")
-        return _generate_fallback_reasoning(label, score, reasons, subject, from_email)
+        return _generate_fallback_reasoning(label, score, reasons, subject, from_email, language)
 
-def _generate_fallback_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str) -> str:
+def _generate_fallback_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str, language: str = "en") -> str:
     """Fallback reasoning when Gemini API is unavailable."""
+    
+    if language == "ja":
+        # Japanese fallback reasoning
+        if label == "PHISHING":
+            if "impersonation" in " ".join(reasons).lower():
+                return f"このメールは、信頼できる組織を装ってあなたを欺こうとしています。送信者のメールアドレス（{from_email}）は、主張する企業の正当なドメインと一致しません。緊急性の戦術と機密情報の要求を組み合わせて、これはあなたの認証情報や個人データを盗むために設計された典型的なフィッシング攻撃です。"
+            elif "urgency" in " ".join(reasons).lower() and "credential" in " ".join(reasons).lower():
+                return f"このメールは、偽の緊急性を作り出して機密情報を明かすよう圧力をかける心理的操作を使用しています。正当な企業がメールでパスワードや認証情報を尋ねることはほとんどなく、即座の行動を強制するためにアカウント停止を脅すこともありません。"
+            else:
+                return f"複数の危険信号がこれがフィッシングの試みであることを示しています。疑わしい送信者アドレス、欺瞞的なリンク、ソーシャルエンジニアリング戦術の組み合わせは、あなたのセキュリティを侵害するために設計されたサイバー犯罪活動の特徴です。"
+        elif label == "SUSPICIOUS":
+            return f"明確に悪意があるわけではありませんが、このメールにはいくつかの懸念されるパターンが見られます。リンクをクリックしたり行動を起こしたりする前に、公式チャネルを通じて送信者の身元を確認する必要があります。"
+        else:  # SAFE
+            return f"このメールは正当なビジネスコミュニケーションの特徴を示しています。送信者のドメインは本物のようで、メッセージは圧力戦術を使用せず、正当な連絡方法を提供しています。ただし、予期しないリクエストについては常に警戒し、公式チャネルを通じて確認してください。"
+    
+    # English fallback reasoning (original)
     
     if label == "PHISHING":
         if "impersonation" in " ".join(reasons).lower():
@@ -745,20 +799,34 @@ def _generate_human_explanation(label: str, score: int, reasons: List[str], evid
     subject = payload.get("subject", "")
     from_email = payload.get("from_email", "")
     raw_text = payload.get("raw_text", "")
+    language = payload.get("language", "en")
     
-    # Generate threat summary based on label
-    if label == "PHISHING":
-        if score >= 80:
-            summary = f"🚨 This email is highly likely a phishing attack. Our AI detected multiple red flags that are commonly used by cybercriminals to steal your personal information or credentials."
-        else:
-            summary = f"⚠️ This email shows strong signs of being a phishing attempt. Several suspicious patterns were detected that suggest this is not a legitimate message."
-    elif label == "SUSPICIOUS":
-        summary = f"⚠️ This email contains some concerning elements that warrant caution. While not definitively malicious, it exhibits patterns often seen in phishing attempts."
-    else:  # SAFE
-        summary = f"✅ This email appears to be legitimate. Our analysis found no significant red flags, and it shows characteristics of authentic business communication."
+    # Generate threat summary based on label and language
+    if language == "ja":
+        # Japanese threat summaries
+        if label == "PHISHING":
+            if score >= 80:
+                summary = f"🚨 このメールはフィッシング攻撃の可能性が非常に高いです。AIが、サイバー犯罪者が個人情報や認証情報を盗むために一般的に使用する複数の危険信号を検出しました。"
+            else:
+                summary = f"⚠️ このメールはフィッシングの試みの強い兆候を示しています。これが正当なメッセージではないことを示唆する疑わしいパターンがいくつか検出されました。"
+        elif label == "SUSPICIOUS":
+            summary = f"⚠️ このメールには注意が必要な懸念される要素が含まれています。明確に悪意があるわけではありませんが、フィッシングの試みでよく見られるパターンを示しています。"
+        else:  # SAFE
+            summary = f"✅ このメールは正当なものと思われます。分析では重大な危険信号は見つからず、本物のビジネスコミュニケーションの特徴を示しています。"
+    else:
+        # English threat summaries (original)
+        if label == "PHISHING":
+            if score >= 80:
+                summary = f"🚨 This email is highly likely a phishing attack. Our AI detected multiple red flags that are commonly used by cybercriminals to steal your personal information or credentials."
+            else:
+                summary = f"⚠️ This email shows strong signs of being a phishing attempt. Several suspicious patterns were detected that suggest this is not a legitimate message."
+        elif label == "SUSPICIOUS":
+            summary = f"⚠️ This email contains some concerning elements that warrant caution. While not definitively malicious, it exhibits patterns often seen in phishing attempts."
+        else:  # SAFE
+            summary = f"✅ This email appears to be legitimate. Our analysis found no significant red flags, and it shows characteristics of authentic business communication."
     
     # Generate Gemini-powered AI reasoning
-    ai_reasoning = _generate_gemini_reasoning(label, score, reasons, subject, from_email, raw_text)
+    ai_reasoning = _generate_gemini_reasoning(label, score, reasons, subject, from_email, raw_text, language)
     
     # Generate human-readable suspicious indicators
     suspicious_indicators = []
@@ -817,13 +885,26 @@ def _generate_human_explanation(label: str, score: int, reasons: List[str], evid
     else:
         final_assessment = f"LOW RISK - Email appears legitimate, but always verify unexpected requests independently."
     
-    # Recommended action
-    if label == "PHISHING":
-        recommended_action = "🛡️ Delete this email immediately. Do not click any links or download attachments. If you're concerned about your account, visit the company's official website directly (not through email links) or call their official customer service number."
-    elif label == "SUSPICIOUS":
-        recommended_action = "⚠️ Do not click any links yet. Contact the sender through official channels (phone number from their website, not from the email) to verify this message is legitimate before taking any action."
+    # Recommended action (language-specific)
+    if language == "ja":
+        # Japanese recommended actions
+        if label == "PHISHING":
+            recommended_action = "🛡️ このメールを直ちに削除してください。リンクをクリックしたり、添付ファイルをダウンロードしたりしないでください。アカウントが心配な場合は、（メールのリンクからではなく）企業の公式ウェブサイトに直接アクセスするか、公式カスタマーサービスに電話してください。"
+        elif label == "SUSPICIOUS":
+            recommended_action = "⚠️ まだリンクをクリックしないでください。このメッセージが正当であることを確認するために、（メールからではなく、ウェブサイトの電話番号から）公式チャネルを通じて送信者に連絡してから行動してください。"
+        else:
+            recommended_action = "✅ このメールは安全に見えますが、予期しないリクエストが含まれていたり、機密情報を求められたりする場合は、公式チャネルを通じて送信者に連絡して独自に確認してください。"
     else:
-        recommended_action = "✅ This email appears safe, but if it contains unexpected requests or asks for sensitive information, verify independently by contacting the sender through official channels."
+        # English recommended actions (original)
+        if label == "PHISHING":
+            recommended_action = "🛡️ Delete this email immediately. Do not click any links or download attachments. If you're concerned about your account, visit the company's official website directly (not through email links) or call their official customer service number."
+        elif label == "SUSPICIOUS":
+            recommended_action = "⚠️ Do not click any links yet. Contact the sender through official channels (phone number from their website, not from the email) to verify this message is legitimate before taking any action."
+        else:
+            recommended_action = "✅ This email appears safe, but if it contains unexpected requests or asks for sensitive information, verify independently by contacting the sender through official channels."
+    
+    # Create full explanation by combining all sections
+    full_explanation = f"{summary}\n\n{ai_reasoning}\n\n{final_assessment}\n\n{recommended_action}"
     
     return {
         "summary": summary,
@@ -831,7 +912,8 @@ def _generate_human_explanation(label: str, score: int, reasons: List[str], evid
         "suspicious_indicators": suspicious_indicators,
         "technical_indicators": technical_indicators,
         "final_assessment": final_assessment,
-        "recommended_action": recommended_action
+        "recommended_action": recommended_action,
+        "full_explanation": full_explanation
     }
 
 def _get_confidence_description(score: int) -> str:
@@ -846,16 +928,3 @@ def _get_confidence_description(score: int) -> str:
         return "Low Confidence"
     else:
         return "Very Low Confidence"
-
-    # 🚀 GEMINI-POWERED: Full AI explanation system
-    ai_explanation = _generate_human_explanation(label, final_score, reasons, evidence, payload)
-    
-    return {
-        "label": label,
-        "score": final_score,
-        "reasons": reasons,
-        "evidence": evidence,
-        "model_meta": model_meta,
-        "ai_explanation": ai_explanation,  # 🚀 NEW: AI-generated explanation
-        "timestamp": datetime.utcnow().isoformat()
-    }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { AudioUpload } from '../components/voice/AudioUpload'
 import { VoiceResultCard } from '../components/voice/VoiceResultCard'
 import { VoiceStats } from '../components/voice/VoiceStats'
@@ -15,6 +16,7 @@ import {
 import './VoicePage.css'
 
 export function VoicePage() {
+    const { t } = useTranslation()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [result, setResult] = useState<VoiceAnalysisResponse | null>(null)
@@ -25,6 +27,12 @@ export function VoicePage() {
 
     // Feedback
     const { toast, showToast, closeToast } = useToast()
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
 
     // Fetch Stats on Load and after analysis
     useEffect(() => {
@@ -62,7 +70,7 @@ export function VoicePage() {
             }, 500)
         } catch (err: any) {
             console.error("Failed to load historical scan:", err)
-            setError("Could not load the requested scan. It may have been deleted.")
+            setError(getText('voice.scanLoadError', 'Could not load the requested scan. It may have been deleted.'))
         } finally {
             setLoading(false)
         }
@@ -76,11 +84,11 @@ export function VoicePage() {
         try {
             const response = await analyzeVoice(file, true)
             setResult(response)
-            showToast('Analysis complete!', 'success')
+            showToast(getText('voice.analysisComplete', 'Analysis complete!'), 'success')
             setRefreshTrigger(prev => prev + 1) // Refresh stats
         } catch (err: any) {
             console.error('Analysis error:', err)
-            const errorMsg = err.message || 'Analysis failed'
+            const errorMsg = err.message || getText('voice.analysisFailed', 'Analysis failed')
             setError(errorMsg)
             showToast(errorMsg, 'error')
         } finally {
@@ -99,10 +107,9 @@ export function VoicePage() {
             )}
 
             <div className="page-header">
-                <h1>🎙️ Voice Deepfake Detection</h1>
+                <h1>🎙️ {getText('voice.pageTitle', 'Voice Deepfake Detection')}</h1>
                 <p>
-                    Advanced AI-powered audio analysis to detect synthetic voices using
-                    WavLM embeddings and spectral artifact detection.
+                    {getText('voice.pageDescription', 'Advanced AI-powered audio analysis to detect synthetic voices using WavLM embeddings and spectral artifact detection.')}
                 </p>
             </div>
 
@@ -118,7 +125,7 @@ export function VoicePage() {
                 {loading && (
                     <div className="loader-wrapper">
                         <Loader />
-                        <p className="loading-text">Running deepfake detection models...</p>
+                        <p className="loading-text">{getText('voice.runningModels', 'Running deepfake detection models...')}</p>
                     </div>
                 )}
 
