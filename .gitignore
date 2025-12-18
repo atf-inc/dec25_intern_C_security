@@ -21,6 +21,9 @@ data/
 *.pth
 *.npz
 
+# But allow backend checkpoints
+!backend/checkpoints/*.pth
+
 # IDE
 .vscode/
 .idea/
