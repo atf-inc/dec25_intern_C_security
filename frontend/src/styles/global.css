@@ -98,7 +98,14 @@ textarea,
 .evidence-card,
 .voice-result-card,
 .evidence-count-badge {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  /* Performance: Ultra-fast color transitions (60ms) for snappy feel */
+  transition: background-color 60ms ease, color 60ms ease, border-color 60ms ease;
+}
+
+/* 🔒 Transition Lock Utility */
+.no-transition,
+.no-transition * {
+  transition: none !important;
 }
 
 body {
