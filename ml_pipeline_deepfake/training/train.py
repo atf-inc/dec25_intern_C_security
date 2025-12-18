@@ -116,6 +116,8 @@ def extract_features_from_directory(data_dir):
     wavlm_features = []
     whisper_features = []
     dsp_features = []
+    successful_labels = []  # Track labels for successful extractions only
+    successful_files = []
     
     for i, audio_file in enumerate(all_files):
         print(f"\nProcessing {i+1}/{len(all_files)}: {os.path.basename(audio_file)}")
@@ -123,32 +125,39 @@ def extract_features_from_directory(data_dir):
         try:
             # Extract WavLM features
             wavlm_feat = wavlm_extractor.extract(audio_file)
-            wavlm_features.append(wavlm_feat)
             
             # Extract Whisper features
             whisper_feat = whisper_extractor.extract(audio_file)
-            whisper_features.append(whisper_feat)
             
             # Extract DSP features
             dsp_feat = dsp_extractor.extract(audio_file)
+            
+            # Only add if all extractions succeeded
+            wavlm_features.append(wavlm_feat)
+            whisper_features.append(whisper_feat)
             dsp_features.append(dsp_feat)
+            successful_labels.append(labels[i])
+            successful_files.append(audio_file)
             
         except Exception as e:
             print(f"  ⚠ Error processing {audio_file}: {e}")
+            print(f"  Skipping this sample...")
             continue
     
     # Convert to numpy arrays
     wavlm_features = np.vstack(wavlm_features)
     whisper_features = np.vstack(whisper_features)
     dsp_features = np.vstack(dsp_features)
-    labels = np.array(labels)
+    labels = np.array(successful_labels)
     
     print(f"\n✓ Feature extraction complete!")
+    print(f"  Successfully processed: {len(successful_labels)}/{len(all_files)} samples")
     print(f"  WavLM shape: {wavlm_features.shape}")
     print(f"  Whisper shape: {whisper_features.shape}")
     print(f"  DSP shape: {dsp_features.shape}")
+    print(f"  Labels shape: {labels.shape}")
     
-    return wavlm_features, whisper_features, dsp_features, labels, all_files
+    return wavlm_features, whisper_features, dsp_features, labels, successful_files
 
 
 
