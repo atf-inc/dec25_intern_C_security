@@ -673,16 +673,182 @@ def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
         "llm_confidence": merged.get("model_meta", {}).get("confidence", 0.8) if use_llm else None
     })
 
-    # 🚀 TEMPORARY: Simplified explanation for testing (disable full AI explanation)
-    ai_explanation = {
-        "summary": f"Email classified as {label} with {final_score}% confidence using improved hybrid detection.",
-        "suspicious_indicators": reasons[:3] if reasons else ["No specific indicators detected"],
-        "ai_reasoning": "Analysis completed using enhanced hybrid AI detection system with improved recall.",
-        "technical_indicators": [f"Risk score: {final_score}/100", f"Analysis method: {model_meta.get('analysis_method', 'hybrid')}"],
-        "final_assessment": f"{label} - {final_score}% confidence",
-        "recommended_action": "Exercise caution and verify sender identity before taking action." if label != "SAFE" else "Email appears safe, but always verify sender identity.",
-        "full_explanation": f"This email has been analyzed using improved detection algorithms and classified as {label}."
+def _generate_gemini_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str, raw_text: str) -> str:
+    """Generate AI reasoning using Gemini API for human-friendly explanations."""
+    
+    # Create a focused prompt for Gemini to explain the email analysis
+    explanation_prompt = f"""You are a cybersecurity expert explaining email analysis results to a non-technical user. 
+
+Email Analysis Results:
+- Classification: {label}
+- Confidence Score: {score}%
+- Subject: "{subject}"
+- From: {from_email}
+- Detected Issues: {', '.join(reasons[:3])}
+
+Your task: Explain in 2-3 sentences WHY this email was classified as {label}. Be conversational, clear, and helpful.
+
+Guidelines:
+- Use simple language, avoid technical jargon
+- Explain the specific threats or safety indicators found
+- Focus on WHY the user should be concerned (or not concerned)
+- Be like a friendly security expert talking to a friend
+
+Examples:
+- For PHISHING: "This email is trying to trick you by pretending to be from PayPal, but the sender's address doesn't match PayPal's real domain. The message also creates fake urgency to pressure you into clicking malicious links before you have time to think."
+- For SAFE: "This email appears legitimate because it comes from Chase's official domain, uses professional language, and provides legitimate contact methods instead of pressuring you to click suspicious links."
+
+Your explanation:"""
+
+    try:
+        # Only call Gemini if we have an API key, otherwise use fallback
+        if LLM_PROVIDER == "gemini" and os.getenv("GEMINI_API_KEY"):
+            res = call_gemini_raw(
+                explanation_prompt, 
+                api_key=os.getenv("GEMINI_API_KEY"), 
+                model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"), 
+                max_output_tokens=200, 
+                temperature=0.3  # Slightly more creative for explanations
+            )
+            gemini_explanation = res.get("text", "").strip()
+            
+            # Validate the response is reasonable
+            if gemini_explanation and len(gemini_explanation) > 20 and len(gemini_explanation) < 500:
+                return gemini_explanation
+        
+        # Fallback to intelligent hardcoded explanations if Gemini fails
+        return _generate_fallback_reasoning(label, score, reasons, subject, from_email)
+        
+    except Exception as ex:
+        logger.warning(f"Gemini explanation failed: {ex}, using fallback")
+        return _generate_fallback_reasoning(label, score, reasons, subject, from_email)
+
+def _generate_fallback_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str) -> str:
+    """Fallback reasoning when Gemini API is unavailable."""
+    
+    if label == "PHISHING":
+        if "impersonation" in " ".join(reasons).lower():
+            return f"This email is impersonating a trusted organization to deceive you. The sender's email address ({from_email}) doesn't match the legitimate domain of the company they claim to represent. Combined with urgency tactics and requests for sensitive information, this is a classic phishing attack designed to steal your credentials or personal data."
+        elif "urgency" in " ".join(reasons).lower() and "credential" in " ".join(reasons).lower():
+            return f"This email uses psychological manipulation by creating a false sense of urgency to pressure you into revealing sensitive information. Legitimate companies rarely ask for passwords or credentials via email, and they don't threaten account suspension to force immediate action."
+        else:
+            return f"Multiple red flags indicate this is a phishing attempt. The combination of suspicious sender address, deceptive links, and social engineering tactics are hallmarks of cybercriminal activity designed to compromise your security."
+    elif label == "SUSPICIOUS":
+        return f"While not definitively malicious, this email exhibits several concerning patterns. You should verify the sender's identity through official channels before taking any action or clicking any links."
+    else:  # SAFE
+        return f"This email shows characteristics of legitimate business communication. The sender's domain appears authentic, the message doesn't employ pressure tactics, and it provides legitimate contact methods. However, always remain vigilant and verify unexpected requests through official channels."
+
+def _generate_human_explanation(label: str, score: int, reasons: List[str], evidence: List[Dict], payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate human-friendly AI explanation of the analysis."""
+    
+    # Extract key information
+    subject = payload.get("subject", "")
+    from_email = payload.get("from_email", "")
+    raw_text = payload.get("raw_text", "")
+    
+    # Generate threat summary based on label
+    if label == "PHISHING":
+        if score >= 80:
+            summary = f"🚨 This email is highly likely a phishing attack. Our AI detected multiple red flags that are commonly used by cybercriminals to steal your personal information or credentials."
+        else:
+            summary = f"⚠️ This email shows strong signs of being a phishing attempt. Several suspicious patterns were detected that suggest this is not a legitimate message."
+    elif label == "SUSPICIOUS":
+        summary = f"⚠️ This email contains some concerning elements that warrant caution. While not definitively malicious, it exhibits patterns often seen in phishing attempts."
+    else:  # SAFE
+        summary = f"✅ This email appears to be legitimate. Our analysis found no significant red flags, and it shows characteristics of authentic business communication."
+    
+    # Generate Gemini-powered AI reasoning
+    ai_reasoning = _generate_gemini_reasoning(label, score, reasons, subject, from_email, raw_text)
+    
+    # Generate human-readable suspicious indicators
+    suspicious_indicators = []
+    for reason in reasons[:5]:  # Top 5 reasons
+        reason_lower = reason.lower()
+        
+        # Translate technical reasons to human language
+        if "urgency" in reason_lower or "urgent" in reason_lower:
+            suspicious_indicators.append("Creates artificial urgency to pressure you into acting quickly without thinking")
+        elif "credential" in reason_lower or "password" in reason_lower:
+            suspicious_indicators.append("Attempts to trick you into revealing sensitive login credentials or passwords")
+        elif "brand impersonation" in reason_lower or "impersonation" in reason_lower:
+            brand = reason.split("impersonation")[0].strip() if "impersonation" in reason else "a trusted company"
+            suspicious_indicators.append(f"Pretends to be from {brand} but the sender's email address doesn't match their official domain")
+        elif "character substitution" in reason_lower or "typosquatting" in reason_lower:
+            suspicious_indicators.append("Uses a fake domain that looks similar to a legitimate one (like replacing 'l' with 'I' or 'o' with '0')")
+        elif "link mismatch" in reason_lower or "anchor" in reason_lower:
+            suspicious_indicators.append("The link text says one thing, but clicking it would take you to a completely different website")
+        elif "suspicious domain" in reason_lower or "free domain" in reason_lower:
+            suspicious_indicators.append("Uses a suspicious or free domain often associated with scam emails")
+        elif "shortened" in reason_lower or "redirect" in reason_lower:
+            suspicious_indicators.append("Contains shortened URLs that hide the real destination website")
+        elif "grammar" in reason_lower or "spelling" in reason_lower:
+            suspicious_indicators.append("Contains grammar or spelling errors typical of mass phishing campaigns")
+        elif "sender" in reason_lower and "generic" in reason_lower:
+            suspicious_indicators.append("Sent from a generic or suspicious email address that doesn't match the claimed sender")
+        else:
+            # Keep original if we can't translate it
+            suspicious_indicators.append(reason)
+    
+    # Generate technical indicators in human-friendly format
+    technical_indicators = []
+    technical_indicators.append(f"Threat confidence: {score}% ({_get_confidence_description(score)})")
+    
+    # Add evidence-based technical details
+    for ev in evidence[:3]:
+        ev_type = ev.get("type", "")
+        if ev_type == "urgency" or ev_type == "high_urgency":
+            count = ev.get("count", 1)
+            technical_indicators.append(f"Detected {count} urgency manipulation tactic{'s' if count > 1 else ''}")
+        elif ev_type == "brand_impersonation":
+            brand = ev.get("brand", "unknown")
+            technical_indicators.append(f"Brand impersonation detected: {brand.title()}")
+        elif ev_type == "character_substitution":
+            domain = ev.get("domain", "")
+            target = ev.get("target", "")
+            technical_indicators.append(f"Fake domain detected: {domain} (mimicking {target})")
+        elif ev_type == "link_mismatch":
+            technical_indicators.append(f"Deceptive link: displays '{ev.get('anchor', '')}' but links to different site")
+    
+    # Final assessment
+    if label == "PHISHING":
+        final_assessment = f"HIGH RISK - Do not click any links or provide any information. This is very likely a phishing attack."
+    elif label == "SUSPICIOUS":
+        final_assessment = f"MEDIUM RISK - Exercise caution. Verify the sender through official channels before proceeding."
+    else:
+        final_assessment = f"LOW RISK - Email appears legitimate, but always verify unexpected requests independently."
+    
+    # Recommended action
+    if label == "PHISHING":
+        recommended_action = "🛡️ Delete this email immediately. Do not click any links or download attachments. If you're concerned about your account, visit the company's official website directly (not through email links) or call their official customer service number."
+    elif label == "SUSPICIOUS":
+        recommended_action = "⚠️ Do not click any links yet. Contact the sender through official channels (phone number from their website, not from the email) to verify this message is legitimate before taking any action."
+    else:
+        recommended_action = "✅ This email appears safe, but if it contains unexpected requests or asks for sensitive information, verify independently by contacting the sender through official channels."
+    
+    return {
+        "summary": summary,
+        "ai_reasoning": ai_reasoning,
+        "suspicious_indicators": suspicious_indicators,
+        "technical_indicators": technical_indicators,
+        "final_assessment": final_assessment,
+        "recommended_action": recommended_action
     }
+
+def _get_confidence_description(score: int) -> str:
+    """Get human-readable confidence description."""
+    if score >= 90:
+        return "Very High Confidence"
+    elif score >= 70:
+        return "High Confidence"
+    elif score >= 50:
+        return "Medium Confidence"
+    elif score >= 30:
+        return "Low Confidence"
+    else:
+        return "Very Low Confidence"
+
+    # 🚀 GEMINI-POWERED: Full AI explanation system
+    ai_explanation = _generate_human_explanation(label, final_score, reasons, evidence, payload)
     
     return {
         "label": label,

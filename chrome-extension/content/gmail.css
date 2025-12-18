@@ -1,0 +1,40 @@
+/* ATF CyberX Gmail Integration Styles */
+
+.atf-security-badge {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.atf-security-badge:hover {
+    transform: scale(1.05) !important;
+    transition: all 0.2s ease !important;
+}
+
+.atf-explanation-panel {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.atf-explanation-panel .close-panel:hover {
+    background: #e5e7eb !important;
+    color: #374151 !important;
+}
+
+/* Ensure our elements don't interfere with Gmail */
+.atf-security-badge,
+.atf-explanation-panel {
+    box-sizing: border-box !important;
+    line-height: normal !important;
+}
