@@ -23,29 +23,28 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
     const toggleTheme = () => {
         setIsAnimating(true);
 
-        // Create ripple effect
-        const ripple = document.createElement('div');
-        ripple.className = 'theme-ripple';
-        document.body.appendChild(ripple);
+        // 🔒 Transition Lock: Prevent layout thrashing during toggle
+        document.documentElement.classList.add('no-transition');
+
+        const newTheme = !isDark;
+        setIsDark(newTheme);
+
+        if (newTheme) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+
+        // 🔓 Unlock transitions immediately after state change
+        // Force reflow to ensure the new state is applied without transition
+        void document.documentElement.offsetHeight;
 
         setTimeout(() => {
-            const newTheme = !isDark;
-            setIsDark(newTheme);
-
-            if (newTheme) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            }
-
-            // Remove ripple effect
-            setTimeout(() => {
-                document.body.removeChild(ripple);
-                setIsAnimating(false);
-            }, 600);
-        }, 300);
+            document.documentElement.classList.remove('no-transition');
+            setIsAnimating(false);
+        }, 0);
     };
 
     return (
