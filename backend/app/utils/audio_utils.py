@@ -169,7 +169,7 @@ def extract_audio_features(waveform, sample_rate):
 
 def validate_audio_file(file_bytes, max_duration_seconds=30):
     """
-    Validate uploaded audio file.
+    Validate uploaded audio file (supports all formats via librosa).
     
     Args:
         file_bytes: Audio file bytes
@@ -180,16 +180,31 @@ def validate_audio_file(file_bytes, max_duration_seconds=30):
         error_message: Error message if invalid
     """
     try:
-        waveform, sr = sf.read(io.BytesIO(file_bytes))
-        duration = len(waveform) / sr
+        # Use librosa which supports MP3/M4A/FLAC/OGG via audioread
+        import tempfile
+        import os
         
-        if duration > max_duration_seconds:
-            return False, f"Audio too long ({duration:.1f}s). Max: {max_duration_seconds}s"
+        # Save to temp file for librosa
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.audio') as temp_file:
+            temp_file.write(file_bytes)
+            temp_path = temp_file.name
         
-        if duration < 1.0:
-            return False, "Audio too short (min 1 second)"
-        
-        return True, None
+        try:
+            # Load with librosa (supports all formats)
+            waveform, sr = librosa.load(temp_path, sr=None, duration=max_duration_seconds + 1)
+            duration = len(waveform) / sr
+            
+            if duration > max_duration_seconds:
+                return False, f"Audio too long ({duration:.1f}s). Max: {max_duration_seconds}s"
+            
+            if duration < 1.0:
+                return False, "Audio too short (min 1 second)"
+            
+            return True, None
+        finally:
+            # Clean up temp file
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
     
     except Exception as e:
         return False, f"Invalid audio file: {str(e)}"
