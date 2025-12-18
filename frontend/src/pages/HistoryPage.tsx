@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import './HistoryPage.css'
 // Email Imports
 import { getScanHistory, ScanHistoryItem, ScanHistoryParams } from '../api/phishingApi'
 import { HistoryTable } from '../components/history/HistoryTable'
@@ -94,41 +95,23 @@ export function HistoryPage() {
     }
 
     return (
-        <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
-            <div style={{ marginBottom: "2rem" }}>
-                <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "#2c3e50" }}>Security Scan History</h1>
-                <p style={{ color: "#7f8c8d" }}>View and analyze past email and voice security scans.</p>
+        <div className="history-page">
+            <div className="page-title-section">
+                <h1 className="page-title">Security Scan History</h1>
+                <p className="page-description">View and analyze past email and voice security scans.</p>
             </div>
 
             {/* Tab Navigation */}
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid #e5e7eb' }}>
+            <div className="tabs-nav">
                 <button
                     onClick={() => setActiveTab('email')}
-                    style={{
-                        padding: '1rem 1.5rem',
-                        border: 'none',
-                        background: 'none',
-                        borderBottom: activeTab === 'email' ? '2px solid #3b82f6' : '2px solid transparent',
-                        color: activeTab === 'email' ? '#3b82f6' : '#64748b',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s'
-                    }}
+                    className={`tab-button ${activeTab === 'email' ? 'active' : ''}`}
                 >
                     📧 Email Scans
                 </button>
                 <button
                     onClick={() => setActiveTab('voice')}
-                    style={{
-                        padding: '1rem 1.5rem',
-                        border: 'none',
-                        background: 'none',
-                        borderBottom: activeTab === 'voice' ? '2px solid #3b82f6' : '2px solid transparent',
-                        color: activeTab === 'voice' ? '#3b82f6' : '#64748b',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s'
-                    }}
+                    className={`tab-button ${activeTab === 'voice' ? 'active' : ''}`}
                 >
                     🎙️ Voice Scans
                 </button>
@@ -139,7 +122,7 @@ export function HistoryPage() {
             {/* Only show Filters/Chart for Email tab currently as Voice stats are different */}
             {activeTab === 'email' && (
                 <>
-                    <div style={{ marginBottom: "2rem" }}>
+                    <div className="chart-section">
                         <HistoryChart data={emailData} />
                     </div>
                     <HistoryFilters filters={filters} onFilterChange={setFilters} />
@@ -147,7 +130,7 @@ export function HistoryPage() {
             )}
 
             {activeTab === 'voice' && (
-                <div style={{ marginBottom: "2rem" }}>
+                <div className="chart-section">
                     <HistoryChart title="Deepfake Confidence Trend" data={voiceData.map(item => ({
                         id: item.id || 0,
                         date: item.created_at || new Date().toISOString(),
@@ -162,7 +145,7 @@ export function HistoryPage() {
             )}
 
             {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+                <div className="loader-container">
                     <Loader />
                 </div>
             ) : (

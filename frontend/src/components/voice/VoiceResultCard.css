@@ -1,8 +1,8 @@
 .voice-result-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-color);
     padding: 2rem;
     margin-top: 2rem;
     animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -28,7 +28,7 @@
 }
 
 .voice-section h3 {
-    color: #1e293b;
+    color: var(--text-primary);
     font-size: 1.125rem;
     font-weight: 700;
     margin-bottom: 1.25rem;
@@ -46,12 +46,12 @@
     flex-wrap: wrap;
     gap: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid #daecfa;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header-content h2 {
     margin: 0 0 0.75rem 0;
-    color: #0f172a;
+    color: var(--text-primary);
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -64,27 +64,28 @@
 }
 
 .meta-tag {
-    background: #f1f5f9;
+    background: var(--bg-tertiary);
     padding: 0.375rem 0.75rem;
     border-radius: 8px;
-    color: #475569;
+    color: var(--text-secondary);
     font-size: 0.8125rem;
     font-weight: 600;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 0.375rem;
 }
 
-/* Premium AI Explanation Card */
+/* Premium AI Explanation Card - Theme Aware */
 .ai-explanation-card {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background: var(--card-bg);
     border-radius: 16px;
     padding: 2rem;
-    color: white;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+    color: var(--text-primary);
+    box-shadow: var(--card-shadow);
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 .ai-explanation-card::before {
@@ -94,7 +95,7 @@
     right: 0;
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent 70%);
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 70%);
 }
 
 .ai-header {
@@ -107,7 +108,7 @@
 }
 
 .ai-icon-wrapper {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--bg-tertiary);
     width: 48px;
     height: 48px;
     border-radius: 12px;
@@ -115,7 +116,7 @@
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
 }
 
 .ai-icon {
@@ -126,22 +127,78 @@
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-primary);
 }
 
 .ai-subtitle {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 .ai-text {
     margin: 0;
     line-height: 1.7;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     font-size: 1rem;
     position: relative;
     z-index: 1;
+}
+
+/* 🌙 Dark Mode AI Card Enhancement */
+:root.dark .ai-explanation-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+    border-color: #475569;
+}
+
+:root.dark .ai-explanation-card::before {
+    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent 70%);
+}
+
+:root.dark .ai-icon-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .ai-title-content h3 {
+    color: white;
+}
+
+:root.dark .ai-subtitle {
+    color: #94a3b8;
+}
+
+:root.dark .ai-text {
+    color: #cbd5e1;
+}
+
+/* 🌞 Light Mode AI Card Enhancement */
+:root:not(.dark) .ai-explanation-card {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12);
+    border-color: #bfdbfe;
+}
+
+:root:not(.dark) .ai-explanation-card::before {
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 70%);
+}
+
+:root:not(.dark) .ai-icon-wrapper {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+:root:not(.dark) .ai-title-content h3 {
+    color: #1e293b;
+}
+
+:root:not(.dark) .ai-subtitle {
+    color: #64748b;
+}
+
+:root:not(.dark) .ai-text {
+    color: #334155;
 }
 
 /* Highlights Grid */
@@ -153,8 +210,8 @@
 
 .highlight-card {
     padding: 1.25rem;
-    background: #fff7ed;
-    border: 1px solid #f9731633;
+    background: rgba(255, 247, 237, 0.8);
+    border: 1px solid rgba(249, 115, 22, 0.2);
     border-radius: 12px;
     display: flex;
     gap: 1rem;
@@ -169,7 +226,7 @@
 
 .highlight-icon {
     font-size: 1.25rem;
-    background: white;
+    background: var(--card-bg);
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -177,11 +234,12 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(249, 115, 22, 0.1);
+    color: #f97316;
 }
 
 .highlight-text {
     margin: 0;
-    color: #9a3412;
+    color: var(--warning-color);
     font-size: 0.9375rem;
     line-height: 1.5;
     font-weight: 500;
@@ -196,8 +254,8 @@
 }
 
 .artifact-card {
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 1.25rem;
     transition: all 0.3s ease;
@@ -211,13 +269,13 @@
 }
 
 .artifact-card.status-suspicious {
-    border-color: #fee2e2;
-    background: #fffafa;
+    border-color: rgba(239, 68, 68, 0.2);
+    background: rgba(254, 226, 226, 0.3);
 }
 
 .artifact-card.status-suspicious:hover {
     box-shadow: 0 12px 24px rgba(220, 38, 38, 0.08);
-    border-color: #fecaca;
+    border-color: rgba(239, 68, 68, 0.3);
 }
 
 .artifact-header {
@@ -230,7 +288,7 @@
 .artifact-label {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #64748b;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -244,13 +302,13 @@
 }
 
 .status-badge.suspicious {
-    background: #fee2e2;
-    color: #dc2626;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
 }
 
 .status-badge.safe {
-    background: #dcfce7;
-    color: #16a34a;
+    background: rgba(22, 163, 74, 0.1);
+    color: var(--success-color);
 }
 
 .artifact-metric-group {
@@ -263,14 +321,14 @@
 .artifact-value {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #1e293b;
+    color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     letter-spacing: -0.03em;
 }
 
 .artifact-unit {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
@@ -280,7 +338,7 @@
     align-items: center;
     gap: 0.5rem;
     padding-top: 0.75rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--border-color);
 }
 
 .status-indicator {
@@ -290,18 +348,18 @@
 }
 
 .status-indicator.suspicious {
-    background: #ef4444;
+    background: var(--danger-color);
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 .status-indicator.safe {
-    background: #22c55e;
+    background: var(--success-color);
     box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
 }
 
 .artifact-context {
     font-size: 0.75rem;
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
@@ -309,10 +367,10 @@
 .technical-toggle {
     width: 100%;
     padding: 1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    color: #64748b;
+    color: var(--text-secondary);
     cursor: pointer;
     font-weight: 600;
     display: flex;
@@ -322,8 +380,8 @@
 }
 
 .technical-toggle:hover {
-    background: #f1f5f9;
-    color: #334155;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .toggle-arrow {
@@ -339,9 +397,9 @@
 .audio-player-section {
     margin-bottom: 2rem;
     padding: 1.5rem;
-    background: #f8fafc;
+    background: var(--bg-secondary);
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
@@ -353,7 +411,7 @@
 
 .audio-label {
     font-size: 0.95rem;
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -371,8 +429,8 @@
 
 /* Chrome/Edge specific styling */
 .custom-audio-player::-webkit-media-controls-panel {
-    background-color: #ffffff;
-    border: 1px solid #cbd5e1;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
 }
 
@@ -381,8 +439,18 @@
 .custom-audio-player::-webkit-media-controls-timeline,
 .custom-audio-player::-webkit-media-controls-current-time-display,
 .custom-audio-player::-webkit-media-controls-time-remaining-display {
-    filter: none;
-    color: #0f172a;
+    filter: invert(0);
+    /* Default for light mode */
+    color: var(--text-primary);
+}
+
+/* In dark mode, invert controls to make them visible against dark bg if needed, or adjust */
+:root.dark .custom-audio-player::-webkit-media-controls-play-button,
+:root.dark .custom-audio-player::-webkit-media-controls-mute-button,
+:root.dark .custom-audio-player::-webkit-media-controls-timeline,
+:root.dark .custom-audio-player::-webkit-media-controls-current-time-display,
+:root.dark .custom-audio-player::-webkit-media-controls-time-remaining-display {
+    filter: invert(1);
 }
 
 .technical-content {
@@ -438,4 +506,32 @@
     .header-content h2 {
         font-size: 1.75rem;
     }
+}
+
+/* Dark Mode overrides handled by variables - redundant blocks removed 
+   except for specific overrides that are not covered by global vars */
+:root.dark .highlight-card {
+    background: rgba(67, 20, 7, 0.4);
+    border-color: rgba(124, 45, 18, 0.4);
+}
+
+:root.dark .artifact-card.status-suspicious {
+    background: rgba(239, 68, 68, 0.14);
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+:root.dark .highlight-text {
+    color: #fdba74;
+}
+
+:root.dark .highlight-icon {
+    background: #7c2d12;
+    color: #fff;
+    box-shadow: none;
+}
+
+:root.dark .technical-content {
+    background: #0f172a;
+    color: var(--color-slate-300);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }

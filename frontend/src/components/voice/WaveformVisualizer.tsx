@@ -9,17 +9,16 @@ interface WaveformVisualizerProps {
     onSeek: (time: number) => void
 }
 
-export function WaveformVisualizer({ 
-    audioUrl, 
-    isPlaying, 
-    currentTime, 
+export function WaveformVisualizer({
+    audioUrl,
+    // isPlaying is available for future use (e.g., animation)
+    currentTime,
     duration,
-    onSeek 
+    onSeek
 }: WaveformVisualizerProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const [audioData, setAudioData] = useState<Float32Array | null>(null)
-    const [isHovering, setIsHovering] = useState(false)
 
     // 1. Decode Audio Data to get Waveform points
     useEffect(() => {
@@ -31,7 +30,7 @@ export function WaveformVisualizer({
                 const arrayBuffer = await response.arrayBuffer()
                 const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-                
+
                 // We only need one channel for visualization
                 setAudioData(audioBuffer.getChannelData(0))
             } catch (e) {
@@ -55,12 +54,12 @@ export function WaveformVisualizer({
         const dpr = window.devicePixelRatio || 1
         const width = container.clientWidth
         const height = 120 // Fixed height
-        
+
         canvas.width = width * dpr
         canvas.height = height * dpr
         canvas.style.width = `${width}px`
         canvas.style.height = `${height}px`
-        
+
         ctx.scale(dpr, dpr)
         ctx.clearRect(0, 0, width, height)
 
@@ -83,25 +82,25 @@ export function WaveformVisualizer({
         for (let i = 0; i < totalBars; i++) {
             let min = 1.0
             let max = -1.0
-            
+
             // Calculate peak in this chunk
             for (let j = 0; j < step; j++) {
                 const datum = audioData[(i * step) + j]
                 if (datum < min) min = datum
                 if (datum > max) max = datum
             }
-            
+
             // Calculate progress to determine color
             const progress = i / totalBars
             const currentPlayProgress = currentTime / duration
-            
+
             ctx.fillStyle = progress <= currentPlayProgress ? playedGradient : unplayedColor
-            
+
             // Draw rounded bar
             const barHeight = Math.max(2, (max - min) * amp)
             const x = i * (barWidth + gap)
             const y = (height - barHeight) / 2
-            
+
             // Rounded rect implementation
             ctx.beginPath()
             ctx.roundRect(x, y, barWidth, barHeight, 2)
@@ -113,23 +112,21 @@ export function WaveformVisualizer({
     // 3. Handle Click to Seek
     const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!duration) return
-        
+
         const rect = canvasRef.current!.getBoundingClientRect()
         const x = e.clientX - rect.left
         const width = rect.width
         const percentage = Math.max(0, Math.min(1, x / width))
-        
+
         onSeek(percentage * duration)
     }
 
     return (
-        <div 
-            className="waveform-container" 
+        <div
+            className="waveform-container"
             ref={containerRef}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
         >
-            <canvas 
+            <canvas
                 ref={canvasRef}
                 onClick={handleCanvasClick}
                 className="waveform-canvas"

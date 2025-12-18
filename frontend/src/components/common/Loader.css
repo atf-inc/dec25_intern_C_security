@@ -7,7 +7,7 @@
 }
 
 .loader {
-  border: 4px solid #f3f4f6;
+  border: 4px solid var(--bg-tertiary);
   border-top: 4px solid var(--primary-color);
   border-radius: 50%;
   width: 40px;
@@ -16,11 +16,19 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loader-container p {
   margin-top: 1rem;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
+
+/* Dark Mode overrides handled by semantic variables */
+/* Removed redundant :root.dark blocks */

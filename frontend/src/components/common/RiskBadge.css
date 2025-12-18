@@ -1,33 +1,82 @@
+/* Base Badge Style */
 .risk-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: bold;
-  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 700;
+  border-left-width: 4px;
+  border-left-style: solid;
+  transition: all 0.2s ease;
 }
 
 .risk-score {
-  font-size: 2rem;
+  font-size: 0.9em;
+  opacity: 0.8;
+  font-family: 'Monaco', monospace;
 }
 
 .risk-level {
   font-size: 0.875rem;
   letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+.risk-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.risk-icon-small {
+  margin-right: 4px;
+}
+
+/* Variant: Low */
 .risk-badge-low {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: transparent;
+  color: var(--success-color);
+  border-left-color: var(--success-color);
 }
 
+/* Variant: Medium */
 .risk-badge-medium {
-  background-color: #fef3c7;
-  color: #92400e;
+  background-color: transparent;
+  color: var(--warning-color);
+  border-left-color: var(--warning-color);
 }
 
+/* Variant: High */
 .risk-badge-high {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: transparent;
+  color: var(--danger-color);
+  border-left-color: var(--danger-color);
+}
+
+/* Size: Small */
+.risk-badge-small {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  border-left-width: 3px;
+}
+
+/* 🌙 Dark Mode Overrides for Visibility */
+:root.dark .risk-badge-low {
+  background-color: transparent;
+  box-shadow: none;
+  color: #4ade80;
+}
+
+:root.dark .risk-badge-medium {
+  background-color: transparent;
+  box-shadow: none;
+  color: #fbbf24;
+}
+
+:root.dark .risk-badge-high {
+  background-color: transparent;
+  box-shadow: none;
+  color: #f87171;
 }

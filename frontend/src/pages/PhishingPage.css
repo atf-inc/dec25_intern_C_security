@@ -19,12 +19,12 @@
 .page-header h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .page-header p {
     font-size: 1.125rem;
-    color: #6b7280;
+    color: var(--text-secondary);
     max-width: 600px;
     margin: 0 auto;
 }
@@ -37,7 +37,7 @@
 
 .loading-text {
     margin-top: 1rem;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.95rem;
     font-weight: 500;
 }
@@ -48,7 +48,7 @@
         flex-direction: column;
         text-align: center;
     }
-    
+
     .page-header h1 {
         font-size: 2rem;
     }

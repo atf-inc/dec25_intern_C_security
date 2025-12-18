@@ -14,7 +14,7 @@
 .voice-page .page-header h1 {
     font-size: 2.5rem;
     margin-bottom: 0.75rem;
-    color: #111827;
+    color: var(--text-primary);
     background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -24,7 +24,7 @@
 
 .voice-page .page-header p {
     font-size: 1.125rem;
-    color: #6b7280;
+    color: var(--text-secondary);
     max-width: 700px;
     margin: 0 auto;
     line-height: 1.6;
@@ -40,11 +40,11 @@
 }
 
 .info-card {
-    background: white;
+    background: var(--card-bg);
     padding: 2rem;
     border-radius: 16px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
     text-align: center;
 }
@@ -63,12 +63,12 @@
 .info-card h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-primary);
     margin-bottom: 0.75rem;
 }
 
 .info-card p {
-    color: #64748b;
+    color: var(--text-secondary);
     line-height: 1.6;
     font-size: 0.95rem;
 }
@@ -87,9 +87,9 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: var(--bg-secondary);
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 .feature-item-icon {
@@ -99,7 +99,7 @@
 
 .feature-item-text {
     font-size: 0.875rem;
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
@@ -222,38 +222,15 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-.voice-page > * {
+.voice-page>* {
     animation: fadeInUp 0.5s ease-out;
-}
-
-/* Dark Mode Support (Optional) */
-@media (prefers-color-scheme: dark) {
-    .voice-page .page-header h1 {
-        color: #f1f5f9;
-    }
-
-    .voice-page .page-header p {
-        color: #94a3b8;
-    }
-
-    .info-card {
-        background: #1e293b;
-        border-color: #334155;
-    }
-
-    .info-card h3 {
-        color: #f1f5f9;
-    }
-
-    .info-card p {
-        color: #94a3b8;
-    }
 }
 
 .analysis-container {

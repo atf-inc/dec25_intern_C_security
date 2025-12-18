@@ -1,5 +1,5 @@
 .navbar {
-  background-color: white;
+  background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -27,7 +27,7 @@
 }
 
 .nav-link {
-  color: var(--text-color);
+  color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
@@ -36,3 +36,6 @@
 .nav-link:hover {
   color: var(--primary-color);
 }
+
+/* Dark Mode overrides handled by semantic variables */
+/* Removed redundant :root.dark blocks as variables handle it */

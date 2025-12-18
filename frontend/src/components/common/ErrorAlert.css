@@ -3,13 +3,20 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  background-color: #fee2e2;
-  border: 1px solid #fecaca;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 8px;
-  color: #991b1b;
+  color: var(--danger-color);
   margin: 1rem 0;
 }
 
 .error-icon {
   font-size: 1.5rem;
+}
+
+/* Dark Mode */
+:root.dark .error-alert {
+  background-color: rgba(153, 27, 27, 0.2);
+  border-color: rgba(153, 27, 27, 0.4);
+  color: #fca5a5;
 }
