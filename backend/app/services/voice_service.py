@@ -65,7 +65,7 @@ class VoiceAnalysisService:
             )
             
             # Load trained checkpoint
-            checkpoint_path = os.path.join("backend", "checkpoints", "fusion_model.pth")
+            checkpoint_path = os.path.join("checkpoints", "fusion_model.pth")
             
             if os.path.exists(checkpoint_path):
                 logger.info(f"Loading checkpoint from {checkpoint_path}")
