@@ -7,16 +7,23 @@ from pydub.utils import which
 import io
 import hashlib
 import os
+import glob
 
 # Auto-detect ffmpeg path on Windows (handles fresh installs)
-if which("ffmpeg") is None:
-    import glob
+ffmpeg_path = which("ffmpeg")
+if ffmpeg_path is None:
     # Check WinGet installation path
     winget_pattern = os.path.expanduser(r"~\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg*\ffmpeg-*\bin\ffmpeg.exe")
     matches = glob.glob(winget_pattern)
     if matches:
-        AudioSegment.converter = matches[0]
-        print(f"✓ FFmpeg found at: {matches[0]}")
+        ffmpeg_path = matches[0]
+        AudioSegment.converter = ffmpeg_path
+        print(f"✓ FFmpeg found at: {ffmpeg_path}")
+        
+        # Also set for audioread (used by librosa for MP3)
+        ffmpeg_dir = os.path.dirname(ffmpeg_path)
+        os.environ['PATH'] = ffmpeg_dir + os.pathsep + os.environ.get('PATH', '')
+        print(f"✓ Added ffmpeg to PATH for audioread")
 
 TARGET_SAMPLE_RATE = 16000  # Standard for Wav2Vec2/WavLM
 
