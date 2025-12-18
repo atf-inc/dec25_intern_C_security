@@ -1,4 +1,3 @@
-
 import {
     BarChart,
     Bar,
@@ -10,6 +9,7 @@ import {
     ResponsiveContainer,
 } from 'recharts'
 import { ScanHistoryItem } from '../../api/phishingApi'
+import './HistoryComponents.css'
 
 interface HistoryChartProps {
     data: ScanHistoryItem[]
@@ -26,10 +26,10 @@ export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartP
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
-                    <p style={{ margin: 0, fontWeight: 'bold' }}>{label}</p>
-                    <p style={{ margin: 0, color: '#8884d8' }}>Score: {payload[0].value}</p>
-                    <p style={{ margin: 0, fontSize: '0.8em' }}>{payload[0].payload.subject}</p>
+                <div className="custom-tooltip">
+                    <p className="tooltip-label">{label}</p>
+                    <p className="tooltip-score">Score: {payload[0].value}</p>
+                    <p className="tooltip-subject">{payload[0].payload.subject}</p>
                 </div>
             )
         }
@@ -37,8 +37,8 @@ export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartP
     }
 
     return (
-        <div style={{ height: '300px', width: '100%', marginBottom: '2rem' }}>
-            <h3 style={{ marginBottom: '1rem', color: '#333' }}>{title}</h3>
+        <div className="chart-container">
+            <h3 className="chart-title">{title}</h3>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={chartData}
@@ -49,15 +49,21 @@ export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartP
                         bottom: 5,
                     }}
                 >
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                     <XAxis
                         dataKey="date"
                         tickFormatter={(date) => new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        stroke="var(--text-color)"
+                        tick={{ fill: 'var(--text-color)' }}
                     />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip content={<CustomTooltip />} />
+                    <YAxis
+                        domain={[0, 100]}
+                        stroke="var(--text-color)"
+                        tick={{ fill: 'var(--text-color)' }}
+                    />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.1)' }} />
                     <Legend />
-                    <Bar dataKey="risk_score" name="Risk Score" fill="#8884d8" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="risk_score" name="Risk Score" fill="var(--primary-color)" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

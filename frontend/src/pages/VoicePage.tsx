@@ -68,7 +68,7 @@ export function VoicePage() {
         }
     }
 
-    const handleAnalyze = async (file: File, useCache: boolean) => {
+    const handleAnalyze = async (file: File, _useCache: boolean) => {
         setLoading(true)
         setError(null)
         setResult(null)

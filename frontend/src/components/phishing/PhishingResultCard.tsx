@@ -421,12 +421,12 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
             )}
 
             {result.model_meta && (
-                <details className="result-section" style={{ marginTop: '24px' }}>
-                    <summary style={{ cursor: 'pointer', fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
+                <details className="result-section analysis-insights-section">
+                    <summary className="section-summary">
                         📊 Analysis Insights
                     </summary>
-                    <div style={{ marginTop: '12px', padding: '16px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                        <h3 style={{ fontSize: '16px', marginBottom: '12px' }}>How We Analyzed This Email</h3>
+                    <div className="insights-content">
+                        <h3 className="insights-title">How We Analyzed This Email</h3>
                         <div className="behavioral-patterns-grid">
                             {/* Analysis Method - User Friendly */}
                             {result.model_meta.analysis_method && (
@@ -533,12 +533,12 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
             )}
 
             {result.model_meta && ((result.reasons?.length || 0) > 3 || (result.evidence?.length || 0) > 3) && (
-                <details className="result-section" style={{ marginTop: '16px' }}>
-                    <summary style={{ cursor: 'pointer', fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
+                <details className="result-section detailed-findings-section">
+                    <summary className="section-summary">
                         🔍 Detailed Security Findings
                     </summary>
-                    <div style={{ marginTop: '12px', padding: '16px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                        <h3 style={{ fontSize: '16px', marginBottom: '12px' }}>Complete Analysis Report</h3>
+                    <div className="insights-content">
+                        <h3 className="insights-title">Complete Analysis Report</h3>
                         <div className="ai-analysis-container">
                             <div className="ai-engine-card">
                                 <div className="ai-engine-header">

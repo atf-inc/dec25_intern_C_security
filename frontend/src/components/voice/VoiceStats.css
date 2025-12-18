@@ -7,10 +7,10 @@
 }
 
 .stat-card {
-    background: white;
+    background: var(--card-bg);
     padding: 1.5rem;
     border-radius: 16px;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-color);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     display: flex;
     align-items: center;
@@ -27,7 +27,7 @@
     width: 50px;
     height: 50px;
     border-radius: 12px;
-    background: #f8fafc;
+    background: var(--bg-tertiary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,7 +37,7 @@
 .stat-info h3 {
     margin: 0;
     font-size: 0.875rem;
-    color: #64748b;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 600;
@@ -46,23 +46,28 @@
 .stat-value {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #1e293b;
+    color: var(--text-primary);
     line-height: 1.2;
 }
 
-.text-red { color: #dc2626; }
+.text-red {
+    color: var(--danger-color);
+}
 
 .stat-sub {
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.8rem;
 }
 
 .stats-skeleton {
     height: 100px;
-    background: #f1f5f9;
+    background: var(--bg-secondary);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
+
+/* Dark Mode overrides handled by semantic variables */
+/* Removed redundant :root.dark blocks */

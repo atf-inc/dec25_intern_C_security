@@ -32,15 +32,16 @@ export function VoiceHistory({ history, onDelete, onView, loading }: VoiceHistor
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="history-actions">
                             <div className="history-badge">
-                                <RiskBadge 
-                                    score={Math.round(scan.confidence * 100)} 
-                                    level={scan.risk_level} 
+                                <RiskBadge
+                                    score={Math.round(scan.confidence * 100)}
+                                    level={scan.risk_level}
+                                    size="small"
                                 />
                             </div>
-                            <button 
+                            <button
                                 className="delete-btn"
                                 onClick={(e) => {
                                     e.stopPropagation()

@@ -1,6 +1,6 @@
-
 import { ScanHistoryItem } from '../../api/phishingApi'
 import { RiskBadge } from '../common/RiskBadge'
+import './HistoryComponents.css'
 
 interface HistoryTableProps {
     data: ScanHistoryItem[]
@@ -11,74 +11,82 @@ interface HistoryTableProps {
 export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProps) {
     if (!data || data.length === 0) {
         return (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+            <div className="empty-state">
                 No scan history available.
             </div>
         )
     }
 
     return (
-        <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid #eee' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="table-container">
+            <table className="history-table">
+                <thead className="table-head">
                     <tr>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Type</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Date</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Subject/File</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Sender</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Risk Level</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Score</th>
-                        <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Actions</th>
+                        <th className="table-header-cell">Type</th>
+                        <th className="table-header-cell">Date</th>
+                        <th className="table-header-cell">Subject/File</th>
+                        <th className="table-header-cell">Sender</th>
+                        <th className="table-header-cell">Detection</th>
+                        <th className="table-header-cell">Risk Level</th>
+                        {/* <th className="table-header-cell">Score</th> Removed as it's in badge */}
+                        <th className="table-header-cell">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item) => (
-                        <tr key={item.id} style={{ borderBottom: '1px solid #eee' }}>
-                            <td style={{ padding: '12px' }}>
-                                <span title={item.type === 'voice' ? 'Voice Scan' : 'Email Scan'}>
-                                    {item.type === 'voice' ? '🎤' : '📧'}
-                                </span>
-                            </td>
-                            <td style={{ padding: '12px' }}>{new Date(item.date).toLocaleDateString()}</td>
-                            <td style={{ padding: '12px' }}>{item.subject || 'N/A'}</td>
-                            <td style={{ padding: '12px' }}>{item.sender || 'N/A'}</td>
-                            <td style={{ padding: '12px' }}>
-                                <RiskBadge level={item.risk_level} score={item.risk_score} />
-                            </td>
-                            <td style={{ padding: '12px' }}>{item.risk_score}</td>
-                            <td style={{ padding: '12px' }}>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                    <button
-                                        onClick={() => onViewDetails?.(item.id)}
-                                        style={{
-                                            padding: '6px 12px',
-                                            backgroundColor: '#007bff',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        View
-                                    </button>
-                                    <button
-                                        onClick={() => onDelete?.(item.id)}
-                                        style={{
-                                            padding: '6px 12px',
-                                            backgroundColor: '#dc3545',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer'
-                                        }}
-                                        title="Delete Scan"
-                                    >
-                                        🗑️
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
+                    {data.map((item) => {
+                        const normalizeRisk = (r: string) => {
+                            const l = r.toLowerCase();
+                            if (['safe', 'low'].includes(l)) return 'low';
+                            if (['suspicious', 'medium'].includes(l)) return 'medium';
+                            return 'high';
+                        };
+                        const riskStyle = normalizeRisk(item.risk_level);
+
+                        return (
+                            <tr key={item.id} className="table-row" data-risk={riskStyle}>
+                                <td className="table-cell">
+                                    <span title={item.type === 'voice' ? 'Voice Scan' : 'Email Scan'}>
+                                        {item.type === 'voice' ? '🎤' : '📧'}
+                                    </span>
+                                </td>
+                                <td className="table-cell">{new Date(item.date).toLocaleDateString()}</td>
+                                <td className="table-cell">{item.subject || 'N/A'}</td>
+                                <td className="table-cell">{item.sender || 'N/A'}</td>
+                                <td className="table-cell">
+                                    {(() => {
+                                        const raw = item.risk_level.toLowerCase();
+                                        const isSafe = ['safe', 'low', 'clean', 'legit'].includes(raw);
+                                        return (
+                                            <span className={`detection-badge ${isSafe ? 'safe' : 'phishing'}`}>
+                                                {isSafe ? '✅ Safe' : '⚠️ Phishing'}
+                                            </span>
+                                        );
+                                    })()}
+                                </td>
+                                <td className="table-cell">
+                                    <RiskBadge level={item.risk_level} score={item.risk_score} size="small" />
+                                </td>
+                                {/* Score is now included in RiskBadge */}
+                                <td className="table-cell">
+                                    <div className="action-buttons">
+                                        <button
+                                            onClick={() => onViewDetails?.(item.id)}
+                                            className="action-btn btn-view"
+                                        >
+                                            View
+                                        </button>
+                                        <button
+                                            onClick={() => onDelete?.(item.id)}
+                                            className="action-btn btn-delete"
+                                            title="Delete Scan"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

@@ -2,27 +2,103 @@
 @import './design-tokens.css';
 @import './animations.css';
 
-/* Modern Animation System - Inline for compatibility */
+:root {
+  /* Semantic Variables - Light Mode Default */
+  --primary-color: #2563eb;
+  --danger-color: #dc2626;
+  --warning-color: #f59e0b;
+  --success-color: #16a34a;
 
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f1f5f9;
+
+  /* Legacy mapping support */
+  --bg-color: var(--bg-secondary);
+
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  /* Legacy mapping support */
+  --text-color: var(--text-primary);
+
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+  --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  /* Animation Durations */
+  --anim-duration-fast: 200ms;
+  --anim-duration-normal: 300ms;
+  --anim-duration-slow: 500ms;
+
+  /* Easing Curves */
+  --anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root.dark {
+  /* Dark Mode Overrides */
+  --primary-color: #3b82f6;
+
+  --bg-primary: #0f172a;
+  /* slate-900 */
+  --bg-secondary: #1e293b;
+  /* slate-800 */
+  --bg-tertiary: #334155;
+  /* slate-700 */
+  --bg-color: var(--bg-primary);
+  /* Update legacy */
+
+  --text-primary: #f1f5f9;
+  /* slate-100 */
+  --text-secondary: #cbd5e1;
+  /* slate-300 */
+  --text-muted: #94a3b8;
+  /* slate-400 */
+  --text-color: var(--text-primary);
+  /* Update legacy */
+
+  --border-color: #334155;
+  /* slate-700 */
+  --input-bg: #0f172a;
+  --input-border: #475569;
+
+  --card-bg: #1e293b;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.5);
+
+  --gradient-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+}
+
+/* Base Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-:root {
-  --primary-color: #2563eb;
-  --danger-color: #dc2626;
-  --warning-color: #f59e0b;
-  --success-color: #16a34a;
-  --bg-color: #f9fafb;
-  --text-color: #111827;
-  --border-color: #e5e7eb;
-  
-  /* Enhanced Modern Colors */
-  --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+body,
+.card,
+button,
+input,
+select,
+textarea,
+.navbar,
+.modal-content,
+.toast,
+.email-form,
+.history-filters,
+.evidence-card,
+.voice-result-card,
+.evidence-count-badge {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 body {
@@ -31,8 +107,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .container {
@@ -46,39 +122,12 @@ button {
   font-family: inherit;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: inherit;
-}
-/* Modern Design Tokens */
-:root {
-  /* Animation Durations */
-  --anim-duration-fast: 200ms;
-  --anim-duration-normal: 300ms;
-  --anim-duration-slow: 500ms;
-  
-  /* Easing Curves */
-  --anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --anim-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  
-  /* Modern Colors */
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-500: #64748b;
-  --color-slate-700: #334155;
-  
-  /* Modern Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
-  /* Border Radius */
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
 }
 
 /* Core Animation Keyframes */
@@ -87,6 +136,7 @@ input, textarea {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -98,6 +148,7 @@ input, textarea {
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -105,24 +156,37 @@ input, textarea {
 }
 
 @keyframes dangerPulse {
-  0%, 100% { 
-    transform: translate(-50%, -50%) scale(0); 
-    opacity: 1; 
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
   }
-  50% { 
-    transform: translate(-50%, -50%) scale(2); 
-    opacity: 0; 
+
+  50% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
   }
 }
 
 @keyframes gentleGlow {
-  0%, 100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  }
 }
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
