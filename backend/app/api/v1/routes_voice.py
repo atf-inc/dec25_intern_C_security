@@ -38,13 +38,14 @@ async def analyze_voice(
     """
     try:
         # Validate file type
-        allowed_extensions = ['.wav', '.mp3', '.m4a', '.flac', '.ogg']
+        # TODO: Re-enable MP3/M4A/FLAC/OGG once audioread backend is configured
+        allowed_extensions = ['.wav']  # Only WAV works reliably for now
         file_ext = '.' + file.filename.split('.')[-1].lower()
         
         if file_ext not in allowed_extensions:
             raise HTTPException(
                 status_code=400,
-                detail=f"Unsupported file type. Allowed: {', '.join(allowed_extensions)}"
+                detail=f"Unsupported file type. Currently only WAV is supported. Please convert your audio to WAV format."
             )
         
         # Read file bytes
