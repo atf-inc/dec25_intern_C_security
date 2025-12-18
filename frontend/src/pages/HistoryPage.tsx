@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import './HistoryPage.css'
 // Email Imports
 import { getScanHistory, ScanHistoryItem, ScanHistoryParams } from '../api/phishingApi'
@@ -17,9 +18,16 @@ import { ConfirmationModal } from '../components/common/ConfirmationModal'
 type TabType = 'email' | 'voice'
 
 export function HistoryPage() {
+    const { t } = useTranslation()
     const [activeTab, setActiveTab] = useState<TabType>('email')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
 
     // Data States
     const [emailData, setEmailData] = useState<ScanHistoryItem[]>([])
@@ -49,7 +57,7 @@ export function HistoryPage() {
             }
         } catch (err) {
             console.error('Failed to fetch history:', err)
-            setError('Failed to load scan history.')
+            setError(getText('dashboard.failedToLoadHistory', 'Failed to load scan history.'))
         } finally {
             setIsLoading(false)
         }
@@ -87,7 +95,7 @@ export function HistoryPage() {
             fetchData() // Refresh list
         } catch (err) {
             console.error('Delete failed', err)
-            alert('Failed to delete scan')
+            alert(getText('dashboard.failedToDelete', 'Failed to delete scan'))
         } finally {
             setIsModalOpen(false)
             setDeleteTarget(null)
@@ -97,8 +105,8 @@ export function HistoryPage() {
     return (
         <div className="history-page">
             <div className="page-title-section">
-                <h1 className="page-title">Security Scan History</h1>
-                <p className="page-description">View and analyze past email and voice security scans.</p>
+                <h1 className="page-title">{getText('dashboard.pageTitle', 'Security Scan History')}</h1>
+                <p className="page-description">{getText('dashboard.pageDescription', 'View and analyze past email and voice security scans.')}</p>
             </div>
 
             {/* Tab Navigation */}
@@ -107,13 +115,13 @@ export function HistoryPage() {
                     onClick={() => setActiveTab('email')}
                     className={`tab-button ${activeTab === 'email' ? 'active' : ''}`}
                 >
-                    📧 Email Scans
+                    📧 {getText('dashboard.emailScans', 'Email Scans')}
                 </button>
                 <button
                     onClick={() => setActiveTab('voice')}
                     className={`tab-button ${activeTab === 'voice' ? 'active' : ''}`}
                 >
-                    🎙️ Voice Scans
+                    🎙️ {getText('dashboard.voiceScans', 'Voice Scans')}
                 </button>
             </div>
 
@@ -131,7 +139,7 @@ export function HistoryPage() {
 
             {activeTab === 'voice' && (
                 <div className="chart-section">
-                    <HistoryChart title="Deepfake Confidence Trend" data={voiceData.map(item => ({
+                    <HistoryChart title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')} data={voiceData.map(item => ({
                         id: item.id || 0,
                         date: item.created_at || new Date().toISOString(),
                         type: 'voice',
@@ -139,7 +147,7 @@ export function HistoryPage() {
                         risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
                         risk_level: item.risk_level,
                         subject: item.file_name, // Map filename to subject for the tooltip
-                        sender: 'Voice Scan' // Placeholder for sender
+                        sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
                     }))} />
                 </div>
             )}
@@ -170,8 +178,8 @@ export function HistoryPage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={confirmDelete}
-                title="Delete Scan"
-                message="Are you sure you want to delete this scan log? This action cannot be undone."
+                title={getText('dashboard.deleteScan', 'Delete Scan')}
+                message={getText('dashboard.deleteScanConfirmation', 'Are you sure you want to delete this scan log? This action cannot be undone.')}
             />
         </div>
     )

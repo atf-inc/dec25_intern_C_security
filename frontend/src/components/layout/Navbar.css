@@ -24,6 +24,16 @@
 .navbar-links {
   display: flex;
   gap: 2rem;
+  align-items: center;
+}
+
+.navbar-toggles {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--border-color);
 }
 
 .nav-link {

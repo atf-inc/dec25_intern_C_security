@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ScanHistoryItem } from '../../api/phishingApi'
 import { RiskBadge } from '../common/RiskBadge'
 import './HistoryComponents.css'
@@ -9,10 +10,18 @@ interface HistoryTableProps {
 }
 
 export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProps) {
+    const { t } = useTranslation()
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
+
     if (!data || data.length === 0) {
         return (
             <div className="empty-state">
-                No scan history available.
+                {getText('history.noScanHistory', 'No scan history available.')}
             </div>
         )
     }
@@ -22,14 +31,14 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
             <table className="history-table">
                 <thead className="table-head">
                     <tr>
-                        <th className="table-header-cell">Type</th>
-                        <th className="table-header-cell">Date</th>
-                        <th className="table-header-cell">Subject/File</th>
-                        <th className="table-header-cell">Sender</th>
-                        <th className="table-header-cell">Detection</th>
-                        <th className="table-header-cell">Risk Level</th>
+                        <th className="table-header-cell">{getText('history.type', 'Type')}</th>
+                        <th className="table-header-cell">{getText('history.date', 'Date')}</th>
+                        <th className="table-header-cell">{getText('history.subjectFile', 'Subject/File')}</th>
+                        <th className="table-header-cell">{getText('history.sender', 'Sender')}</th>
+                        <th className="table-header-cell">{getText('history.detection', 'Detection')}</th>
+                        <th className="table-header-cell">{getText('history.riskLevel', 'Risk Level')}</th>
                         {/* <th className="table-header-cell">Score</th> Removed as it's in badge */}
-                        <th className="table-header-cell">Actions</th>
+                        <th className="table-header-cell">{getText('history.actions', 'Actions')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +54,7 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
                         return (
                             <tr key={item.id} className="table-row" data-risk={riskStyle}>
                                 <td className="table-cell">
-                                    <span title={item.type === 'voice' ? 'Voice Scan' : 'Email Scan'}>
+                                    <span title={item.type === 'voice' ? getText('history.voiceScan', 'Voice Scan') : getText('history.emailScan', 'Email Scan')}>
                                         {item.type === 'voice' ? '🎤' : '📧'}
                                     </span>
                                 </td>
@@ -58,7 +67,7 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
                                         const isSafe = ['safe', 'low', 'clean', 'legit'].includes(raw);
                                         return (
                                             <span className={`detection-badge ${isSafe ? 'safe' : 'phishing'}`}>
-                                                {isSafe ? '✅ Safe' : '⚠️ Phishing'}
+                                                {isSafe ? `✅ ${getText('history.safe', 'Safe')}` : `⚠️ ${getText('history.phishing', 'Phishing')}`}
                                             </span>
                                         );
                                     })()}
@@ -73,12 +82,12 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
                                             onClick={() => onViewDetails?.(item.id)}
                                             className="action-btn btn-view"
                                         >
-                                            View
+                                            {getText('history.view', 'View')}
                                         </button>
                                         <button
                                             onClick={() => onDelete?.(item.id)}
                                             className="action-btn btn-delete"
-                                            title="Delete Scan"
+                                            title={getText('history.deleteScanTitle', 'Delete Scan')}
                                         >
                                             🗑️
                                         </button>

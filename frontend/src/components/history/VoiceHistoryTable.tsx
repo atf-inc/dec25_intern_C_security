@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { VoiceAnalysisResponse } from '../../api/voiceApi'
 import { RiskBadge } from '../common/RiskBadge'
 import './HistoryComponents.css'
@@ -9,10 +10,18 @@ interface VoiceHistoryTableProps {
 }
 
 export function VoiceHistoryTable({ data, onViewDetails, onDelete }: VoiceHistoryTableProps) {
+    const { t } = useTranslation()
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
+
     if (!data || data.length === 0) {
         return (
             <div className="empty-state">
-                No voice scan history available.
+                {getText('history.noVoiceScanHistory', 'No voice scan history available.')}
             </div>
         )
     }
@@ -22,13 +31,13 @@ export function VoiceHistoryTable({ data, onViewDetails, onDelete }: VoiceHistor
             <table className="history-table">
                 <thead className="table-head">
                     <tr>
-                        <th className="table-header-cell">Date</th>
-                        <th className="table-header-cell">File Name</th>
-                        <th className="table-header-cell">Duration</th>
-                        <th className="table-header-cell">Detection</th>
-                        <th className="table-header-cell">Risk Level</th>
+                        <th className="table-header-cell">{getText('history.date', 'Date')}</th>
+                        <th className="table-header-cell">{getText('history.fileName', 'File Name')}</th>
+                        <th className="table-header-cell">{getText('history.duration', 'Duration')}</th>
+                        <th className="table-header-cell">{getText('history.detection', 'Detection')}</th>
+                        <th className="table-header-cell">{getText('history.riskLevel', 'Risk Level')}</th>
                         {/* <th className="table-header-cell">Confidence</th> In badge */}
-                        <th className="table-header-cell">Actions</th>
+                        <th className="table-header-cell">{getText('history.actions', 'Actions')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,7 +55,7 @@ export function VoiceHistoryTable({ data, onViewDetails, onDelete }: VoiceHistor
                             <td className="table-cell">{item.duration.toFixed(1)}s</td>
                             <td className="table-cell">
                                 <span className={`detection-badge ${item.is_deepfake ? 'deepfake' : 'real'}`}>
-                                    {item.is_deepfake ? '⚠️ Deepfake' : '✅ Real'}
+                                    {item.is_deepfake ? `⚠️ ${getText('history.deepfake', 'Deepfake')}` : `✅ ${getText('history.real', 'Real')}`}
                                 </span>
                             </td>
                             <td className="table-cell">
@@ -59,12 +68,13 @@ export function VoiceHistoryTable({ data, onViewDetails, onDelete }: VoiceHistor
                                         onClick={() => onViewDetails?.(item)}
                                         className="action-btn btn-view"
                                     >
-                                        View
+                                        {getText('history.view', 'View')}
                                     </button>
                                     {onDelete && (
                                         <button
                                             onClick={() => item.id && onDelete(item.id)}
                                             className="action-btn btn-delete"
+                                            title={getText('history.deleteScanTitle', 'Delete Scan')}
                                         >
                                             🗑️
                                         </button>

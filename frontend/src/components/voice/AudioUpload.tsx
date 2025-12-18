@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, ChangeEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { WaveformVisualizer } from './WaveformVisualizer'
 import './AudioUpload.css'
 
@@ -12,12 +13,13 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const MAX_DURATION = 30 // seconds
 
 export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
+    const { t } = useTranslation()
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [useCache, setUseCache] = useState(true)
     const [validationError, setValidationError] = useState<string | null>(null)
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
-    
+
     // Playback State
     const [isPlaying, setIsPlaying] = useState(false)
     const [currentTime, setCurrentTime] = useState(0)
@@ -25,6 +27,12 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
 
     const fileInputRef = useRef<HTMLInputElement>(null)
     const audioRef = useRef<HTMLAudioElement>(new Audio())
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
 
     // Cleanup audio URL on unmount
     useEffect(() => {
@@ -36,7 +44,7 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
     // Setup Audio Listeners
     useEffect(() => {
         const audio = audioRef.current
-        
+
         const updateTime = () => setCurrentTime(audio.currentTime)
         const updateDuration = () => setDuration(audio.duration)
         const onEnded = () => setIsPlaying(false)
@@ -55,33 +63,33 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
 
     const handleFileSelect = (file: File) => {
         setValidationError(null)
-        
+
         // 1. Size Validation
         if (file.size > MAX_FILE_SIZE) {
-            setValidationError('File size exceeds 10MB limit')
+            setValidationError(getText('voice.fileSizeExceeds', 'File size exceeds 10MB limit'))
             return
         }
 
         // 2. Format Validation
         const ext = '.' + file.name.split('.').pop()?.toLowerCase()
         if (!ALLOWED_FORMATS.includes(ext)) {
-            setValidationError('Unsupported file format')
+            setValidationError(getText('voice.unsupportedFormat', 'Unsupported file format'))
             return
         }
 
         // 3. Create URL and Verify Duration
         const url = URL.createObjectURL(file)
         const tempAudio = new Audio(url)
-        
+
         tempAudio.onloadedmetadata = () => {
             if (tempAudio.duration > MAX_DURATION) {
-                setValidationError(`Audio duration (${tempAudio.duration.toFixed(1)}s) exceeds 30s limit`)
+                setValidationError(getText('voice.durationExceeds', 'Audio duration ({duration}s) exceeds 30s limit').replace('{duration}', tempAudio.duration.toFixed(1)))
                 URL.revokeObjectURL(url)
             } else {
                 // Success
                 setSelectedFile(file)
                 setAudioUrl(url)
-                
+
                 // Reset player
                 audioRef.current.src = url
                 audioRef.current.load()
@@ -142,29 +150,29 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
         <div className="audio-upload-container">
             {/* 1. Upload Zone (Only show if no file selected) */}
             {!selectedFile ? (
-                <div 
+                <div
                     className={`upload-zone ${isDragging ? 'drag-active' : ''} ${loading ? 'disabled' : ''}`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     onClick={!loading ? handleBrowse : undefined}
                 >
-                    <input 
-                        type="file" 
+                    <input
+                        type="file"
                         ref={fileInputRef}
                         onChange={handleFileInput}
                         accept={ALLOWED_FORMATS.join(',')}
-                        hidden 
+                        hidden
                     />
                     <div className="upload-content">
                         <span className="upload-icon">☁️</span>
-                        <h3>Drop audio file here or click to browse</h3>
+                        <h3>{getText('voice.dropAudioFile', 'Drop audio file here or click to browse')}</h3>
                         <div className="upload-formats">
                             {ALLOWED_FORMATS.map(fmt => (
                                 <span key={fmt} className="format-badge">{fmt.toUpperCase()}</span>
                             ))}
                         </div>
-                        <p className="upload-limits">Max size: 10MB | Max duration: 30s</p>
+                        <p className="upload-limits">{getText('voice.maxSize', 'Max size: 10MB')} | {getText('voice.maxDuration', 'Max duration: 30s')}</p>
                     </div>
                 </div>
             ) : (
@@ -185,7 +193,7 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
 
                     {/* The Waveform Visualizer */}
                     {audioUrl && (
-                        <WaveformVisualizer 
+                        <WaveformVisualizer
                             audioUrl={audioUrl}
                             isPlaying={isPlaying}
                             currentTime={currentTime}
@@ -196,11 +204,11 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
 
                     {/* Playback Controls */}
                     <div className="playback-controls">
-                        <button 
+                        <button
                             className={`play-btn ${isPlaying ? 'playing' : ''}`}
                             onClick={togglePlay}
                         >
-                            {isPlaying ? '⏸ Pause' : '▶ Play Preview'}
+                            {isPlaying ? `⏸ ${getText('voice.pause', 'Pause')}` : `▶ ${getText('voice.playPreview', 'Play Preview')}`}
                         </button>
                         <span className="time-display">
                             {formatTime(currentTime)} / {formatTime(duration)}
@@ -221,23 +229,23 @@ export function AudioUpload({ onAnalyze, loading }: AudioUploadProps) {
                 <div className="action-footer">
                     <div className="cache-toggle">
                         <label className="switch">
-                            <input 
-                                type="checkbox" 
+                            <input
+                                type="checkbox"
                                 checked={useCache}
                                 onChange={(e) => setUseCache(e.target.checked)}
                                 disabled={loading}
                             />
                             <span className="slider round"></span>
                         </label>
-                        <span className="cache-text">Enable Result Caching</span>
+                        <span className="cache-text">{getText('voice.enableCaching', 'Enable Result Caching')}</span>
                     </div>
 
-                    <button 
+                    <button
                         className="analyze-btn-large"
                         onClick={() => onAnalyze(selectedFile, useCache)}
                         disabled={loading}
                     >
-                        {loading ? 'Processing...' : '🛡️ Analyze Audio'}
+                        {loading ? getText('voice.processing', 'Processing...') : `🛡️ ${getText('voice.analyzeAudio', 'Analyze Audio')}`}
                     </button>
                 </div>
             )}

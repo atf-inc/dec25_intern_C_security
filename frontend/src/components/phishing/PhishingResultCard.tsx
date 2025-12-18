@@ -1,4 +1,5 @@
 import { RiskBadge } from '../common/RiskBadge'
+import { useTranslation } from 'react-i18next'
 import './PhishingResultCard.css'
 
 interface PhishingResultCardProps {
@@ -39,10 +40,12 @@ interface PhishingResultCardProps {
 }
 
 export function PhishingResultCard({ result }: PhishingResultCardProps) {
+    const { t } = useTranslation()
+
     return (
         <div className="result-card">
             <div className="result-header">
-                <h2>Analysis Results</h2>
+                <h2>{t('phishing.analysisResults')}</h2>
                 <RiskBadge score={result.score} level={result.label as 'low' | 'medium' | 'high'} />
             </div>
 
@@ -52,7 +55,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                         {result.label === 'PHISHING' ? '🚨' : result.label === 'SUSPICIOUS' ? '⚠️' : '✅'}
                     </div>
                     <div className="summary-content">
-                        <span className="summary-label">Risk Level</span>
+                        <span className="summary-label">{t('phishing.riskLevel')}</span>
                         <span className={`summary-value risk-${result.label.toLowerCase()}`}>
                             {result.label.toUpperCase()}
                         </span>
@@ -61,7 +64,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                 <div className="summary-item">
                     <div className="summary-icon">🎯</div>
                     <div className="summary-content">
-                        <span className="summary-label">Confidence</span>
+                        <span className="summary-label">{t('phishing.confidence')}</span>
                         <span className="summary-value">{result.score}%</span>
                     </div>
                 </div>
@@ -69,8 +72,8 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                     <div className="summary-item">
                         <div className="summary-icon">🔍</div>
                         <div className="summary-content">
-                            <span className="summary-label">Indicators</span>
-                            <span className="summary-value">{result.evidence.length} detected</span>
+                            <span className="summary-label">{t('phishing.indicators')}</span>
+                            <span className="summary-value">{result.evidence.length} {t('phishing.detected')}</span>
                         </div>
                     </div>
                 )}
@@ -80,9 +83,9 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                             {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? '🤖' : '🔧'}
                         </div>
                         <div className="summary-content">
-                            <span className="summary-label">Analysis</span>
+                            <span className="summary-label">{t('phishing.analysis')}</span>
                             <span className="summary-value">
-                                {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'AI + Heuristics' : 'Heuristics Only'}
+                                {result.model_meta.llm?.includes('gemini') || result.model_meta.analysis_method === 'hybrid_advanced' ? 'AI + ' + t('phishing.heuristicScore') : t('phishing.heuristicScore')}
                             </span>
                         </div>
                     </div>
@@ -91,14 +94,14 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
 
             {result.suggested_action && (
                 <div className="result-section">
-                    <h3>Recommended Action</h3>
+                    <h3>{t('phishing.recommendedActionTitle')}</h3>
                     <p className="suggested-action">{result.suggested_action}</p>
                 </div>
             )}
 
             {result.suggested_reply && (
                 <div className="result-section">
-                    <h3>Suggested Response</h3>
+                    <h3>{t('phishing.suggestedResponse')}</h3>
                     <p className="suggested-reply">{result.suggested_reply}</p>
                 </div>
             )}
@@ -106,13 +109,13 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
             {result.ai_explanation && (
                 <div className="result-section">
                     <div className="ai-explanation-section">
-                        <h3>🤖 AI Security Analysis</h3>
+                        <h3>🤖 {t('phishing.aiSecurityAnalysis')}</h3>
 
                         {/* Threat Summary Card */}
                         <div className="ai-explanation-card summary-card">
                             <div className="explanation-header">
                                 <div className="explanation-icon">🛡️</div>
-                                <h4>Threat Summary</h4>
+                                <h4>{t('phishing.threatSummary')}</h4>
                             </div>
                             <div className="explanation-content">
                                 {result.ai_explanation.summary}
@@ -124,7 +127,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                             <div className="ai-explanation-card indicators-card">
                                 <div className="explanation-header">
                                     <div className="explanation-icon">⚠️</div>
-                                    <h4>Suspicious Indicators ({result.ai_explanation.suspicious_indicators.length} found)</h4>
+                                    <h4>{t('phishing.suspiciousIndicators')} ({result.ai_explanation.suspicious_indicators.length} {t('phishing.found')})</h4>
                                 </div>
                                 <div className="explanation-content">
                                     <div className="indicators-summary">
@@ -149,8 +152,8 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                                                         <div className="indicator-category">
                                                             <div className="category-icon">🚨</div>
                                                             <div className="category-content">
-                                                                <div className="category-title">Urgency Tactics</div>
-                                                                <div className="category-count">{grouped.urgency} detected</div>
+                                                                <div className="category-title">{t('phishing.urgencyTactics')}</div>
+                                                                <div className="category-count">{grouped.urgency} {t('phishing.detected')}</div>
                                                             </div>
                                                         </div>
                                                     )}
@@ -158,8 +161,8 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                                                         <div className="indicator-category">
                                                             <div className="category-icon">🔗</div>
                                                             <div className="category-content">
-                                                                <div className="category-title">Deceptive Links</div>
-                                                                <div className="category-count">{grouped.links} detected</div>
+                                                                <div className="category-title">{t('phishing.deceptiveLinks')}</div>
+                                                                <div className="category-count">{grouped.links} {t('phishing.detected')}</div>
                                                             </div>
                                                         </div>
                                                     )}
@@ -167,8 +170,8 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                                                         <div className="indicator-category">
                                                             <div className="category-icon">🌐</div>
                                                             <div className="category-content">
-                                                                <div className="category-title">URL Obfuscation</div>
-                                                                <div className="category-count">{grouped.obfuscation} detected</div>
+                                                                <div className="category-title">{t('phishing.urlObfuscation')}</div>
+                                                                <div className="category-count">{grouped.obfuscation} {t('phishing.detected')}</div>
                                                             </div>
                                                         </div>
                                                     )}
@@ -176,8 +179,8 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                                                         <div className="indicator-category">
                                                             <div className="category-icon">🔍</div>
                                                             <div className="category-content">
-                                                                <div className="category-title">Other Patterns</div>
-                                                                <div className="category-count">{grouped.other} detected</div>
+                                                                <div className="category-title">{t('phishing.otherPatterns')}</div>
+                                                                <div className="category-count">{grouped.other} {t('phishing.detected')}</div>
                                                             </div>
                                                         </div>
                                                     )}
@@ -188,7 +191,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
 
                                     {/* Expandable detailed view */}
                                     <details className="indicators-details">
-                                        <summary className="details-toggle">View detailed breakdown</summary>
+                                        <summary className="details-toggle">{t('phishing.viewDetailedBreakdown')}</summary>
                                         <div className="detailed-indicators">
                                             {result.ai_explanation.suspicious_indicators.slice(0, 5).map((indicator, index) => (
                                                 <div key={index} className="detailed-indicator-item">
@@ -212,7 +215,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                             <div className="ai-explanation-card reasoning-card">
                                 <div className="explanation-header">
                                     <div className="explanation-icon">🧠</div>
-                                    <h4>AI Reasoning</h4>
+                                    <h4>{t('phishing.aiReasoning')}</h4>
                                 </div>
                                 <div className="explanation-content">
                                     {result.ai_explanation.ai_reasoning}
@@ -225,7 +228,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                             <div className="ai-explanation-card technical-card">
                                 <div className="explanation-header">
                                     <div className="explanation-icon">🔍</div>
-                                    <h4>Technical Analysis</h4>
+                                    <h4>{t('phishing.technicalAnalysis')}</h4>
                                 </div>
                                 <div className="explanation-content">
                                     <ul className="technical-indicators-list">
@@ -245,7 +248,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                             <div className="ai-explanation-card assessment-card">
                                 <div className="explanation-header">
                                     <div className="explanation-icon">🎯</div>
-                                    <h4>Final Assessment</h4>
+                                    <h4>{t('phishing.finalAssessment')}</h4>
                                 </div>
                                 <div className="explanation-content">
                                     <div className={`assessment-badge assessment-${result.label.toLowerCase()}`}>
@@ -261,7 +264,7 @@ export function PhishingResultCard({ result }: PhishingResultCardProps) {
                             <div className="ai-explanation-card action-card">
                                 <div className="explanation-header">
                                     <div className="explanation-icon">💡</div>
-                                    <h4>Recommended Action</h4>
+                                    <h4>{t('phishing.recommendedAction')}</h4>
                                 </div>
                                 <div className="explanation-content">
                                     <div className="recommended-action-content">

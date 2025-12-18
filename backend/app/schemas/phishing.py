@@ -34,6 +34,7 @@ class AnalyzeRequest(BaseModel):
     attachments: Optional[List[AttachmentItem]] = []
     sanitization: Optional[List[Any]] = None
     meta: Optional[dict] = None
+    language: Optional[str] = Field(default="en", description="Language for AI explanations (en, ja)")
 
 class AIExplanation(BaseModel):
     summary: str
