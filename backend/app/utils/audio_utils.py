@@ -3,8 +3,20 @@ import librosa
 import soundfile as sf
 import numpy as np
 from pydub import AudioSegment
+from pydub.utils import which
 import io
 import hashlib
+import os
+
+# Auto-detect ffmpeg path on Windows (handles fresh installs)
+if which("ffmpeg") is None:
+    import glob
+    # Check WinGet installation path
+    winget_pattern = os.path.expanduser(r"~\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg*\ffmpeg-*\bin\ffmpeg.exe")
+    matches = glob.glob(winget_pattern)
+    if matches:
+        AudioSegment.converter = matches[0]
+        print(f"✓ FFmpeg found at: {matches[0]}")
 
 TARGET_SAMPLE_RATE = 16000  # Standard for Wav2Vec2/WavLM
 
@@ -51,7 +63,7 @@ def load_and_preprocess_audio(file_path_or_bytes, target_sr=TARGET_SAMPLE_RATE):
 
 def convert_to_wav(audio_bytes, input_format="mp3"):
     """
-    Convert audio from any format to WAV.
+    Convert audio from any format to WAV using librosa (no ffmpeg needed).
     
     Args:
         audio_bytes: Raw audio file bytes
@@ -60,19 +72,45 @@ def convert_to_wav(audio_bytes, input_format="mp3"):
     Returns:
         wav_bytes: WAV format bytes
     """
-    # Load with pydub
-    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format=input_format)
-    
-    # Convert to mono, 16kHz
-    audio = audio.set_channels(1)
-    audio = audio.set_frame_rate(TARGET_SAMPLE_RATE)
-    
-    # Export as WAV
-    wav_io = io.BytesIO()
-    audio.export(wav_io, format="wav")
-    wav_io.seek(0)
-    
-    return wav_io.read()
+    try:
+        # Use librosa to load audio directly from bytes (supports MP3 natively)
+        import tempfile
+        import os
+        
+        # Save to temp file (librosa needs a file path)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f'.{input_format}') as temp_in:
+            temp_in.write(audio_bytes)
+            temp_path = temp_in.name
+        
+        try:
+            # Load with librosa (automatically handles MP3, M4A, FLAC, etc.)
+            waveform, sr = librosa.load(temp_path, sr=TARGET_SAMPLE_RATE, mono=True)
+            
+            # Convert to WAV bytes
+            wav_io = io.BytesIO()
+            sf.write(wav_io, waveform, TARGET_SAMPLE_RATE, format='WAV')
+            wav_io.seek(0)
+            
+            return wav_io.read()
+        finally:
+            # Clean up temp file
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+                
+    except Exception as e:
+        # Fallback to pydub if librosa fails
+        try:
+            audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format=input_format)
+            audio = audio.set_channels(1)
+            audio = audio.set_frame_rate(TARGET_SAMPLE_RATE)
+            
+            wav_io = io.BytesIO()
+            audio.export(wav_io, format="wav")
+            wav_io.seek(0)
+            
+            return wav_io.read()
+        except Exception as e2:
+            raise ValueError(f"Failed to convert audio: {e}. Pydub also failed: {e2}")
 
 
 def compute_audio_hash(audio_bytes):
