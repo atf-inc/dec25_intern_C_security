@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { AudioUpload } from '../components/voice/AudioUpload'
 import { VoiceResultCard } from '../components/voice/VoiceResultCard'
 import { VoiceStats } from '../components/voice/VoiceStats'
-import { Loader } from '../components/common/Loader'
+
+import { ForensicScanner } from '../components/common/ForensicScanner'
 import { ErrorAlert } from '../components/common/ErrorAlert'
 import { Toast, useToast } from '../components/common/Toast'
 import {
@@ -122,12 +123,7 @@ export function VoicePage() {
                     <AudioUpload onAnalyze={handleAnalyze} loading={loading} />
                 </div>
 
-                {loading && (
-                    <div className="loader-wrapper">
-                        <Loader />
-                        <p className="loading-text">{getText('voice.runningModels', 'Running deepfake detection models...')}</p>
-                    </div>
-                )}
+                {loading && <ForensicScanner type="voice" />}
 
                 {error && (
                     <div className="error-container">

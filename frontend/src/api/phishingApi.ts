@@ -186,3 +186,28 @@ export async function getScanHistory(params?: ScanHistoryParams): Promise<ScanHi
 
     return Promise.resolve(history)
 }
+
+// ------------------------------------------------------------
+// Re-translate AI Explanation for Language Switching
+// ------------------------------------------------------------
+export async function retranslateExplanation(
+    originalResult: PhishingResponse,
+    targetLanguage: string
+): Promise<PhishingResponse> {
+    console.log('Retranslating explanation to:', targetLanguage)
+
+    const requestData = {
+        original_result: originalResult,
+        target_language: targetLanguage,
+        meta: { consent: true }
+    }
+
+    try {
+        const response = await apiClient.post<PhishingResponse>('/analyze/retranslate', requestData)
+        return response.data
+    } catch (error) {
+        console.error('Re-translation failed:', error)
+        // Return original result if re-translation fails
+        return originalResult
+    }
+}

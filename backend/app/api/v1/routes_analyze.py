@@ -1,10 +1,12 @@
 # backend/app/api/v1/routes_analyze.py
 from fastapi import APIRouter, HTTPException, status
 from app.schemas.phishing import AnalyzeRequest, AnalyzeResponse
-from app.ml.phishing_model import analyze_email
+from app.ml.phishing_model import analyze_email, retranslate_explanation
 from uuid import uuid4
 from app.db.session import SessionLocal
 from app.models.email_scan import EmailScan
+from pydantic import BaseModel
+from typing import Dict, Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -75,3 +77,40 @@ def analyze(req: AnalyzeRequest):
         "model_meta": result.get("model_meta", {})
     }
     return response
+
+# Re-translation request schema
+class RetranslateRequest(BaseModel):
+    original_result: Dict[str, Any]
+    target_language: str
+    meta: Dict[str, Any] = {}
+
+@router.post("/retranslate", response_model=AnalyzeResponse)
+def retranslate(req: RetranslateRequest):
+    """Re-translate AI explanation to a different language without re-analyzing."""
+    
+    meta = req.meta or {}
+    consent = meta.get("consent", False)
+    if not consent:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User consent required (meta.consent=true)")
+
+    try:
+        # Re-translate the explanation
+        updated_result = retranslate_explanation(req.original_result, req.target_language)
+        
+        # Return the updated result with new explanation
+        response = {
+            "request_id": req.original_result.get("request_id", str(uuid4())),
+            "label": updated_result.get("label"),
+            "score": int(updated_result.get("score", 0)),
+            "reasons": updated_result.get("reasons") or [],
+            "evidence": updated_result.get("evidence") or [],
+            "suggested_action": updated_result.get("suggested_action", ""),
+            "suggested_reply": updated_result.get("suggested_reply", ""),
+            "ai_explanation": updated_result.get("ai_explanation"),
+            "model_meta": updated_result.get("model_meta", {})
+        }
+        return response
+        
+    except Exception as ex:
+        logger.exception("Re-translation failed: %s", ex)
+        raise HTTPException(status_code=500, detail="Re-translation failed")

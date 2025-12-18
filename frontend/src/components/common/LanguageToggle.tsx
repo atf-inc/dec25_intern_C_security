@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './LanguageToggle.css';
 
@@ -9,23 +9,16 @@ interface LanguageToggleProps {
 
 const LanguageToggle: React.FC<LanguageToggleProps> = ({ size = 'md', className = '' }) => {
     const { i18n } = useTranslation();
-    const [isOpen, setIsOpen] = useState(false);
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng);
         localStorage.setItem('language', lng);
-        setIsOpen(false);
     };
 
     const currentLanguage = i18n.language;
     const isJapanese = currentLanguage === 'ja';
 
-    const languages = [
-        { code: 'en', name: 'English', flag: '🇺🇸', short: 'EN' },
-        { code: 'ja', name: '日本語', flag: '🇯🇵', short: 'JP' }
-    ];
 
-    const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
     return (
         <div className={`language-toggle-container ${className}`}>

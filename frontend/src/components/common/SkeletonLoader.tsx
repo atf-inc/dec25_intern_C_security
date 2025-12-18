@@ -85,3 +85,58 @@ export function SkeletonResultCard() {
         </div>
     );
 }
+
+export function SkeletonVoiceCard() {
+    return (
+        <div className="skeleton-result-card">
+            {/* Header */}
+            <div className="skeleton-result-header">
+                <SkeletonLoader variant="text" width="150px" height="1.5rem" />
+                <SkeletonLoader variant="rectangle" width="100px" height="40px" />
+            </div>
+
+            {/* File Meta */}
+            <div className="skeleton-file-meta">
+                <SkeletonLoader variant="text" width="120px" height="0.875rem" />
+                <SkeletonLoader variant="text" width="80px" height="0.875rem" />
+                <SkeletonLoader variant="text" width="100px" height="0.875rem" />
+            </div>
+
+            {/* Audio Player */}
+            <div className="skeleton-audio-section">
+                <SkeletonLoader variant="text" width="140px" height="1rem" />
+                <SkeletonLoader variant="rectangle" width="100%" height="40px" />
+            </div>
+
+            {/* AI Explanation */}
+            <div className="skeleton-ai-section">
+                <SkeletonLoader variant="text" width="200px" height="1.2rem" />
+                <div className="skeleton-ai-card">
+                    <SkeletonLoader variant="text" count={3} />
+                </div>
+            </div>
+
+            {/* Artifacts Grid */}
+            <div className="skeleton-artifacts-section">
+                <SkeletonLoader variant="text" width="220px" height="1.2rem" />
+                <div className="skeleton-artifacts-grid">
+                    {Array.from({ length: 4 }, (_, i) => (
+                        <div key={i} className="skeleton-artifact-card">
+                            <div className="skeleton-card-header">
+                                <SkeletonLoader variant="text" width="100px" height="0.875rem" />
+                                <SkeletonLoader variant="rectangle" width="60px" height="20px" />
+                            </div>
+                            <SkeletonLoader variant="text" width="80px" height="1.5rem" />
+                            <SkeletonLoader variant="text" width="120px" height="0.75rem" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Technical Details */}
+            <div className="skeleton-technical-section">
+                <SkeletonLoader variant="text" width="180px" height="1rem" />
+            </div>
+        </div>
+    );
+}

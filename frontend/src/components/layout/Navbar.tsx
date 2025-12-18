@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ThemeToggle } from '../common/ThemeToggle'
 import LanguageToggle from '../common/LanguageToggle'
+import logoImage from '../image.png'
 import './Navbar.css'
 
 export function Navbar() {
@@ -11,7 +12,11 @@ export function Navbar() {
         <nav className="navbar">
             <div className="navbar-container">
                 <Link to="/" className="navbar-brand">
-                    🛡️ ATF CyberX
+                    <img src={logoImage} alt="ATF Shield" className="navbar-logo" />
+                    <span className="brand-text">
+                        <span className="brand-atf"></span>
+                        <span className="brand-cyberx">CyberX</span>
+                    </span>
                 </Link>
                 <div className="navbar-links">
                     <Link to="/phishing" className="nav-link">
