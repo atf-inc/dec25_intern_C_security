@@ -1,5 +1,5 @@
 // Export all modern animated components for easy importing
-export { SkeletonLoader, SkeletonCard, SkeletonResultCard } from './SkeletonLoader';
+export { SkeletonLoader, SkeletonCard, SkeletonResultCard, SkeletonVoiceCard } from './SkeletonLoader';
 export { ProgressIndicator, SuccessAnimation, ErrorAnimation, AnalysisProgress } from './ProgressIndicator';
 export { AnimatedUploadZone } from './AnimatedUploadZone';
 export { ThemeToggle } from './ThemeToggle';

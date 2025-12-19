@@ -7,6 +7,7 @@ export interface EmailAnalysisRequest {
     sender: string
     urls?: string[]
     pdfFile?: File  // Supports EML and PDF
+    language?: string  // Language for AI explanations
 }
 
 export interface PhishingResponse {
@@ -84,6 +85,7 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
             raw_text: uploadResponse.data.raw_text || '',
             visible_links: uploadResponse.data.visible_links || [],
             hidden_links: uploadResponse.data.hidden_links || [],
+            language: data.language || 'en',
             meta: { consent: true }
         }
 
@@ -111,6 +113,7 @@ export async function analyzeEmail(data: EmailAnalysisRequest): Promise<Phishing
                 uri: url,
                 anchor_text: url
             })) || [],
+        language: data.language || 'en',
         meta: { consent: true }
     }
 
@@ -182,4 +185,29 @@ export async function getScanHistory(params?: ScanHistoryParams): Promise<ScanHi
     }
 
     return Promise.resolve(history)
+}
+
+// ------------------------------------------------------------
+// Re-translate AI Explanation for Language Switching
+// ------------------------------------------------------------
+export async function retranslateExplanation(
+    originalResult: PhishingResponse,
+    targetLanguage: string
+): Promise<PhishingResponse> {
+    console.log('Retranslating explanation to:', targetLanguage)
+
+    const requestData = {
+        original_result: originalResult,
+        target_language: targetLanguage,
+        meta: { consent: true }
+    }
+
+    try {
+        const response = await apiClient.post<PhishingResponse>('/analyze/retranslate', requestData)
+        return response.data
+    } catch (error) {
+        console.error('Re-translation failed:', error)
+        // Return original result if re-translation fails
+        return originalResult
+    }
 }

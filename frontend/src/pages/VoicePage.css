@@ -258,3 +258,20 @@
     margin-top: 2rem;
     animation: slideUp 0.5s ease-out;
 }
+
+/* Skeleton Loading */
+.skeleton-loading-section {
+    margin: 2rem 0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

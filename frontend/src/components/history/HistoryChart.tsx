@@ -8,6 +8,7 @@ import {
     Legend,
     ResponsiveContainer,
 } from 'recharts'
+import { useTranslation } from 'react-i18next'
 import { ScanHistoryItem } from '../../api/phishingApi'
 import './HistoryComponents.css'
 
@@ -16,7 +17,18 @@ interface HistoryChartProps {
     title?: string
 }
 
-export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartProps) {
+export function HistoryChart({ data, title }: HistoryChartProps) {
+    const { t } = useTranslation()
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
+
+    const defaultTitle = getText('dashboard.riskScoreTrend', 'Risk Score Trend')
+    const chartTitle = title || defaultTitle
+
     if (!data || data.length === 0) return null
 
     // Process data for the chart - sort by date
@@ -28,7 +40,7 @@ export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartP
             return (
                 <div className="custom-tooltip">
                     <p className="tooltip-label">{label}</p>
-                    <p className="tooltip-score">Score: {payload[0].value}</p>
+                    <p className="tooltip-score">{getText('history.score', 'Score')}: {payload[0].value}</p>
                     <p className="tooltip-subject">{payload[0].payload.subject}</p>
                 </div>
             )
@@ -38,7 +50,7 @@ export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartP
 
     return (
         <div className="chart-container">
-            <h3 className="chart-title">{title}</h3>
+            <h3 className="chart-title">{chartTitle}</h3>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     data={chartData}
@@ -63,7 +75,7 @@ export function HistoryChart({ data, title = "Risk Score Trend" }: HistoryChartP
                     />
                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.1)' }} />
                     <Legend />
-                    <Bar dataKey="risk_score" name="Risk Score" fill="var(--primary-color)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="risk_score" name={getText('dashboard.riskScoreTrend', 'Risk Score')} fill="var(--primary-color)" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

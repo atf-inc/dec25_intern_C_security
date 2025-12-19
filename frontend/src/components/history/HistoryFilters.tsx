@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ScanHistoryParams } from '../../api/phishingApi'
 import './HistoryFilters.css'
 
@@ -7,6 +8,13 @@ interface HistoryFiltersProps {
 }
 
 export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps) {
+    const { t } = useTranslation()
+
+    // Fallback function for translations
+    const getText = (key: string, fallback: string) => {
+        const translated = t(key)
+        return translated === key ? fallback : translated
+    }
     const handleRiskChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         onFilterChange({ ...filters, risk_level: e.target.value || undefined })
     }
@@ -26,32 +34,32 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
     return (
         <div className="history-filters">
             <div className="filter-group search-group">
-                <label className="filter-label">Search</label>
+                <label className="filter-label">{getText('history.search', 'Search')}</label>
                 <input
                     type="text"
                     className="filter-input search-input"
                     value={filters.search_query || ''}
                     onChange={handleSearchChange}
-                    placeholder="Search by subject or sender..."
+                    placeholder={getText('history.searchPlaceholder', 'Search by subject or sender...')}
                 />
             </div>
 
             <div className="filter-group">
-                <label className="filter-label">Risk Level</label>
+                <label className="filter-label">{getText('history.riskLevel', 'Risk Level')}</label>
                 <select
                     className="filter-select risk-select"
                     value={filters.risk_level || ''}
                     onChange={handleRiskChange}
                 >
-                    <option value="">All Levels</option>
-                    <option value="high">High Risk</option>
-                    <option value="medium">Medium Risk</option>
-                    <option value="low">Low Risk</option>
+                    <option value="">{getText('history.allLevels', 'All Levels')}</option>
+                    <option value="high">{getText('history.highRisk', 'High Risk')}</option>
+                    <option value="medium">{getText('history.mediumRisk', 'Medium Risk')}</option>
+                    <option value="low">{getText('history.lowRisk', 'Low Risk')}</option>
                 </select>
             </div>
 
             <div className="filter-group">
-                <label className="filter-label">Start Date</label>
+                <label className="filter-label">{getText('history.startDate', 'Start Date')}</label>
                 <input
                     type="date"
                     className="filter-input date-input"
@@ -61,7 +69,7 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
             </div>
 
             <div className="filter-group">
-                <label className="filter-label">End Date</label>
+                <label className="filter-label">{getText('history.endDate', 'End Date')}</label>
                 <input
                     type="date"
                     className="filter-input date-input"
@@ -75,7 +83,7 @@ export function HistoryFilters({ filters, onFilterChange }: HistoryFiltersProps)
                     className="clear-filters-btn"
                     onClick={() => onFilterChange({})}
                 >
-                    Clear Filters
+                    {getText('history.clearFilters', 'Clear Filters')}
                 </button>
             )}
         </div>

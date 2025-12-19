@@ -1043,9 +1043,9 @@
     font-size: 0.75rem;
     flex: 1;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .evidence-description {
@@ -1218,10 +1218,17 @@
 /* Text overflow and word breaking for long URLs and text */
 .link-value,
 .evidence-description,
-.analysis-finding-text {
+.analysis-finding-text,
+.evidence-type-label,
+.category-title,
+.summary-value,
+.metric-value,
+.explanation-content,
+.indicator-text {
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
+    max-width: 100%;
 }
 
 /* Ensure proper spacing on all screen sizes */
@@ -1518,9 +1525,23 @@
 
 .indicators-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
     margin-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+    .indicators-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .indicators-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
 }
 
 .indicator-category {
@@ -1554,14 +1575,28 @@
 .category-title {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     margin-bottom: 2px;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .category-count {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
     opacity: 0.9;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .category-title {
+        font-size: 0.8rem;
+    }
+    
+    .category-count {
+        font-size: 0.7rem;
+    }
 }
 
 /* Expandable Details */
@@ -1909,4 +1944,35 @@
 :root.dark .pattern-card {
     background-color: #1e293b;
     border-color: #475569;
+}
+/* Translation Indicator */
+.translation-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.translation-spinner {
+    animation: spin 1s linear infinite;
+    font-size: 1rem;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+    .translation-indicator {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
 }
