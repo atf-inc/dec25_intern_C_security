@@ -1,351 +1,149 @@
 
 import torch
-import torch.nn as nn
 import numpy as np
-from transformers import WavLMModel, Wav2Vec2FeatureExtractor
-from typing import Dict, Tuple
 import logging
+import os
+from pathlib import Path
+from typing import Dict, Any
+
+from app.ml.fusion.models.fusion_model import FusionDeepfakeDetector
+from app.ml.fusion.features.wavlm_extractor import WavLMExtractor
+from app.ml.fusion.features.whisper_extractor import WhisperExtractor
+from app.ml.fusion.features.dsp_extractor import DSPExtractor
 
 logger = logging.getLogger(__name__)
 
 class DeepfakeDetector:
     """
-    Deepfake voice detection using WavLM embeddings + custom classifier.
-    
-    NOVELTY ELEMENTS:
-    1. Dual-model ensemble (WavLM + traditional features)
-    2. Artifact detection layer
-    3. Confidence calibration
-    4. Explainable feature importance
+    Wrapper for the Fusion Deepfake Detector (WavLM + Whisper + DSP + Attention).
     """
     
-    def __init__(self, model_name="microsoft/wavlm-base-plus", device=None):
-        """
-        Initialize the deepfake detector.
+    def __init__(self, model_path="app/ml/models/deepfake_v2_1.pth", device=None):
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model_path = model_path
         
-        Args:
-            model_name: Hugging Face model identifier
-            device: torch device (cuda/cpu)
-        """
-        self.model_name = model_name
+        # Lazy loading
+        self.model = None
+        self.wavlm_ext = None
+        self.whisper_ext = None
+        self.dsp_ext = None
+        self.is_trained = False # Will be true after loading
         
-        # Auto-detect device
-        if device is None:
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        else:
-            self.device = device
-        
-        logger.info(f"Initialized DeepfakeDetector config on {self.device}")
-        
-        # Initialize model attributes to None (Lazy Loading)
-        self.feature_extractor = None
-        self.wavlm_model = None
-        
-        # Classifier head (to be trained)
-        self.classifier = None
-        self.artifact_detector = None
-        self.is_trained = False
-        
-    def _ensure_model_loaded(self):
-        """Load the model if it hasn't been loaded yet."""
-        if self.wavlm_model is not None:
+    def _ensure_loaded(self):
+        if self.model is not None:
             return
 
-        logger.info(f"Loading WavLM model: {self.model_name}...")
+        logger.info("Loading Fusion Deepfake Model components (v2.0 - 246 dim DSP)...")
+        
+        # 1. Load Extractors
+        self.wavlm_ext = WavLMExtractor(device=self.device)
+        self.whisper_ext = WhisperExtractor(device=self.device)
+        self.dsp_ext = DSPExtractor()
+        
+        # 2. Load Model
+        # shared_dim=256 matches the training config
+        self.model = FusionDeepfakeDetector(dsp_dim=246, shared_dim=256) 
+        
         try:
-            # Load feature extractor and model
-            self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(self.model_name)
-            
-            # Load with optimizations for GPU
-            if self.device.type == "cuda":
-                self.wavlm_model = WavLMModel.from_pretrained(
-                    self.model_name,
-                    torch_dtype=torch.float16,  # Half precision for speed
-                ).to(self.device)
+            # Check absolute path first, then relative
+            if os.path.exists(self.model_path):
+                path = self.model_path
             else:
-                self.wavlm_model = WavLMModel.from_pretrained(self.model_name).to(self.device)
+                # Fallback to absolute path relative to this file's directory
+                # models/ is in the same directory as deepfake_model.py's parent? 
+                # No, deepfake_model.py is in app/ml
+                # models is in app/ml/models
+                base_name = os.path.basename(self.model_path)
+                path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'models', base_name))
             
-            self.wavlm_model.eval()  # Set to evaluation mode
-            logger.info("WavLM model loaded successfully.")
+            logger.info(f"Loading weights from {path}")
+            state_dict = torch.load(path, map_location=self.device)
+            self.model.load_state_dict(state_dict)
+            self.model.to(self.device)
+            self.model.eval()
+            self.is_trained = True
+            logger.info("Fusion model loaded successfully.")
         except Exception as e:
-            logger.error(f"Failed to load WavLM model: {e}")
-            raise
-    
-    
-    def extract_embeddings(self, waveform: np.ndarray, sample_rate: int = 16000) -> torch.Tensor:
-        """
-        Extract WavLM embeddings from audio waveform.
-        
-        Args:
-            waveform: Audio samples (numpy array)
-            sample_rate: Sampling rate
-        
-        Returns:
-            embeddings: Pooled embeddings tensor
-        """
-        # Ensure model is loaded
-        self._ensure_model_loaded()
-        
-        # Preprocess audio
-        inputs = self.feature_extractor(
-            waveform,
-            sampling_rate=sample_rate,
-            return_tensors="pt",
-            padding=True
-        )
-        
-        # Move to device
-        inputs = {k: v.to(self.device) for k, v in inputs.items()}
-        
-        # Extract features with no gradient
-        with torch.no_grad():
-            outputs = self.wavlm_model(**inputs)
-            
-            # Get last hidden state
-            last_hidden_state = outputs.last_hidden_state  # Shape: [batch, time, hidden_dim]
-            
-            # Mean pooling over time dimension
-            embeddings = torch.mean(last_hidden_state, dim=1)  # Shape: [batch, hidden_dim]
-        
-        return embeddings
-    
-    
-    def detect_vocoder_artifacts(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, float]:
-        """
-        Detect vocoder artifacts common in AI-generated speech.
-        
-        NOVELTY: Custom artifact detection based on signal processing.
-        
-        Args:
-            waveform: Audio samples
-            sample_rate: Sampling rate
-        
-        Returns:
-            artifact_scores: Dictionary of artifact indicators
-        """
-        import librosa
-        
-        artifacts = {}
-        
-        # 1. Spectral flatness (higher in synthetic speech)
-        spectral_flatness = librosa.feature.spectral_flatness(y=waveform)[0]
-        artifacts['spectral_flatness'] = float(np.mean(spectral_flatness))
-        
-        # 2. Periodicity detection (synthetic speech has unusual periodicity)
-        autocorr = librosa.autocorrelate(waveform)
-        if len(autocorr) > 1:
-            end_idx = min(100, len(autocorr))
-            slice_ = autocorr[1:end_idx]
-            if len(slice_) > 0:
-                artifacts['autocorr_peak'] = float(np.max(slice_))
-            else:
-                artifacts['autocorr_peak'] = 0.0
-        else:
-            artifacts['autocorr_peak'] = 0.0
-        
-        # 3. High-frequency content analysis (vocoders often have artifacts >8kHz)
-        stft = librosa.stft(waveform)
-        high_freq_energy = np.mean(np.abs(stft[int(len(stft) * 0.5):, :]))
-        artifacts['high_freq_energy'] = float(high_freq_energy)
-        
-        # 4. Zero-crossing rate variance (synthetic speech is more regular)
-        zcr = librosa.feature.zero_crossing_rate(waveform)[0]
-        artifacts['zcr_variance'] = float(np.var(zcr))
-        
-        return artifacts
-    
-    
-    def build_classifier(self, input_dim: int = 768, hidden_dim: int = 256):
-        """
-        Build the classifier head.
-        
-        Args:
-            input_dim: WavLM embedding dimension (768 for base models)
-            hidden_dim: Hidden layer dimension
-        """
-        self.classifier = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(hidden_dim, 128),
-            nn.ReLU(),
-            nn.Dropout(0.2),
-            nn.Linear(128, 1),  # Binary classification
-            nn.Sigmoid()
-        ).to(self.device)
-        
-        logger.info(f"Built classifier: {input_dim} -> {hidden_dim} -> 128 -> 1")
-    
-    
-    def train_classifier(self, train_data, val_data, epochs=10, lr=0.001):
-        """
-        Train the classifier on labeled data.
-        
-        Args:
-            train_data: List of (waveform, label) tuples
-            val_data: Validation data
-            epochs: Training epochs
-            lr: Learning rate
-        """
-        if self.classifier is None:
-            self.build_classifier()
-        
-        optimizer = torch.optim.Adam(self.classifier.parameters(), lr=lr)
-        criterion = nn.BCELoss()
-        
-        best_val_acc = 0.0
-        
-        for epoch in range(epochs):
-            self.classifier.train()
-            train_loss = 0.0
-            
-            for waveform, label in train_data:
-                # Extract embeddings
-                embeddings = self.extract_embeddings(waveform)
-                
-                # Forward pass
-                output = self.classifier(embeddings)
-                loss = criterion(output, torch.tensor([[label]], dtype=torch.float32).to(self.device))
-                
-                # Backward pass
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                
-                train_loss += loss.item()
-            
-            # Validation
-            val_acc = self.evaluate(val_data)
-            
-            logger.info(f"Epoch {epoch+1}/{epochs} - Loss: {train_loss/len(train_data):.4f} - Val Acc: {val_acc:.4f}")
-            
-            if val_acc > best_val_acc:
-                best_val_acc = val_acc
-                self.save_model("best_model.pth")
-        
-        self.is_trained = True
-    
-    
-    def evaluate(self, data):
-        """Evaluate classifier on data."""
-        self.classifier.eval()
-        correct = 0
-        total = 0
-        
-        with torch.no_grad():
-            for waveform, label in data:
-                embeddings = self.extract_embeddings(waveform)
-                output = self.classifier(embeddings)
-                prediction = (output > 0.5).float()
-                correct += (prediction == label).sum().item()
-                total += 1
-        
-        return correct / total
-    
-    
-    def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, any]:
-        """
-        Predict if audio is deepfake.
-        
-        Args:
-            waveform: Audio samples
-            sample_rate: Sampling rate
-        
-        Returns:
-            result: Dictionary with prediction and confidence
-        """
-        # Ensure model is loaded (Lazy Loading)
-        self._ensure_model_loaded()
+            logger.error(f"Failed to load fusion weights: {e}")
+            logger.warning("Running in untrained mode (random weights)")
+            self.model.to(self.device)
+            self.is_trained = False
 
-        if not self.is_trained:
-            # Use simple heuristic for MVP if not trained
-            return self._heuristic_prediction(waveform, sample_rate)
-        
-        self.classifier.eval()
-        
-        # Extract embeddings
-        embeddings = self.extract_embeddings(waveform, sample_rate)
-        
-        # Get prediction
-        with torch.no_grad():
-            confidence = self.classifier(embeddings).cpu().item()
-        
-        # Detect artifacts (NOVELTY)
-        artifacts = self.detect_vocoder_artifacts(waveform, sample_rate)
-        
-        # Combine scores (ensemble approach - NOVELTY)
-        artifact_score = (
-            artifacts['spectral_flatness'] * 0.3 +
-            (artifacts['autocorr_peak'] / 1000) * 0.2 +
-            artifacts['high_freq_energy'] * 0.3 +
-            (1 - artifacts['zcr_variance']) * 0.2
-        )
-        
-        # Weighted combination
-        final_confidence = 0.7 * confidence + 0.3 * artifact_score
-        final_confidence = np.clip(final_confidence, 0, 1)
-        
-        is_deepfake = final_confidence > 0.5
-        
-        return {
-            'is_deepfake': bool(is_deepfake),
-            'confidence': float(final_confidence),
-            'raw_confidence': float(confidence),
-            'artifact_score': float(artifact_score),
-            'artifacts': artifacts,
-            'risk_level': self._get_risk_level(final_confidence)
-        }
-    
-    
-    def _heuristic_prediction(self, waveform: np.ndarray, sample_rate: int) -> Dict[str, any]:
+    def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, Any]:
         """
-        Simple heuristic prediction for MVP (before training).
-        Based on artifact detection only.
+        End-to-end prediction: Audio -> Features -> Fusion Model -> Result
         """
-        artifacts = self.detect_vocoder_artifacts(waveform, sample_rate)
+        self._ensure_loaded()
         
-        # Simple scoring
-        score = (
-            artifacts['spectral_flatness'] * 40 +
-            (artifacts['autocorr_peak'] / 1000) * 20 +
-            artifacts['high_freq_energy'] * 30 +
-            (1 - artifacts['zcr_variance']) * 10
-        )
-        
-        confidence = np.clip(score / 100, 0, 1)
-        is_deepfake = confidence > 0.5
-        
-        return {
-            'is_deepfake': bool(is_deepfake),
-            'confidence': float(confidence),
-            'artifacts': artifacts,
-            'risk_level': self._get_risk_level(confidence),
-            'note': 'Using heuristic model (not trained yet)'
-        }
-    
-    
+        # 1. Extract Features
+        try:
+            # Features need to be tensors on device
+            w_emb = torch.tensor(self.wavlm_ext.extract(waveform, sample_rate)).unsqueeze(0).to(self.device)
+            s_emb = torch.tensor(self.whisper_ext.extract(waveform, sample_rate)).unsqueeze(0).to(self.device)
+            d_feat = torch.tensor(self.dsp_ext.extract(waveform, sample_rate)).unsqueeze(0).to(self.device)
+            
+            # 2. Forward Pass
+            # Use explainability method to get detailed scores
+            result = self.model.predict_with_explanation(w_emb, s_emb, d_feat)
+            
+            final_conf = float(result['confidence'])
+            is_deepfake = final_conf > 0.5
+            
+            # Map expert scores for UI
+            expert_scores = result['expert_scores']
+            
+            # Construct artifact dictionary with clean keys for Frontend v2.1
+            # We map 1.0 (Fake) -> 0.0 (Consistency) for user-friendly display if needed, 
+            # but usually "Score" implies "Defect Score" in security contexts.
+            # Let's keep it as "Anomaly Score" (Higher = More Fake/Anomaly).
+            artifacts = {
+                'signal_quality': expert_scores['signal'],       # Higher = More Signal Anomalies
+                'acoustic_consistency': expert_scores['acoustic'], # Higher = More Acoustic Anomalies
+                'semantic_coherence': expert_scores['semantic']    # Higher = More Semantic Anomalies
+            }
+            
+
+            # Generate Professional Explanation
+            if is_deepfake:
+                factors = []
+                if expert_scores['signal'] > 0.6: factors.append("digital signal processing artifacts")
+                if expert_scores['acoustic'] > 0.6: factors.append("acoustic inconsistencies")
+                if expert_scores['semantic'] > 0.6: factors.append("unnatural semantic patterns")
+                
+                if not factors: factors.append("general synthetic characteristics")
+                factor_str = ", ".join(factors)
+                
+                explanation = (
+                    f"Voice analysis confirms high probability of AI generation (Confidence: {final_conf:.1%}). "
+                    f"The model detected {factor_str}, which are strong indicators of neural text-to-speech synthesis."
+                )
+            else:
+                explanation = (
+                    f"Voice analysis indicates the audio is likely genuine (Confidence: {final_conf:.1%}). "
+                    "The acoustic properties and signal integrity align with natural human speech patterns."
+                )
+
+            # Construct response
+            return {
+                'is_deepfake': is_deepfake,
+                'confidence': float(final_conf),
+                'risk_level': self._get_risk_level(final_conf),
+                'artifact_score': float(expert_scores['signal']), # Use DSP score as "Artifact Score"
+                'artifacts': artifacts,
+                'explanation': explanation
+            }
+            
+        except Exception as e:
+            logger.error(f"Prediction error: {e}")
+            # Fallback
+            return {
+                'is_deepfake': False,
+                'confidence': 0.0,
+                'risk_level': "low",
+                'error': str(e)
+            }
+
     def _get_risk_level(self, confidence: float) -> str:
-        """Determine risk level from confidence score."""
-        if confidence < 0.3:
-            return "low"
-        elif confidence < 0.7:
-            return "medium"
-        else:
-            return "high"
-    
-    
-    def save_model(self, path: str):
-        """Save classifier weights."""
-        if self.classifier is not None:
-            torch.save(self.classifier.state_dict(), path)
-            logger.info(f"Model saved to {path}")
-    
-    
-    def load_model(self, path: str):
-        """Load classifier weights."""
-        if self.classifier is None:
-            self.build_classifier()
-        
-        self.classifier.load_state_dict(torch.load(path, map_location=self.device))
-        self.is_trained = True
-        logger.info(f"Model loaded from {path}")
+        if confidence < 0.3: return "low"
+        if confidence < 0.7: return "medium"
+        return "high"

@@ -25,7 +25,7 @@ class VoiceAnalysisService:
         """Initialize the service with ML model."""
         logger.info("Initializing VoiceAnalysisService...")
         self.detector = DeepfakeDetector()
-        self.model_version = "v1.0-wavlm-base-plus"
+        self.model_version = "v2.1-fusion-generalization"
         logger.info("VoiceAnalysisService initialized successfully")
     
     
@@ -54,10 +54,11 @@ class VoiceAnalysisService:
         file_hash = compute_audio_hash(file_bytes)
         
         # Step 2: Check cache if enabled
+        # CRITICAL FIX: Only use cache if model version matches!
         if use_cache and db is not None:
             cached_result = get_voice_scan_by_hash(db, file_hash)
-            if cached_result:
-                logger.info(f"Cache hit for file hash: {file_hash}")
+            if cached_result and cached_result.model_version == self.model_version:
+                logger.info(f"Cache hit for file hash: {file_hash} (Version: {cached_result.model_version})")
                 return {
                     "cached": True,
                     **cached_result.to_dict()
@@ -100,7 +101,7 @@ class VoiceAnalysisService:
             "traditional_features": traditional_features,
             "processing_time": time.time() - start_time,
             "model_version": self.model_version,
-            "explanation": None,  # Will be filled by Gemini
+            "explanation": prediction.get('explanation'),
             "highlights": self._generate_highlights(prediction),
             "cached": False
         }
@@ -182,19 +183,19 @@ class VoiceAnalysisService:
         else:
             highlights.append(f"Low confidence ({confidence:.1%}) - likely real")
         
-        # Artifact-based highlights
+        # Artifact-based highlights (Professional Forensic Analysis)
         if artifacts:
-            if artifacts.get('spectral_flatness', 0) > 0.5:
-                highlights.append("Unusually flat frequency spectrum detected")
+            # Signal Quality (Higher = Worse)
+            if artifacts.get('signal_quality', 0) > 0.6:
+                highlights.append("Detected significant digital signal anomalies indicative of synthesis")
             
-            if artifacts.get('high_freq_energy', 0) > 0.3:
-                highlights.append("Suspicious high-frequency artifacts present")
+            # Acoustic Consistency (Higher = Worse)
+            if artifacts.get('acoustic_consistency', 0) > 0.6:
+                highlights.append("Acoustic patterns exhibit inconsistencies typical of neural vocoders")
             
-            if artifacts.get('zcr_variance', 0) < 0.01:
-                highlights.append("Unnaturally regular zero-crossing pattern")
-            
-            if artifacts.get('autocorr_peak', 0) > 500:
-                highlights.append("Strong periodicity suggests synthetic generation")
+            # Semantic Coherence (Higher = Worse)
+            if artifacts.get('semantic_coherence', 0) > 0.6:
+                highlights.append(" phonetic or prosodic misalignment detected in speech structure")
         
         # Risk level highlight
         risk_level = prediction['risk_level']

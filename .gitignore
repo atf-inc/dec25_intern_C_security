@@ -10,16 +10,28 @@ venv/
 dist/
 build/
 
-# Data files
-data/
-*.wav
-*.mp3
-*.flac
-*.m4a
+# Node/Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
 
-# Model files
+# ML Data (CRITICAL EXCLUSIONS)
+ml_pipeline_deepfake/data/
+ml_pipeline_deepfake/features_*/
+ml_pipeline_deepfake/features/
+ml_pipeline_deepfake/features_v3_gen/
+uploads/
+backend/uploads/
+
+# Large Model Files
 *.pth
+*.onnx
+*.npy
 *.npz
+
+# Allow specifically the deployed model IF <100MB (Verified: ~5MB)
+!backend/app/ml/models/deepfake_v2_1.pth
 
 # IDE
 .vscode/
@@ -31,5 +43,22 @@ data/
 .DS_Store
 Thumbs.db
 
+# Sensitive
+.env
+*.env
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
 # Logs
 *.log
+*_results.txt
+*_debug.txt
+*_output.txt
+*_full_for_deepfake.txt
+
+# Local Test Files
+sample_test.wav
+test_result*.txt

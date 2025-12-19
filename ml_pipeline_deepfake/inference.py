@@ -64,7 +64,7 @@ class DeepfakeInference:
         print(f"\nLoading checkpoint: {checkpoint_path}")
         self.model = DeepfakeFusionModel()
         try:
-            self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device))
+            self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device), strict=False)
             print("✓ Model loaded successfully")
         except FileNotFoundError:
             print(f"\n⚠ WARNING: Checkpoint not found at '{checkpoint_path}'")
