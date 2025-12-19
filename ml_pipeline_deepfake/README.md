@@ -1,20 +1,49 @@
-# 🎙️ Fusion Deepfake Voice Detection Pipeline
+# Deepfake Voice Detection MVP
 
-Multi-modal deepfake voice detection using WavLM + Whisper + DSP fusion architecture.
+**Team**: ATF Inc - Security Intern Team (December 2025)  
+**Project**: Multi-Modal Fusion Deepfake Voice Detection System  
+**Status**: MVP Complete ✅
 
-## 🎯 Architecture Overview
+---
 
-**Three Expert Branches:**
-1. **WavLM (Acoustic Expert)** - 768-dim embeddings
-   - Detects micro-glitches, compression artifacts, vocoder traces
-2. **Whisper (Semantic Expert)** - 768-dim embeddings
-   - Detects prosody mismatches, unnatural pauses, emotion inconsistencies
-3. **DSP (Signal Expert)** - 8-dim features
-   - Detects impossible physics, spectral anomalies, phase errors
+## 🎯 Project Overview
 
-**Total Fusion Vector:** 1544 dimensions (768 + 768 + 8)
+This is a **CPU-friendly, explainable deepfake voice detection system** using a multi-expert fusion architecture:
+- **WavLM-Base-Plus**: Acoustic feature extraction (768-dim)
+- **Whisper-Small**: Semantic/prosody feature extraction (768-dim)  
+- **DSP Features**: Signal processing features (6-dim)
+- **Fusion Classifier**: Lightweight MLP (~429K parameters)
 
-**Expected Accuracy:** 92-95%
+**Key Features**: Multi-modal fusion, interpretable results, CPU-friendly inference
+
+---
+
+## 🏗️ Architecture
+
+```
+Audio Input (.wav)
+    ↓
+┌───────────┬────────────┬──────────┐
+│   WavLM   │  Whisper   │   DSP    │
+│  (768-d)  │  (768-d)   │   (6-d)  │
+│  Frozen   │   Frozen   │  Rules   │
+└─────┬─────┴──────┬─────┴────┬─────┘
+      │            │          │
+      └────────────┼──────────┘
+                   │
+            Concatenate (1542-d)
+                   │
+                   ▼
+         ┌─────────────────┐
+         │  Fusion MLP     │
+         │  (Trainable)    │
+         │  3 Layers       │
+         └────────┬────────┘
+                  │
+                  ▼
+         Binary Output
+         (Real vs Fake)
+```
 
 ---
 
@@ -22,286 +51,331 @@ Multi-modal deepfake voice detection using WavLM + Whisper + DSP fusion architec
 
 ```
 ml_pipeline_deepfake/
-├── src/
-│   ├── features/           # Feature extractors
-│   │   ├── wavlm_extractor.py
-│   │   ├── whisper_extractor.py
-│   │   └── dsp_extractor.py
-│   └── models/             # Fusion model
-│       └── fusion_model.py
-├── scripts/
-│   ├── download_dataset.py    # Dataset download
-│   ├── extract_features.py    # Feature extraction
-│   └── train_fusion.py        # Model training
-├── data/                   # Raw audio files
-│   ├── train/
-│   ├── dev/
-│   └── test/
-├── features/               # Extracted features (.npy)
-│   ├── train/
-│   ├── dev/
-│   └── test/
-├── models/                 # Trained models
-│   └── fusion_detector.pth
-├── test_extractors.py      # Test all extractors
-└── requirements.txt
+├── checkpoints/           # Trained model checkpoints
+│   └── fusion_model.pth      # Pre-trained fusion model
+│
+├── features/              # Feature extraction modules
+│   ├── wavlm_extractor.py    # WavLM acoustic features
+│   ├── whisper_extractor.py  # Whisper semantic features
+│   ├── dsp_features.py       # DSP signal features
+│   └── __init__.py
+│
+├── models/                # Model architecture
+│   ├── fusion_model.py       # Fusion classifier
+│   └── __init__.py
+│
+├── training/              # Training pipeline
+│   ├── train.py              # Training script
+│   └── __init__.py
+│
+├── validation/            # Evaluation & testing
+│   ├── eval.py               # Comprehensive evaluation
+│   └── __init__.py
+│
+├── scripts/               # Utility scripts
+│   ├── data_preparation/     # Data prep scripts
+│   └── data_conversion/      # Audio conversion tools
+│
+├── docs/                  # Documentation
+│   ├── TECHNICAL_SUMMARY.md
+│   ├── PRIORITY1_RESULTS.md
+│   └── ...
+│
+├── data/                  # Training/test data
+│   ├── real/                 # Real voice samples
+│   └── fake/                 # Fake voice samples
+│
+├── inference.py           # 🎯 Simple inference script (START HERE!)
+├── run_training.py        # Training entry point
+├── test_extractors.py     # Test feature extractors
+├── requirements.txt       # Python dependencies
+└── README.md              # This file
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### 1. Installation
 
 ```bash
+# Navigate to project directory
+cd ml_pipeline_deepfake
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Test Extractors
-
-```bash
-python test_extractors.py
-```
-
-Expected output:
-```
-✅ WavLM extraction successful! (768-dim)
-✅ Whisper extraction successful! (768-dim)
-✅ DSP extraction successful! (8-dim)
-✅ Fusion successful! (1544-dim)
-```
-
-### 3. Download Dataset
-
-**Option A: Quick (WaveFake - 5GB, ~1 hour)**
-```bash
-python scripts/download_dataset.py --dataset wavefake --output data/
-```
-
-**Option B: Production (ASVspoof 2021 - 25GB, overnight)**
-```bash
-python scripts/download_dataset.py --dataset asvspoof --output data/
-```
-
-### 4. Extract Features
-
-```bash
-python scripts/extract_features.py --data_dir data/ --output features/
-```
-
-This will:
-- Process all audio files in `data/train/`, `data/dev/`, `data/test/`
-- Extract WavLM, Whisper, and DSP features
-- Save as `.npy` files in `features/`
-- Takes ~9 seconds per audio file on CPU
-
-### 5. Train Fusion Model
-
-```bash
-python scripts/train_fusion.py --features_dir features/ --epochs 20 --batch_size 32
-```
-
-Training parameters:
-- **Epochs:** 20 (adjust based on dataset size)
-- **Batch size:** 32 (reduce if out of memory)
-- **Learning rate:** 0.001 (with ReduceLROnPlateau scheduler)
-- **Optimizer:** Adam
-- **Loss:** Binary Cross Entropy
-
-### 6. Evaluate Model
-
-The training script automatically evaluates on the dev set and saves the best model.
-
-Final metrics:
-- Accuracy
-- Precision / Recall / F1
-- AUC-ROC
-- Confusion Matrix
+**Requirements:**
+- Python 3.8+
+- PyTorch 2.0+
+- Transformers 4.30+
+- librosa, scikit-learn, numpy
 
 ---
 
-## 📊 Expected Performance
+### 2. 🎯 Run Inference (Using Pre-trained Model)
 
-| Metric | Target |
-|--------|--------|
-| Accuracy | 92-95% |
-| Precision | >90% |
-| Recall | >90% |
-| F1 Score | >90% |
-| AUC-ROC | >0.95 |
-
----
-
-## 🔧 Advanced Usage
-
-### Custom Dataset
-
-If you have your own dataset:
-
-1. Organize files:
-```
-data/
-├── train/
-│   ├── real/  (real voice samples)
-│   └── fake/  (deepfake samples)
-├── dev/
-│   ├── real/
-│   └── fake/
-└── test/
-    ├── real/
-    └── fake/
-```
-
-2. Extract features:
-```bash
-python scripts/extract_features.py --data_dir data/ --output features/
-```
-
-3. Train:
-```bash
-python scripts/train_fusion.py --features_dir features/ --epochs 20
-```
-
-### Hyperparameter Tuning
+The easiest way to get started is using the pre-trained checkpoint:
 
 ```bash
-# Larger model
-python scripts/train_fusion.py --features_dir features/ --epochs 30 --batch_size 64 --lr 0.0005
+# Single file prediction
+python inference.py --audio data/real/DF_E_2000053.wav
 
-# More regularization (small dataset)
-python scripts/train_fusion.py --features_dir features/ --epochs 15 --batch_size 16 --lr 0.001
+# Batch prediction on a directory
+python inference.py --audio_dir data/real/ --limit 5
+
+# Use custom checkpoint
+python inference.py --audio test.wav --checkpoint checkpoints/my_model.pth
 ```
 
-### CPU vs GPU
+**Example Output:**
+```
+============================================================
+RESULTS
+============================================================
 
-```bash
-# Force CPU training
-python scripts/train_fusion.py --features_dir features/ --cpu
+🎯 PREDICTION: REAL
+   Probability of being FAKE: 38.21%
+   Confidence: 61.79%
+   ⚠ MODERATE CONFIDENCE
 
-# GPU training (automatic if available)
-python scripts/train_fusion.py --features_dir features/
+📊 Signal Analysis (DSP Features):
+   Pitch Mean          : 615.2680
+   Pitch Variance      : 1040.1733
+   Pitch Range         : 3801.6489
+   Energy Mean         : 0.1052
+   Energy Variance     : 0.0939
+   Silence Ratio       : 0.2661
+
+💡 Interpretation:
+   ✓ No obvious signal anomalies detected
 ```
 
 ---
 
-## 🧪 Testing
+### 3. Train Your Own Model
 
-### Test Individual Extractors
+```bash
+# Basic training (5 epochs, small batch)
+python run_training.py --epochs 5 --batch_size 4
+
+# Advanced training
+python run_training.py \
+  --data_dir data/ \
+  --epochs 10 \
+  --batch_size 8 \
+  --hidden_dim 256 \
+  --dropout 0.3 \
+  --lr 0.001
+```
+
+**Training Options:**
+- `--data_dir`: Path to data directory (default: `data/`)
+- `--epochs`: Number of training epochs (default: 5)
+- `--batch_size`: Batch size (default: 4)
+- `--hidden_dim`: Hidden layer size (default: 256)
+- `--dropout`: Dropout rate (default: 0.3)
+- `--save_path`: Where to save model (default: `fusion_model.pth`)
+
+---
+
+### 4. Comprehensive Evaluation
+
+```bash
+# Evaluate on test directory with real/ and fake/ subdirectories
+python validation/eval.py --model checkpoints/fusion_model.pth --test_dir data/
+
+# Single file evaluation with detailed output
+python validation/eval.py --model checkpoints/fusion_model.pth --audio_file test.wav
+```
+
+---
+
+## 💻 Python API Usage
+
+### Simple Inference
 
 ```python
-from src.features import WavLMExtractor, WhisperExtractor, DSPExtractor
-import numpy as np
+from inference import DeepfakeInference
 
-# Generate test audio
-audio = np.sin(2 * np.pi * 440 * np.linspace(0, 3, 48000))
+# Initialize
+detector = DeepfakeInference(checkpoint_path="checkpoints/fusion_model.pth")
 
-# Extract features
-wavlm_ext = WavLMExtractor()
-whisper_ext = WhisperExtractor()
-dsp_ext = DSPExtractor()
+# Predict single file
+result = detector.predict("audio.wav")
+print(f"Prediction: {result['prediction']}")
+print(f"Confidence: {result['confidence']:.2%}")
 
-wavlm_emb = wavlm_ext.extract(audio, 16000)
-whisper_emb = whisper_ext.extract(audio, 16000)
-dsp_feat = dsp_ext.extract(audio, 16000)
-
-print(f"WavLM: {wavlm_emb.shape}")      # (768,)
-print(f"Whisper: {whisper_emb.shape}")  # (768,)
-print(f"DSP: {dsp_feat.shape}")         # (8,)
+# Batch prediction
+results = detector.predict_batch("audio_folder/", limit=10)
 ```
 
-### Test Fusion Model
+### Advanced Evaluation
 
 ```python
-import torch
-from src.models import FusionDeepfakeDetector
+from validation.eval import DeepfakeEvaluator
 
-model = FusionDeepfakeDetector()
-model.load_state_dict(torch.load('models/fusion_detector.pth'))
-model.eval()
+# Initialize evaluator
+evaluator = DeepfakeEvaluator(
+    model_path="checkpoints/fusion_model.pth",
+    device="cpu"
+)
 
-# Dummy features
-wavlm = torch.randn(1, 768)
-whisper = torch.randn(1, 768)
-dsp = torch.randn(1, 8)
+# Detailed single file analysis
+result = evaluator.predict_single("test.wav", verbose=True)
 
-# Predict
-confidence = model(wavlm, whisper, dsp)
-print(f"Deepfake confidence: {confidence.item():.4f}")
-
-# With explainability
-result = model.predict_with_explanation(wavlm, whisper, dsp)
-print(f"Expert scores: {result['expert_scores']}")
+# Evaluate entire directory
+results = evaluator.evaluate_directory("test_data/")
 ```
 
 ---
 
-## 🔗 Integration with Backend
+## 📊 Model Performance
 
-Once trained, integrate the model into the backend:
+**Checkpoint**: `checkpoints/fusion_model.pth`
 
-```python
-# backend/app/ml/deepfake_model.py
+| Metric | Value |
+|--------|-------|
+| **Model Size** | ~429K parameters |
+| **Input Dimension** | 1542 (WavLM: 768, Whisper: 768, DSP: 6) |
+| **Architecture** | 3-layer MLP (256 → 128 → 1) |
+| **Inference Speed** | ~2-3 seconds/file (CPU) |
+| **Device** | CPU-friendly |
 
-from ml_pipeline_deepfake.src.features import WavLMExtractor, WhisperExtractor, DSPExtractor
-from ml_pipeline_deepfake.src.models import FusionDeepfakeDetector
-import torch
+---
 
-class FusionDeepfakeDetector:
-    def __init__(self, model_path='ml_pipeline_deepfake/models/fusion_detector.pth'):
-        self.wavlm_ext = WavLMExtractor()
-        self.whisper_ext = WhisperExtractor()
-        self.dsp_ext = DSPExtractor()
-        
-        self.model = FusionDeepfakeDetector()
-        self.model.load_state_dict(torch.load(model_path))
-        self.model.eval()
-    
-    def predict(self, audio_path):
-        # Load audio
-        import librosa
-        waveform, sr = librosa.load(audio_path, sr=16000)
-        
-        # Extract features
-        wavlm_emb = self.wavlm_ext.extract(waveform, sr)
-        whisper_emb = self.whisper_ext.extract(waveform, sr)
-        dsp_feat = self.dsp_ext.extract(waveform, sr)
-        
-        # Convert to tensors
-        wavlm_t = torch.FloatTensor(wavlm_emb).unsqueeze(0)
-        whisper_t = torch.FloatTensor(whisper_emb).unsqueeze(0)
-        dsp_t = torch.FloatTensor(dsp_feat).unsqueeze(0)
-        
-        # Predict with explainability
-        result = self.model.predict_with_explanation(wavlm_t, whisper_t, dsp_t)
-        
-        return {
-            'is_deepfake': result['confidence'] > 0.5,
-            'confidence': result['confidence'],
-            'expert_scores': result['expert_scores']
-        }
+## 🔬 Technical Details
+
+### Feature Extractors
+
+1. **WavLM-Base-Plus** (Acoustic Expert)
+   - Model: `microsoft/wavlm-base-plus`
+   - Parameters: 94M (frozen)
+   - Output: 768-dim vector
+   - Captures: Spectral artifacts, phase issues, vocoder traces
+
+2. **Whisper-Small** (Semantic Expert)
+   - Model: `openai/whisper-small`
+   - Parameters: 244M (frozen, encoder only)
+   - Output: 768-dim vector
+   - Captures: Prosody mismatches, timing anomalies
+
+3. **DSP Features** (Signal Expert)
+   - Library: librosa
+   - Output: 6-dim vector
+   - Features: pitch (mean/std/range), energy (mean/std), silence ratio
+
+### Fusion Model
+
+- **Architecture**: 3-layer feedforward network
+- **Layers**: 1542 → 256 → 128 → 1
+- **Activation**: ReLU
+- **Regularization**: Batch normalization + Dropout (0.3)
+- **Loss**: Binary Cross Entropy with Logits
+- **Optimizer**: Adam (lr=1e-3)
+
+---
+
+## 🎯 Design Philosophy
+
+### Why Multi-Modal Fusion?
+
+1. **Complementary Information**: Each expert catches different artifacts
+   - WavLM: Low-level acoustic anomalies
+   - Whisper: High-level semantic/prosody issues
+   - DSP: Physical impossibilities (pitch/energy patterns)
+
+2. **Explainability**: DSP features provide interpretable signals
+3. **Efficiency**: Only fusion head is trainable (~429K params)
+4. **Robustness**: Harder to fool multiple modalities
+
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**1. Import Errors**
+```bash
+# Make sure you're in the ml_pipeline_deepfake directory
+cd ml_pipeline_deepfake
+python inference.py --audio data/real/sample.wav
+```
+
+**2. Model Loading Errors**
+```bash
+# Check checkpoint exists
+ls checkpoints/fusion_model.pth
+
+# Use absolute path if needed
+python inference.py --audio test.wav --checkpoint /full/path/to/fusion_model.pth
+```
+
+**3. Audio File Errors**
+- Ensure audio is in supported format (.wav, .mp3, .flac, .m4a)
+- Check file exists and is readable
+- Try converting to .wav if issues persist
+
+**4. Memory Issues**
+```bash
+# Reduce batch size
+python run_training.py --batch_size 2
+
+# Force CPU usage
+python inference.py --audio test.wav --device cpu
 ```
 
 ---
 
-## 📚 References
+## 📈 Future Improvements
 
-- **WavLM Paper:** https://arxiv.org/abs/2110.13900
-- **Whisper Paper:** https://arxiv.org/abs/2212.04356
-- **ASVspoof 2021:** https://www.asvspoof.org/index2021.html
-- **WaveFake Dataset:** https://zenodo.org/record/5642506
+### Short-term
+- [ ] Add data augmentation (pitch shift, time stretch, noise)
+- [ ] Implement attention-based fusion
+- [ ] Add frame-level temporal analysis
+- [ ] Create web demo interface
 
----
-
-## 🎯 Next Steps
-
-1. ✅ Feature extractors implemented
-2. ✅ Fusion model created
-3. ✅ Training pipeline ready
-4. ⏳ Download dataset
-5. ⏳ Extract features
-6. ⏳ Train model
-7. ⏳ Integrate with backend
+### Long-term
+- [ ] Real-time inference API
+- [ ] Support for streaming audio
+- [ ] Multi-language support
+- [ ] Explainability dashboard
 
 ---
 
-**Ready to train? Start with Step 3 (Download Dataset)!**
+## 📝 Documentation
+
+- **README.md** (this file): Quick start and usage guide
+- **docs/TECHNICAL_SUMMARY.md**: Detailed technical documentation
+- **docs/PRIORITY1_RESULTS.md**: Training results and analysis
+- **docs/WILD_DATA_STATUS.md**: Data integration status
+
+---
+
+## 🤝 Contributing
+
+This project was developed as part of the ATF Inc Security Intern program (December 2025).
+
+**Team**: ATF Inc Security Intern Team  
+**Repository**: https://github.com/atf-inc/dec25_intern_C_security
+
+---
+
+## 📄 License
+
+[Add your license here]
+
+---
+
+## ✅ Project Status
+
+**MVP**: ✅ Complete  
+**Inference**: ✅ Working  
+**Checkpoint**: ✅ Available (`checkpoints/fusion_model.pth`)  
+**Documentation**: ✅ Complete
+
+---
+
+**Last Updated**: December 14, 2025  
+**Version**: 1.1.0 (Reorganized)

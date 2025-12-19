@@ -116,6 +116,8 @@ def extract_features_from_directory(data_dir):
     wavlm_features = []
     whisper_features = []
     dsp_features = []
+    successful_labels = []  # Track labels for successful extractions only
+    successful_files = []
     
     for i, audio_file in enumerate(all_files):
         print(f"\nProcessing {i+1}/{len(all_files)}: {os.path.basename(audio_file)}")
@@ -123,32 +125,39 @@ def extract_features_from_directory(data_dir):
         try:
             # Extract WavLM features
             wavlm_feat = wavlm_extractor.extract(audio_file)
-            wavlm_features.append(wavlm_feat)
             
             # Extract Whisper features
             whisper_feat = whisper_extractor.extract(audio_file)
-            whisper_features.append(whisper_feat)
             
             # Extract DSP features
             dsp_feat = dsp_extractor.extract(audio_file)
+            
+            # Only add if all extractions succeeded
+            wavlm_features.append(wavlm_feat)
+            whisper_features.append(whisper_feat)
             dsp_features.append(dsp_feat)
+            successful_labels.append(labels[i])
+            successful_files.append(audio_file)
             
         except Exception as e:
             print(f"  ⚠ Error processing {audio_file}: {e}")
+            print(f"  Skipping this sample...")
             continue
     
     # Convert to numpy arrays
     wavlm_features = np.vstack(wavlm_features)
     whisper_features = np.vstack(whisper_features)
     dsp_features = np.vstack(dsp_features)
-    labels = np.array(labels)
+    labels = np.array(successful_labels)
     
     print(f"\n✓ Feature extraction complete!")
+    print(f"  Successfully processed: {len(successful_labels)}/{len(all_files)} samples")
     print(f"  WavLM shape: {wavlm_features.shape}")
     print(f"  Whisper shape: {whisper_features.shape}")
     print(f"  DSP shape: {dsp_features.shape}")
+    print(f"  Labels shape: {labels.shape}")
     
-    return wavlm_features, whisper_features, dsp_features, labels, all_files
+    return wavlm_features, whisper_features, dsp_features, labels, successful_files
 
 
 
@@ -298,13 +307,33 @@ def main(args):
     
     model.to(device)
     
-    # Loss and optimizer
-    criterion = nn.BCEWithLogitsLoss()
+    # Calculate class weights to handle imbalance
+    num_real = np.sum(labels[train_idx] == 0)
+    num_fake = np.sum(labels[train_idx] == 1)
+    total = len(train_idx)
+    
+    # Weight for positive class (fake) - higher weight for minority class
+    pos_weight = torch.tensor([num_real / num_fake]).to(device)
+    
+    print(f"\nClass distribution:")
+    print(f"  Real: {num_real} samples")
+    print(f"  Fake: {num_fake} samples")
+    print(f"  Positive weight (fake): {pos_weight.item():.2f}")
+    
+    # Loss and optimizer with class weighting
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    
+    # Learning rate scheduler - reduce LR on plateau
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='max', factor=0.5, patience=5
+    )
     
     # Training loop
     print(f"\n=== Training for {args.epochs} epochs ===")
     best_val_acc = 0.0
+    patience_counter = 0
+    patience_limit = 10  # Early stopping patience
     
     for epoch in range(args.epochs):
         print(f"\nEpoch {epoch+1}/{args.epochs}")
@@ -319,11 +348,23 @@ def main(args):
         print(f"Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.4f}")
         print(f"Precision: {val_prec:.4f} | Recall: {val_rec:.4f} | F1: {val_f1:.4f} | AUC: {val_auc:.4f}")
         
+        # Learning rate scheduling
+        scheduler.step(val_acc)
+        
         # Save best model
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             torch.save(model.state_dict(), args.save_path)
-            print(f"✓ Model saved to {args.save_path}")
+            print(f"✓ Model saved to {args.save_path} (Best: {best_val_acc:.4f})")
+            patience_counter = 0
+        else:
+            patience_counter += 1
+            print(f"  No improvement ({patience_counter}/{patience_limit})")
+        
+        # Early stopping
+        if patience_counter >= patience_limit:
+            print(f"\n⚠ Early stopping triggered after {epoch+1} epochs")
+            break
     
     print(f"\n=== Training Complete ===")
     print(f"Best validation accuracy: {best_val_acc:.4f}")
