@@ -1,5 +1,4 @@
 // Gmail Content Script - Real-time Email Security Analysis
-// This is the core of our MVP - extracts email data and triggers AI analysis
 
 console.log('🛡️ ATF CyberX Email Security - Gmail Integration Active');
 
@@ -8,6 +7,7 @@ class GmailSecurityAnalyzer {
         this.processedEmails = new Set(); // Avoid re-scanning same emails
         this.currentEmailHash = null;
         this.observer = null;
+        this.scanTimeout = null; // For debouncing
         this.init();
     }
 
@@ -23,13 +23,15 @@ class GmailSecurityAnalyzer {
     startMonitoring() {
         console.log('🔍 Starting Gmail email monitoring...');
 
-        // Monitor for email view changes using MutationObserver
+        // Task 10: Debouncing implemented here to improve performance
         this.observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    this.checkForNewEmail();
-                }
-            });
+            // Clear the previous timeout if a new mutation occurs quickly
+            if (this.scanTimeout) clearTimeout(this.scanTimeout);
+            
+            // Wait 500ms after changes stop before scanning
+            this.scanTimeout = setTimeout(() => {
+                this.checkForNewEmail();
+            }, 500);
         });
 
         // Start observing Gmail's main content area
@@ -43,32 +45,54 @@ class GmailSecurityAnalyzer {
         setTimeout(() => this.checkForNewEmail(), 1000);
     }
 
-    checkForNewEmail() {
+    // Task 7: Async check for Auto-Scan setting
+    async checkForNewEmail() {
+        // 1. Check if auto-scan is enabled in user settings
+        try {
+            const settings = await chrome.storage.local.get(['autoScanEnabled']);
+            // If setting exists and is explicitly false, stop here.
+            if (settings.autoScanEnabled === false) {
+                return;
+            }
+        } catch (err) {
+            // 🛑 FIX: Detect invalidation and stop the script to prevent spam
+            if (err.message.includes('Extension context invalidated')) {
+                console.log('🛑 Extension updated. Stopping old content script observer.');
+                if (this.observer) this.observer.disconnect();
+                return;
+            }
+            console.warn('Could not read settings, proceeding with scan', err);
+        }
+
+        // 2. Locate the email container
         const emailContainer = this.findEmailContainer();
         if (!emailContainer) return;
 
+        // 3. Extract data
         const emailData = this.extractEmailData(emailContainer);
         if (!emailData) return;
 
-        // Create hash to avoid re-processing same email
+        // 4. Check hash to avoid re-processing the same email multiple times
         const emailHash = this.createEmailHash(emailData);
         if (this.processedEmails.has(emailHash)) return;
 
         console.log('📧 New email detected:', emailData.subject);
         this.processedEmails.add(emailHash);
-        this.currentEmailHash = emailHash;
-
-        // Send to background service for AI analysis
+        
+        // 5. Analyze
         this.analyzeEmail(emailData, emailContainer);
     }
 
     findEmailContainer() {
-        // Gmail email container selectors (multiple fallbacks)
+        // Task 3: Robust Selectors for different Gmail views
         const selectors = [
-            '[data-message-id]',           // Primary email container
-            '.ii.gt .a3s.aiL',            // Email body container
-            '[role="listitem"] .ii',       // Email in conversation
-            '.nH .if'                      // Fallback container
+            '[data-message-id]',           // Standard view
+            '.ii.gt .a3s.aiL',             // Message body wrapper
+            '[role="listitem"] .ii',       // Conversation view item
+            '.nH .if',                     // Split view container
+            '[data-legacy-message-id]',    // Old Gmail view
+            '.gs .ii',                     // Generic message wrapper
+            'div[data-message-id] .ii'     // Specific wrapper
         ];
 
         for (const selector of selectors) {
@@ -81,7 +105,7 @@ class GmailSecurityAnalyzer {
     }
 
     isValidEmailContainer(container) {
-        // Validate this is actually an email (not compose, etc.)
+        // Ensure we aren't scanning a compose window or empty div
         const hasSubject = container.querySelector('[data-subject]') ||
             container.querySelector('h2') ||
             document.querySelector('[data-subject]');
@@ -91,34 +115,19 @@ class GmailSecurityAnalyzer {
 
     extractEmailData(container) {
         try {
-            // Extract subject
             const subject = this.extractSubject();
             if (!subject) return null;
 
-            // Extract sender
             const sender = this.extractSender();
-
-            // Extract email body (text only)
             const body = this.extractBody(container);
-
-            // Extract visible links
             const links = this.extractLinks(container);
 
-            const emailData = {
+            return {
                 subject: subject.trim(),
                 from_email: sender.trim(),
                 body: body.trim(),
                 visible_links: links
             };
-
-            console.log('📊 Extracted email data:', {
-                subject: emailData.subject,
-                sender: emailData.from_email,
-                bodyLength: emailData.body.length,
-                linkCount: emailData.visible_links.length
-            });
-
-            return emailData;
         } catch (error) {
             console.error('❌ Error extracting email data:', error);
             return null;
@@ -126,14 +135,7 @@ class GmailSecurityAnalyzer {
     }
 
     extractSubject() {
-        const selectors = [
-            '[data-subject]',
-            'h2[data-subject]',
-            '.hP',
-            '.bog',
-            'h2.hP'
-        ];
-
+        const selectors = ['[data-subject]', 'h2[data-subject]', '.hP', '.bog', 'h2.hP'];
         for (const selector of selectors) {
             const element = document.querySelector(selector);
             if (element) {
@@ -145,20 +147,11 @@ class GmailSecurityAnalyzer {
     }
 
     extractSender() {
-        const selectors = [
-            '[email]',
-            '.go .g2',
-            '.yW span[email]',
-            '.yW .g2',
-            '.qu .go .g2'
-        ];
-
+        const selectors = ['[email]', '.go .g2', '.yW span[email]', '.yW .g2', '.qu .go .g2'];
         for (const selector of selectors) {
             const element = document.querySelector(selector);
             if (element) {
-                const email = element.getAttribute('email') ||
-                    element.getAttribute('data-email') ||
-                    element.textContent;
+                const email = element.getAttribute('email') || element.getAttribute('data-email') || element.textContent;
                 if (email && email.includes('@')) return email.trim();
             }
         }
@@ -166,18 +159,10 @@ class GmailSecurityAnalyzer {
     }
 
     extractBody(container) {
-        // Get email body text, excluding headers and signatures
-        const bodySelectors = [
-            '.ii.gt .a3s.aiL',
-            '.a3s.aiL',
-            '.ii.gt div[dir="ltr"]',
-            '.ii.gt'
-        ];
-
+        const bodySelectors = ['.ii.gt .a3s.aiL', '.a3s.aiL', '.ii.gt div[dir="ltr"]', '.ii.gt'];
         for (const selector of bodySelectors) {
             const bodyElement = container.querySelector(selector) || document.querySelector(selector);
             if (bodyElement) {
-                // Clean up the text - remove extra whitespace, keep structure
                 let text = bodyElement.innerText || bodyElement.textContent || '';
                 text = text.replace(/\s+/g, ' ').trim();
                 if (text.length > 20) return text;
@@ -189,24 +174,16 @@ class GmailSecurityAnalyzer {
     extractLinks(container) {
         const links = [];
         const linkElements = container.querySelectorAll('a[href]');
-
         linkElements.forEach(link => {
             const href = link.getAttribute('href');
-            const text = link.textContent.trim();
-
             if (href && href.startsWith('http')) {
-                links.push({
-                    uri: href,
-                    anchor_text: text || href
-                });
+                links.push({ uri: href, anchor_text: link.textContent.trim() || href });
             }
         });
-
         return links;
     }
 
     createEmailHash(emailData) {
-        // Simple hash to identify unique emails
         const hashString = emailData.subject + emailData.from_email + emailData.body.substring(0, 100);
         return btoa(hashString).substring(0, 16);
     }
@@ -214,8 +191,8 @@ class GmailSecurityAnalyzer {
     async analyzeEmail(emailData, container) {
         try {
             console.log('🤖 Sending email for AI analysis...');
-
-            // Send to background service
+            
+            // Send to background service (which handles API calls & caching)
             const response = await chrome.runtime.sendMessage({
                 action: 'analyzeEmail',
                 emailData: emailData
@@ -226,40 +203,38 @@ class GmailSecurityAnalyzer {
                 this.displaySecurityBadge(response.result, container);
             } else {
                 console.error('❌ Analysis failed:', response?.error);
-                this.displayErrorBadge(container);
+                // Task 4: Enhanced Error Handling
+                this.displayErrorBadge(container, response?.error || 'Unknown Error');
             }
         } catch (error) {
             console.error('❌ Error during analysis:', error);
-            this.displayErrorBadge(container);
+            this.displayErrorBadge(container, 'Connection Error');
         }
     }
 
     displaySecurityBadge(analysisResult, container) {
-        // Remove any existing badges
         const existingBadge = document.querySelector('.atf-security-badge');
         if (existingBadge) existingBadge.remove();
 
-        // Create security badge based on analysis
         const badge = this.createSecurityBadge(analysisResult);
-
-        // Find the best place to inject the badge (email header area)
         const headerArea = this.findEmailHeader();
+
+        // Task 6: Improved Positioning logic
         if (headerArea) {
-            headerArea.appendChild(badge);
+            // Try to place it near the sender info if possible
+            const senderArea = headerArea.querySelector('.gD') || headerArea;
+            if (senderArea.parentNode) {
+                senderArea.parentNode.insertBefore(badge, senderArea.nextSibling);
+            } else {
+                headerArea.appendChild(badge);
+            }
         } else {
-            // Fallback: inject at top of email container
             container.insertBefore(badge, container.firstChild);
         }
     }
 
     findEmailHeader() {
-        const headerSelectors = [
-            '.gE.iv.gt',           // Gmail email header
-            '.hA',                 // Header area
-            '.qu',                 // Email metadata area
-            '.adn.ads'             // Email actions area
-        ];
-
+        const headerSelectors = ['.gE.iv.gt', '.hA', '.qu', '.adn.ads', 'table.cf.gJ'];
         for (const selector of headerSelectors) {
             const header = document.querySelector(selector);
             if (header) return header;
@@ -268,50 +243,32 @@ class GmailSecurityAnalyzer {
     }
 
     createSecurityBadge(analysisResult) {
-        const { label, score, ai_explanation } = analysisResult;
-
-        // Determine badge style based on threat level
+        const { label, score } = analysisResult;
         const badgeConfig = this.getBadgeConfig(label, score);
 
-        // Create badge container
         const badge = document.createElement('div');
         badge.className = 'atf-security-badge';
-        badge.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            margin: 8px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            background: ${badgeConfig.background};
-            color: ${badgeConfig.color};
-            border: 2px solid ${badgeConfig.border};
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            z-index: 10000;
-            position: relative;
-        `;
+        
+        // Most styles are now in gmail.css (Task 6), we only set dynamic colors here
+        badge.style.background = badgeConfig.background;
+        badge.style.color = badgeConfig.color;
+        badge.style.border = `1px solid ${badgeConfig.border}`;
+        
+        // Basic structural styles required for correct display
+        badge.style.cursor = 'pointer';
+        badge.style.padding = '4px 10px';
+        badge.style.borderRadius = '16px';
+        badge.style.marginLeft = '12px';
+        badge.style.fontSize = '12px';
+        badge.style.fontWeight = '500';
 
         badge.innerHTML = `
-            <span style="margin-right: 6px; font-size: 14px;">${badgeConfig.icon}</span>
+            <span style="margin-right: 6px;">${badgeConfig.icon}</span>
             <span>${badgeConfig.text}</span>
         `;
 
-        // Add hover effect
-        badge.addEventListener('mouseenter', () => {
-            badge.style.transform = 'scale(1.05)';
-            badge.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-        });
-
-        badge.addEventListener('mouseleave', () => {
-            badge.style.transform = 'scale(1)';
-            badge.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-        });
-
-        // Click to show detailed explanation
-        badge.addEventListener('click', () => {
+        badge.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent Gmail from collapsing the email
             this.showDetailedExplanation(analysisResult, badge);
         });
 
@@ -321,136 +278,106 @@ class GmailSecurityAnalyzer {
     getBadgeConfig(label, score) {
         switch (label) {
             case 'PHISHING':
-                return {
-                    icon: '🔴',
-                    text: 'Phishing Detected',
-                    background: '#fee2e2',
-                    color: '#dc2626',
-                    border: '#fca5a5'
-                };
+                return { icon: '🚫', text: 'Phishing Detected', background: '#FEF2F2', color: '#DC2626', border: '#FECACA' };
             case 'SUSPICIOUS':
-                return {
-                    icon: '🟡',
-                    text: 'Suspicious',
-                    background: '#fef3c7',
-                    color: '#d97706',
-                    border: '#fcd34d'
-                };
+                return { icon: '⚠️', text: 'Suspicious', background: '#FFFBEB', color: '#D97706', border: '#FDE68A' };
             case 'SAFE':
             default:
-                return {
-                    icon: '🟢',
-                    text: 'Safe',
-                    background: '#dcfce7',
-                    color: '#16a34a',
-                    border: '#86efac'
-                };
+                return { icon: '🛡️', text: 'Safe', background: '#ECFDF5', color: '#059669', border: '#A7F3D0' };
         }
     }
 
     showDetailedExplanation(analysisResult, badge) {
-        // Remove any existing explanation panel
         const existingPanel = document.querySelector('.atf-explanation-panel');
         if (existingPanel) {
             existingPanel.remove();
-            return; // Toggle off
+            return;
         }
 
         const panel = this.createExplanationPanel(analysisResult);
-        badge.parentNode.insertBefore(panel, badge.nextSibling);
+        
+        // Position relative to badge
+        // Ensure parent has relative positioning for the absolute panel
+        if (badge.parentNode) {
+            badge.parentNode.style.position = 'relative'; 
+            badge.parentNode.appendChild(panel);
+        }
     }
 
     createExplanationPanel(analysisResult) {
-        const { label, ai_explanation } = analysisResult;
-
+        const { ai_explanation } = analysisResult;
         const panel = document.createElement('div');
         panel.className = 'atf-explanation-panel';
-        panel.style.cssText = `
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin: 8px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            max-width: 500px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            z-index: 10001;
-            position: relative;
-        `;
+        
+        // CSS class handles animation and glassmorphism (Task 6)
+        // We set positioning and layout here
+        panel.style.position = 'absolute';
+        panel.style.top = '35px';
+        panel.style.left = '0';
+        panel.style.width = '320px';
+        panel.style.zIndex = '1000';
+        panel.style.padding = '16px';
+        panel.style.borderRadius = '8px';
+        panel.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)';
+        panel.style.background = 'white'; // Fallback
 
         panel.innerHTML = `
-            <div style="margin-bottom: 12px;">
-                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">
-                    🤖 AI Security Analysis
-                </h4>
-                <p style="margin: 0; color: #4b5563; font-size: 13px; line-height: 1.4;">
-                    ${ai_explanation?.summary || 'Analysis completed.'}
-                </p>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <h4 style="margin:0; font-size:14px; font-weight:700;">Security Analysis</h4>
+                <span class="close-panel" style="cursor:pointer; font-size:18px;">&times;</span>
             </div>
+            <p style="font-size:13px; color:#374151; margin-bottom:12px;">${ai_explanation?.summary || 'Analysis complete.'}</p>
             
-            <div style="margin-bottom: 12px;">
-                <h5 style="margin: 0 0 6px 0; color: #1f2937; font-size: 12px; font-weight: 600;">
-                    🧠 Why this matters:
-                </h5>
-                <p style="margin: 0; color: #4b5563; font-size: 12px; line-height: 1.4;">
-                    ${ai_explanation?.ai_reasoning || 'No detailed reasoning available.'}
-                </p>
+            <div style="background:#F3F4F6; padding:8px; border-radius:6px; margin-bottom:12px;">
+                <strong style="font-size:11px; text-transform:uppercase; color:#6B7280;">Reasoning</strong>
+                <p style="font-size:12px; margin:4px 0 0 0; color:#1F2937;">${ai_explanation?.ai_reasoning || 'No details.'}</p>
             </div>
-            
-            <div style="margin-bottom: 12px;">
-                <h5 style="margin: 0 0 6px 0; color: #1f2937; font-size: 12px; font-weight: 600;">
-                    💡 Recommended action:
-                </h5>
-                <p style="margin: 0; color: #4b5563; font-size: 12px; line-height: 1.4;">
-                    ${ai_explanation?.recommended_action || 'Exercise normal caution.'}
-                </p>
-            </div>
-            
-            <div style="text-align: right; margin-top: 12px;">
-                <button class="close-panel" style="
-                    background: #f3f4f6;
-                    border: 1px solid #d1d5db;
-                    border-radius: 6px;
-                    padding: 4px 8px;
-                    font-size: 11px;
-                    color: #6b7280;
-                    cursor: pointer;
-                ">Close</button>
-            </div>
+
+            <button class="close-panel" style="width:100%; padding:6px; background:white; border:1px solid #D1D5DB; border-radius:4px; font-size:12px; cursor:pointer;">Dismiss</button>
         `;
 
-        // Add close functionality
-        panel.querySelector('.close-panel').addEventListener('click', () => {
+        const closeBtns = panel.querySelectorAll('.close-panel');
+        closeBtns.forEach(btn => btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             panel.remove();
-        });
+        }));
 
         return panel;
     }
 
-    displayErrorBadge(container) {
+    displayErrorBadge(container, errorMessage) {
+        const existingBadge = document.querySelector('.atf-security-badge');
+        if (existingBadge) existingBadge.remove();
+
         const badge = document.createElement('div');
         badge.className = 'atf-security-badge';
-        badge.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            margin: 8px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            background: #f3f4f6;
-            color: #6b7280;
-            border: 2px solid #d1d5db;
-            z-index: 10000;
-        `;
-        badge.innerHTML = `<span style="margin-right: 6px;">⚠️</span><span>Analysis Error</span>`;
+        badge.style.background = '#F3F4F6';
+        badge.style.color = '#6B7280';
+        badge.style.border = '1px solid #E5E7EB';
+        badge.style.padding = '4px 10px';
+        badge.style.borderRadius = '16px';
+        badge.style.fontSize = '12px';
+        badge.style.fontWeight = '500';
+        badge.style.marginLeft = '12px';
+        
+        // Task 4: Friendly Error Messages
+        let text = 'Analysis Unavailable';
+        if (errorMessage.includes('offline') || errorMessage.includes('Network') || errorMessage.includes('fetch')) {
+            text = 'Offline';
+        } else if (errorMessage.includes('timeout')) {
+            text = 'Server Busy';
+        }
 
+        badge.innerHTML = `<span>⚠️ ${text}</span>`;
+        badge.title = errorMessage; // Show full error on hover
+        
         const headerArea = this.findEmailHeader();
         if (headerArea) {
             headerArea.appendChild(badge);
+        } else {
+            container.insertBefore(badge, container.firstChild);
         }
     }
 }
 
-// Initialize Gmail Security Analyzer
 const gmailAnalyzer = new GmailSecurityAnalyzer();
