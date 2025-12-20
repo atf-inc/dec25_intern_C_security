@@ -1,205 +1,32 @@
 .table-container {
     overflow-x: hidden;
-<<<<<<< HEAD
-=======
+    overflow-x: hidden;
     /* Prevent horizontal scroll on mobile */
->>>>>>> origin/develop
     border-radius: 12px;
     border: 1px solid var(--border-color);
     background: var(--card-bg);
 }
 
-/* On mobile, remove container border since cards have their own */
-@media screen and (max-width: 1024px) {
-    .table-container {
-        border: none;
-        background: transparent;
-        overflow: visible;
-    }
-}
-
-.history-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.table-head {
-    background-color: var(--bg-tertiary);
-}
-
-.table-header-cell {
-    padding: 12px;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.table-row {
-    border-bottom: 1px solid var(--border-color);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 3px solid transparent;
-    padding-block: var(--space-md);
-}
-
-/* Row Risk Accents */
-.table-row[data-risk="low"] {
-    border-left: 3px solid transparent;
-}
-
-.table-row[data-risk="medium"] {
-    border-left: 3px solid rgba(245, 158, 11, 0.4);
-}
-
-.table-row[data-risk="high"] {
-    border-left: 3px solid rgba(239, 68, 68, 0.4);
-}
-
-.table-row[data-risk="low"]:hover {
-    background-color: rgba(22, 163, 74, 0.05);
-}
-
-.table-row[data-risk="medium"]:hover {
-    background-color: rgba(245, 158, 11, 0.05);
-}
-
-.table-row[data-risk="high"]:hover {
-    background-color: rgba(239, 68, 68, 0.05);
-}
-
-/* Dark Mode Row Enhancements */
-:root.dark .table-row[data-risk="low"]:hover {
-    background-color: rgba(22, 163, 74, 0.15);
-}
-
-:root.dark .table-row[data-risk="medium"]:hover {
-    background-color: rgba(245, 158, 11, 0.15);
-}
-
-:root.dark .table-row[data-risk="high"]:hover {
-    background-color: rgba(239, 68, 68, 0.2);
-}
-
-.table-row:last-child {
-    border-bottom: none;
-}
-
-.table-cell {
-    padding: 12px;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-    vertical-align: middle;
-}
-
-.table-cell:has(.detection-badge) {
-    min-width: 130px;
-}
-
-.empty-state {
-    padding: 3rem;
-    text-align: center;
-    color: var(--text-muted);
-    background: var(--card-bg);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.action-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-view {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-view:hover {
-    background-color: #1d4ed8;
-}
-
-.btn-delete {
-    background-color: var(--danger-color);
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #b91c1c;
-}
-
-.file-cell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-}
-
-.detection-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    white-space: nowrap;
-    border-left: 3px solid transparent;
-    transition: all 0.2s ease;
-}
-
 .detection-badge.phishing {
-<<<<<<< HEAD
-    background-color: rgba(254, 226, 226, 1);
-=======
     background-color: #fecaca;
->>>>>>> origin/develop
     color: #991b1b;
     border-left-color: var(--danger-color);
 }
 
 .detection-badge.safe {
-<<<<<<< HEAD
-    background-color: rgba(220, 252, 231, 1);
-=======
     background-color: #dcfce7;
->>>>>>> origin/develop
     color: #065f46;
     border-left-color: var(--success-color);
 }
 
 .detection-badge.deepfake {
-<<<<<<< HEAD
-    background-color: rgba(254, 226, 226, 1);
-=======
     background-color: #fecaca;
->>>>>>> origin/develop
     color: #991b1b;
     border-left-color: var(--danger-color);
 }
 
 .detection-badge.real {
-<<<<<<< HEAD
-    background-color: rgba(220, 252, 231, 1);
-=======
     background-color: #dcfce7;
->>>>>>> origin/develop
     color: #065f46;
     border-left-color: var(--success-color);
 }
@@ -207,77 +34,17 @@
 /* Dark Mode - Inverted badges for readability */
 :root.dark .detection-badge.phishing,
 :root.dark .detection-badge.deepfake {
-<<<<<<< HEAD
-    background-color: rgba(239, 68, 68, 0.15);
-=======
     background-color: rgba(239, 68, 68, 0.2);
->>>>>>> origin/develop
     color: #fca5a5;
 }
 
 :root.dark .detection-badge.safe,
 :root.dark .detection-badge.real {
-<<<<<<< HEAD
-    background-color: rgba(16, 185, 129, 0.15);
-    color: #6ee7b7;
-=======
     background-color: rgba(34, 197, 94, 0.2);
     color: #86efac;
->>>>>>> origin/develop
 }
 
-/* Chart Styles */
-.chart-container {
-    height: 300px;
-    width: 100%;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: var(--card-bg);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.chart-title {
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.custom-tooltip {
-    background-color: var(--card-bg);
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.tooltip-label {
-    margin: 0;
-    font-weight: bold;
-    color: var(--text-primary);
-}
-
-.tooltip-score {
-    margin: 0;
-    color: var(--primary-color);
-}
-
-.tooltip-subject {
-    margin: 0;
-    font-size: 0.8em;
-    color: var(--text-secondary);
-}
-
-:root.dark .custom-tooltip {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-}
-
-<<<<<<< HEAD
 /* 📱 Mobile Responsive Card View */
-=======
-/* 📱 Mobile Responsive Card View (≤1024px) */
->>>>>>> origin/develop
 @media screen and (max-width: 1024px) {
 
     .history-table,
@@ -378,7 +145,6 @@
 
 :root.dark .table-row:hover {
     background-color: var(--glass-bg-light);
-<<<<<<< HEAD
 }
 
 :root.dark .table-row:nth-child(even) {
@@ -453,112 +219,8 @@
     }
 }
 
-/* ⬇️ Virtualized List Styles (from develop) - ADDED BACK ⬇️ */
-.virtual-list-row-wrapper {
-    padding: 0 0.5rem 1rem 0.5rem;
-    box-sizing: border-box;
-=======
->>>>>>> origin/develop
-}
-
-.history-card-item {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1rem;
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: var(--shadow-sm);
-    /* Authentically updated to new token */
-}
-
-.history-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-<<<<<<< HEAD
-=======
-:root.dark .empty-state {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-}
-
-/* Virtualized List Styles */
-.virtual-list-row-wrapper {
-    padding: 0 0.5rem 1rem 0.5rem;
-    box-sizing: border-box;
-}
-
-.history-card-item {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1rem;
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.history-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
->>>>>>> origin/develop
-.history-card-type {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
-
-.history-card-body {
-    flex: 1;
-    margin-bottom: 1rem;
-}
-
-.history-subject {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.history-sender {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.history-card-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.history-card-actions .action-btn {
-    flex: 1;
-}
-
 :root.dark .history-card-item {
     background: var(--bg-secondary);
-<<<<<<< HEAD
-=======
 }
 
 /* 📱 Small Phone Breakpoint (≤480px) */
@@ -601,5 +263,78 @@
         padding: 6px 10px;
         font-size: 0.75rem;
     }
->>>>>>> origin/develop
+}
+
+/* ⬇️ Virtualized List Styles (from develop) - RESTORED ⬇️ */
+.virtual-list-row-wrapper {
+    padding: 0 0.5rem 1rem 0.5rem;
+    box-sizing: border-box;
+}
+
+.history-card-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+:root.dark .empty-state {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.history-card-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.history-card-body {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+.history-subject {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.history-sender {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.history-card-actions .action-btn {
+    flex: 1;
+}
+
+:root.dark .history-card-item {
+    background: var(--bg-secondary);
 }
