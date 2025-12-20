@@ -291,4 +291,32 @@
     }
 }
 
+@media (max-width: 640px) {
+    .email-form {
+        padding: 1rem;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px;
+        /* Prevents iOS zoom */
+        padding: 0.875rem;
+    }
+
+    .submit-button {
+        padding: 1.125rem;
+        position: sticky;
+        bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+    }
+}
+
 /* Dark Mode overrides controlled by variables - redundant blocks removed */

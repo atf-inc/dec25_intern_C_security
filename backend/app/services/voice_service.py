@@ -32,6 +32,13 @@ class VoiceAnalysisService:
     """Service for analyzing voice files using multi-modal fusion deepfake detection."""
     
     def __init__(self):
+    # <<<<<<< HEAD
+    #     # """Initialize the service with ML model."""
+    #     # logger.info("Initializing VoiceAnalysisService...")
+    #     # self.detector = DeepfakeDetector()
+    #     # self.model_version = "v2.1-fusion-generalization"
+    #     # logger.info("VoiceAnalysisService initialized successfully")
+    # =======
         """Initialize the service with your trained fusion model."""
         logger.info("Initializing VoiceAnalysisService with Fusion Model...")
         
@@ -89,6 +96,7 @@ class VoiceAnalysisService:
         
         self.model_version = "v1.0-fusion-wavlm-whisper-dsp"
         logger.info(f"✅ VoiceAnalysisService initialized successfully (version: {self.model_version})")
+    # >>>>>>> origin/develop
     
     
     async def analyze_voice(
@@ -116,10 +124,11 @@ class VoiceAnalysisService:
         file_hash = compute_audio_hash(file_bytes)
         
         # Step 2: Check cache if enabled
+        # CRITICAL FIX: Only use cache if model version matches!
         if use_cache and db is not None:
             cached_result = get_voice_scan_by_hash(db, file_hash)
-            if cached_result:
-                logger.info(f"Cache hit for file hash: {file_hash}")
+            if cached_result and cached_result.model_version == self.model_version:
+                logger.info(f"Cache hit for file hash: {file_hash} (Version: {cached_result.model_version})")
                 return {
                     "cached": True,
                     **cached_result.to_dict()
@@ -226,7 +235,42 @@ class VoiceAnalysisService:
                 except:
                     pass
         
+    # <<<<<<< HEAD
+    #     # Step 5: Load and preprocess audio
+    #     waveform, sample_rate = load_and_preprocess_audio(file_bytes)
+    #     duration = len(waveform) / sample_rate
+    #     
+    #     # Step 6: Run deepfake detection
+    #     logger.info(f"Running deepfake detection on {filename}")
+    #     prediction = self.detector.predict(waveform, sample_rate)
+    #     
+    #     # Step 7: Extract traditional features (for novelty/ensemble)
+    #     traditional_features = extract_audio_features(waveform, sample_rate)
+    #     
+    #     # Step 8: Prepare result
+    #     result = {
+    #         "file_name": filename,
+    #         "file_hash": file_hash,
+    #         "file_size": len(file_bytes),
+    #         "duration": duration,
+    #         "is_deepfake": prediction['is_deepfake'],
+    #         "confidence": prediction['confidence'],
+    #         "risk_level": prediction['risk_level'],
+    #         "raw_model_confidence": prediction.get('raw_confidence'),
+    #         "artifact_score": prediction.get('artifact_score'),
+    #         "artifacts": prediction.get('artifacts', {}),
+    #         "traditional_features": traditional_features,
+    #         "processing_time": time.time() - start_time,
+    #         "model_version": self.model_version,
+    #         "explanation": prediction.get('explanation'),
+    #         "highlights": self._generate_highlights(prediction),
+    #         "cached": False
+    #     }
+    #     
+    #     # Step 9: Save file to disk
+    # =======
         # Step 11: Save file to disk
+    # >>>>>>> origin/develop
         file_path = None
         if db is not None:
              try:
@@ -313,6 +357,21 @@ class VoiceAnalysisService:
         else:
             highlights.append(f"Low confidence ({confidence:.1%}) - borderline case")
         
+    # <<<<<<< HEAD
+    #     # Artifact-based highlights (Professional Forensic Analysis)
+    #     if artifacts:
+    #         # Signal Quality (Higher = Worse)
+    #         if artifacts.get('signal_quality', 0) > 0.6:
+    #             highlights.append("Detected significant digital signal anomalies indicative of synthesis")
+    #         
+    #         # Acoustic Consistency (Higher = Worse)
+    #         if artifacts.get('acoustic_consistency', 0) > 0.6:
+    #             highlights.append("Acoustic patterns exhibit inconsistencies typical of neural vocoders")
+    #         
+    #         # Semantic Coherence (Higher = Worse)
+    #         if artifacts.get('semantic_coherence', 0) > 0.6:
+    #             highlights.append(" phonetic or prosodic misalignment detected in speech structure")
+    # =======
         # DSP feature analysis
         pitch_std = dsp_feat[1]
         energy_std = dsp_feat[4]
@@ -328,6 +387,7 @@ class VoiceAnalysisService:
             highlights.append("⚠️ Very few pauses (unnatural speech pattern)")
         elif silence_ratio > 0.4:
             highlights.append("⚠️ Excessive silence (possible audio manipulation)")
+    # >>>>>>> origin/develop
         
         # Risk level highlight
         if prob_fake > 0.7:

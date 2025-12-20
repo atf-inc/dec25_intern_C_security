@@ -63,10 +63,16 @@ class DeepfakeInference:
         # Load model
         print(f"\nLoading checkpoint: {checkpoint_path}")
         self.model = DeepfakeFusionModel()
-        self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device))
+        try:
+            self.model.load_state_dict(torch.load(checkpoint_path, map_location=self.device), strict=False)
+            print("✓ Model loaded successfully")
+        except FileNotFoundError:
+            print(f"\n⚠ WARNING: Checkpoint not found at '{checkpoint_path}'")
+            print("  Running in DEMO MODE with random weights.")
+            print("  The 'Prediction' will be random, but 'Signal Analysis' (DSP) is real/accurate.")
+        
         self.model.to(self.device)
         self.model.eval()
-        print("✓ Model loaded successfully")
         
         # Initialize feature extractors
         print("\nInitializing feature extractors...")

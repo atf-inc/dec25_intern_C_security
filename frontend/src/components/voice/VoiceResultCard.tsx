@@ -19,26 +19,26 @@ export function VoiceResultCard({ result }: VoiceResultCardProps) {
     }
 
     // Helper to determine status color for artifacts based on backend thresholds
+    // Scores are "Defect/Anomaly Scores" (0.0 = Perfect, 1.0 = Highly Anomalous)
     const getArtifactStatus = (key: string, value: number) => {
+        // v2.1 Metrics
+        if (['signal_quality', 'acoustic_consistency', 'semantic_coherence'].includes(key)) {
+            return value > 0.5 ? 'suspicious' : 'safe'
+        }
+        // Legacy fallback
         switch (key) {
             case 'spectral_flatness': return value > 0.5 ? 'suspicious' : 'safe'
-            case 'high_freq_energy': return value > 0.3 ? 'suspicious' : 'safe'
-            case 'zcr_variance': return value < 0.01 ? 'suspicious' : 'safe'
-            case 'autocorr_peak': return value > 500 ? 'suspicious' : 'safe'
             default: return 'neutral'
         }
     }
 
     const formatMetricName = (key: string) => {
-        // Use translations for known metrics, fallback to formatted name
-        const translationKey = `voice.${key.replace(/_/g, '')}`
-        const translated = getText(translationKey, '')
-        if (translated && translated !== translationKey) {
-            return translated
+        const names: Record<string, string> = {
+            'signal_quality': getText('voice.signalQuality', 'Signal Quality'),
+            'acoustic_consistency': getText('voice.acousticConsistency', 'Acoustic Consistency'),
+            'semantic_coherence': getText('voice.semanticCoherence', 'Semantic Coherence')
         }
-        // Fallback to formatted name if no translation found
-        const fallbackName = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-        return getText(`voice.${key}`, fallbackName)
+        return names[key] || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
     }
 
     return (

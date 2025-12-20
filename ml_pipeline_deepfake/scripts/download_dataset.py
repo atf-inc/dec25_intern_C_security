@@ -19,16 +19,56 @@ from pathlib import Path
 
 
 def download_file(url, output_path):
-    """Download file with progress bar."""
+    """Download file with support for resuming."""
     print(f"Downloading from {url}")
     print(f"Saving to {output_path}")
-    
-    def progress_hook(count, block_size, total_size):
-        percent = int(count * block_size * 100 / total_size)
-        print(f"\rProgress: {percent}%", end='')
-    
-    urllib.request.urlretrieve(url, output_path, progress_hook)
-    print("\n✓ Download complete")
+
+    # Check existing size for resume
+    initial_pos = 0
+    mode = 'wb'
+    if os.path.exists(output_path):
+        initial_pos = os.path.getsize(output_path)
+        if initial_pos > 0:
+            print(f"Resuming from {initial_pos / 1024 / 1024 / 1024:.2f} GB...")
+            mode = 'ab'
+
+    req = urllib.request.Request(url)
+    if initial_pos > 0:
+        req.add_header('Range', f'bytes={initial_pos}-')
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            total_size = int(response.info().get('Content-Length', 0)) + initial_pos
+            
+            # If server resets connection (200 OK instead of 206 Partial), restart
+            if initial_pos > 0 and response.getcode() == 200:
+                print("Server does not support resuming. Restarting download...")
+                initial_pos = 0
+                mode = 'wb'
+                total_size = int(response.info().get('Content-Length', 0))
+
+            with open(output_path, mode) as f:
+                block_size = 8192 * 4
+                downloaded = initial_pos
+                while True:
+                    buffer = response.read(block_size)
+                    if not buffer:
+                        break
+                    f.write(buffer)
+                    downloaded += len(buffer)
+                    
+                    # Progress update
+                    if total_size > 0:
+                        percent = int(downloaded * 100 / total_size)
+                        # Print every 10MB or so to avoid spam, or just use CR
+                        print(f"\rProgress: {percent}% ({downloaded / 1024 / 1024 / 1024:.2f} / {total_size / 1024 / 1024 / 1024:.2f} GB)", end='')
+        print("\n✓ Download complete")
+        
+    except urllib.error.HTTPError as e:
+        if e.code == 416: # Range Not Satisfiable (completed?)
+            print("\n✓ Download assumed complete (server returned 416)")
+        else:
+            raise e
 
 
 def extract_archive(archive_path, extract_to):
@@ -57,23 +97,39 @@ def download_wavefake(output_dir):
     print("\n" + "="*60)
     print("Downloading WaveFake Dataset")
     print("="*60)
-    print("Size: ~5GB")
-    print("Time: ~1 hour (depending on connection)")
+    print("Size: ~29GB (Updated v1.2.0)")
+    print("Time: ~2-4 hours (depending on connection)")
     print("="*60)
     
     # Create directories
     os.makedirs(output_dir, exist_ok=True)
     
-    # WaveFake dataset URL (from Zenodo)
-    url = "https://zenodo.org/record/5642506/files/wavefake.zip"
+    # WaveFake dataset URL (Zenodo v1.2.0)
+    url = "https://zenodo.org/records/5642694/files/generated_audio.zip?download=1"
     archive_path = os.path.join(output_dir, "wavefake.zip")
     
-    # Download
-    if not os.path.exists(archive_path):
-        download_file(url, archive_path)
-    else:
-        print(f"✓ Archive already exists: {archive_path}")
+    # Download logic
+    if os.path.exists(archive_path):
+        # Check for corrupted file (e.g., 404 HTML page saved as zip)
+        file_size = os.path.getsize(archive_path)
+        if file_size < 1024 * 1024:  # < 1MB indicates HTML error page
+            print(f"⚠ Found corrupted file ({file_size} bytes). Deleting and retrying...")
+            try:
+                os.remove(archive_path)
+            except OSError:
+                pass
+        else:
+            print(f"✓ Found existing file ({file_size / 1024 / 1024 / 1024:.2f} GB). Attempting to resume...")
+
+    download_file(url, archive_path)
     
+    # Validate Zip AFTER download
+    print("Verifying integrity...")
+    if not zipfile.is_zipfile(archive_path):
+        print("\n❌ Error: The downloaded file is not a valid zip archive.")
+        print("It might be corrupted. Try deleting 'data/wavefake.zip' and running again.")
+        return
+
     # Extract
     extract_to = os.path.join(output_dir, "wavefake")
     if not os.path.exists(extract_to):

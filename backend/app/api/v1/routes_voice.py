@@ -67,7 +67,7 @@ async def analyze_voice(
             file_bytes=file_bytes,
             filename=file.filename,
             db=db,
-            use_cache=True
+            use_cache=False  # User requested fresh analysis every time
         )
         
         # Generate explanation if requested and not cached

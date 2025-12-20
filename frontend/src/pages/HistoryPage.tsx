@@ -4,6 +4,10 @@ import './HistoryPage.css'
 // Email Imports
 import { getScanHistory, ScanHistoryItem, ScanHistoryParams } from '../api/phishingApi'
 import { HistoryTable } from '../components/history/HistoryTable'
+// New Imports
+import { VirtualizedHistoryList } from '../components/history/VirtualizedHistoryList'
+import { useMediaQuery } from '../hooks/useMediaQuery'
+
 // Voice Imports
 import { getVoiceHistory, VoiceAnalysisResponse, deleteScan } from '../api/voiceApi'
 import { VoiceHistoryTable } from '../components/history/VoiceHistoryTable'
@@ -19,6 +23,7 @@ type TabType = 'email' | 'voice'
 
 export function HistoryPage() {
     const { t } = useTranslation()
+    const isMobile = useMediaQuery('(max-width: 768px)')
     const [activeTab, setActiveTab] = useState<TabType>('email')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -159,11 +164,20 @@ export function HistoryPage() {
             ) : (
                 <>
                     {activeTab === 'email' ? (
-                        <HistoryTable
-                            data={emailData}
-                            onViewDetails={handleEmailView}
-                            onDelete={handleEmailDelete}
-                        />
+                        isMobile ? (
+                            <VirtualizedHistoryList
+                                data={emailData}
+                                onViewDetails={handleEmailView}
+                                onDelete={handleEmailDelete}
+                                height={600}
+                            />
+                        ) : (
+                            <HistoryTable
+                                data={emailData}
+                                onViewDetails={handleEmailView}
+                                onDelete={handleEmailDelete}
+                            />
+                        )
                     ) : (
                         <VoiceHistoryTable
                             data={voiceData}
