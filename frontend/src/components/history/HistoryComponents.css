@@ -1,5 +1,9 @@
 .table-container {
     overflow-x: hidden;
+<<<<<<< HEAD
+=======
+    /* Prevent horizontal scroll on mobile */
+>>>>>>> origin/develop
     border-radius: 12px;
     border: 1px solid var(--border-color);
     background: var(--card-bg);
@@ -161,25 +165,41 @@
 }
 
 .detection-badge.phishing {
+<<<<<<< HEAD
     background-color: rgba(254, 226, 226, 1);
+=======
+    background-color: #fecaca;
+>>>>>>> origin/develop
     color: #991b1b;
     border-left-color: var(--danger-color);
 }
 
 .detection-badge.safe {
+<<<<<<< HEAD
     background-color: rgba(220, 252, 231, 1);
+=======
+    background-color: #dcfce7;
+>>>>>>> origin/develop
     color: #065f46;
     border-left-color: var(--success-color);
 }
 
 .detection-badge.deepfake {
+<<<<<<< HEAD
     background-color: rgba(254, 226, 226, 1);
+=======
+    background-color: #fecaca;
+>>>>>>> origin/develop
     color: #991b1b;
     border-left-color: var(--danger-color);
 }
 
 .detection-badge.real {
+<<<<<<< HEAD
     background-color: rgba(220, 252, 231, 1);
+=======
+    background-color: #dcfce7;
+>>>>>>> origin/develop
     color: #065f46;
     border-left-color: var(--success-color);
 }
@@ -187,14 +207,23 @@
 /* Dark Mode - Inverted badges for readability */
 :root.dark .detection-badge.phishing,
 :root.dark .detection-badge.deepfake {
+<<<<<<< HEAD
     background-color: rgba(239, 68, 68, 0.15);
+=======
+    background-color: rgba(239, 68, 68, 0.2);
+>>>>>>> origin/develop
     color: #fca5a5;
 }
 
 :root.dark .detection-badge.safe,
 :root.dark .detection-badge.real {
+<<<<<<< HEAD
     background-color: rgba(16, 185, 129, 0.15);
     color: #6ee7b7;
+=======
+    background-color: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+>>>>>>> origin/develop
 }
 
 /* Chart Styles */
@@ -244,7 +273,11 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
+<<<<<<< HEAD
 /* 📱 Mobile Responsive Card View */
+=======
+/* 📱 Mobile Responsive Card View (≤1024px) */
+>>>>>>> origin/develop
 @media screen and (max-width: 1024px) {
 
     .history-table,
@@ -345,6 +378,7 @@
 
 :root.dark .table-row:hover {
     background-color: var(--glass-bg-light);
+<<<<<<< HEAD
 }
 
 :root.dark .table-row:nth-child(even) {
@@ -423,6 +457,8 @@
 .virtual-list-row-wrapper {
     padding: 0 0.5rem 1rem 0.5rem;
     box-sizing: border-box;
+=======
+>>>>>>> origin/develop
 }
 
 .history-card-item {
@@ -446,6 +482,39 @@
     margin-bottom: 0.5rem;
 }
 
+<<<<<<< HEAD
+=======
+:root.dark .empty-state {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+/* Virtualized List Styles */
+.virtual-list-row-wrapper {
+    padding: 0 0.5rem 1rem 0.5rem;
+    box-sizing: border-box;
+}
+
+.history-card-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+>>>>>>> origin/develop
 .history-card-type {
     display: flex;
     align-items: center;
@@ -488,4 +557,49 @@
 
 :root.dark .history-card-item {
     background: var(--bg-secondary);
+<<<<<<< HEAD
+=======
+}
+
+/* 📱 Small Phone Breakpoint (≤480px) */
+@media screen and (max-width: 480px) {
+    .table-row {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .table-cell {
+        padding: 8px 0;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .table-cell::before {
+        flex: none;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+    }
+
+    .table-cell>span,
+    .table-cell>div {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .action-buttons {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .action-btn {
+        min-height: 44px;
+        font-size: 0.875rem;
+    }
+
+    .detection-badge {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+>>>>>>> origin/develop
 }

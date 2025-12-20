@@ -622,4 +622,37 @@ h3,
   .stats-section {
     grid-template-columns: repeat(2, 1fr);
   }
+<<<<<<< HEAD
+=======
+}
+
+/* Mobile-First Breakpoints */
+@media (max-width: 639px) {
+  :root {
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+  }
+
+  body {
+    font-size: 0.95rem;
+  }
+
+  .container {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+>>>>>>> origin/develop
 }

@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+=======
+
+import { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
+
+>>>>>>> origin/develop
 import { useTranslation } from 'react-i18next'
 import { ThemeToggle } from '../common/ThemeToggle'
 import LanguageToggle from '../common/LanguageToggle'
@@ -9,6 +16,10 @@ import './Navbar.css'
 export function Navbar() {
     const { t } = useTranslation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
     const [isScrolled, setIsScrolled] = useState(false);
 
     // 🖱️ Track scroll for sticky navbar shadow
@@ -23,6 +34,10 @@ export function Navbar() {
     // Helper for NavLink class
     const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
         `nav-link ${isActive ? 'active' : ''}`;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
 
     return (
         <nav
@@ -36,14 +51,27 @@ export function Navbar() {
                         <span className="brand-atf"></span>
                         <span className="brand-cyberx">CyberX</span>
                     </span>
+<<<<<<< HEAD
                 </NavLink>
 
+=======
+
+                </NavLink>
+
+
+>>>>>>> origin/develop
                 <button
                     className="navbar-toggle-btn"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     aria-label="Toggle navigation menu"
                     aria-expanded={isMenuOpen}
+<<<<<<< HEAD
                     aria-controls="navbar-menu"
+=======
+
+                    aria-controls="navbar-menu"
+
+>>>>>>> origin/develop
                 >
                     <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
                 </button>
@@ -59,6 +87,10 @@ export function Navbar() {
                         {t('navigation.voice')}
                     </NavLink>
                     <NavLink to="/history" className={getNavLinkClass} onClick={() => setIsMenuOpen(false)}>
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
                         {t('navigation.dashboard')}
                     </NavLink>
                     <div className="navbar-toggles">

@@ -88,6 +88,10 @@
   color: var(--primary-color);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
 /* Active route indicator */
 .nav-link.active {
   color: var(--primary-color);
@@ -103,6 +107,10 @@
   cursor: pointer;
   padding: 0.5rem;
   z-index: 100;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
   min-width: 44px;
   min-height: 44px;
   z-index: 100;
@@ -117,6 +125,10 @@
 
 :root.dark .navbar.scrolled {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
 }
 
 .hamburger {
@@ -172,9 +184,17 @@
   }
 
   .navbar-toggle-btn {
+<<<<<<< HEAD
     display: flex;
     align-items: center;
     justify-content: center;
+=======
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+>>>>>>> origin/develop
   }
 
   /* Mobile Drawer */
@@ -201,11 +221,19 @@
   .nav-link {
     font-size: 1.1rem;
     width: 100%;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
     padding: 0.75rem 0;
     min-height: 44px;
     /* Ensure 44px touch target */
     display: flex;
     align-items: center;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
     border-bottom: 1px solid var(--border-color);
   }
 
@@ -218,6 +246,10 @@
     justify-content: space-between;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
     min-height: 44px;
   }
 
