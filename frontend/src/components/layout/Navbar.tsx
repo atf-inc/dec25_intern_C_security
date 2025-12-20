@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+
 import { useTranslation } from 'react-i18next'
 import { ThemeToggle } from '../common/ThemeToggle'
 import LanguageToggle from '../common/LanguageToggle'
@@ -9,6 +11,7 @@ import './Navbar.css'
 export function Navbar() {
     const { t } = useTranslation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     const [isScrolled, setIsScrolled] = useState(false);
 
     // 🖱️ Track scroll for sticky navbar shadow
@@ -24,6 +27,7 @@ export function Navbar() {
     const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
         `nav-link ${isActive ? 'active' : ''}`;
 
+
     return (
         <nav
             className={`navbar ${isScrolled ? 'scrolled' : ''}`}
@@ -36,14 +40,18 @@ export function Navbar() {
                         <span className="brand-atf"></span>
                         <span className="brand-cyberx">CyberX</span>
                     </span>
+
                 </NavLink>
+
 
                 <button
                     className="navbar-toggle-btn"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     aria-label="Toggle navigation menu"
                     aria-expanded={isMenuOpen}
+
                     aria-controls="navbar-menu"
+
                 >
                     <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
                 </button>
@@ -59,6 +67,7 @@ export function Navbar() {
                         {t('navigation.voice')}
                     </NavLink>
                     <NavLink to="/history" className={getNavLinkClass} onClick={() => setIsMenuOpen(false)}>
+
                         {t('navigation.dashboard')}
                     </NavLink>
                     <div className="navbar-toggles">
