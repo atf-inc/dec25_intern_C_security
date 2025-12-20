@@ -42,7 +42,7 @@ export function VoiceResultCard({ result }: VoiceResultCardProps) {
     }
 
     return (
-        <div className="voice-result-card">
+        <div className="voice-result-card slide-in-up">
             {/* Header Section */}
             <div className="result-header">
                 <div className="header-content">

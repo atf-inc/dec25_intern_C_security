@@ -1,25 +1,50 @@
 .phishing-page {
-    padding: 2rem 0;
+    padding: 0 0 2rem;
 }
 
+/* 🎨 Animated Gradient Hero */
 .page-header {
     text-align: center;
-    margin-bottom: 3rem;
+    max-width: var(--container-max, 1200px);
+    width: 100%;
+    margin: 0 auto 2rem;
+    padding: 3rem var(--container-padding, 24px) 2.5rem;
+
+    border-top: 4px solid var(--phishing-accent);
+    background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.05) 0%,
+            rgba(124, 58, 237, 0.08) 50%,
+            rgba(139, 92, 246, 0.05) 100%);
+    background-size: 200% 200%;
+    border-radius: 0 0 var(--radius-xl, 16px) var(--radius-xl, 16px);
+    animation: gradientShift 15s ease infinite;
 }
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    gap: 2rem;
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-header {
+        animation: none;
+        background-position: center;
+    }
 }
 
 .page-header h1 {
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+    /* Fluid type */
     margin-bottom: 0.5rem;
     color: var(--text-primary);
+    font-weight: 800;
 }
 
 .page-header p {
@@ -53,6 +78,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

@@ -7,7 +7,7 @@ import { VoiceStats } from '../components/voice/VoiceStats'
 
 import { ForensicScanner } from '../components/common/ForensicScanner'
 import { ErrorAlert } from '../components/common/ErrorAlert'
-import { Toast, useToast } from '../components/common/Toast'
+import { useToast } from '../components/common/ToastContext'
 import {
     analyzeVoice,
     getVoiceStatistics,
@@ -27,7 +27,7 @@ export function VoicePage() {
     const [refreshTrigger, setRefreshTrigger] = useState(0) // To trigger re-fetches of stats
 
     // Feedback
-    const { toast, showToast, closeToast } = useToast()
+    const { showToast } = useToast()
 
     // Fallback function for translations
     const getText = (key: string, fallback: string) => {
@@ -99,14 +99,6 @@ export function VoicePage() {
 
     return (
         <div className="voice-page">
-            {toast && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={closeToast}
-                />
-            )}
-
             <div className="page-header">
                 <h1>🎙️ {getText('voice.pageTitle', 'Voice Deepfake Detection')}</h1>
                 <p>

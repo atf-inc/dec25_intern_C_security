@@ -34,49 +34,80 @@
   margin-right: 4px;
 }
 
-/* Variant: Low */
+/* Variant: Safe / Low - Light Mode */
+.risk-badge-safe,
 .risk-badge-low {
-  background-color: transparent;
-  color: var(--success-color);
-  border-left-color: var(--success-color);
+  background-color: rgba(220, 252, 231, 0.8);
+  color: #065f46;
+  /* WCAG dark green */
+  border-left-color: var(--safe-bg);
 }
 
-/* Variant: Medium */
+/* Variant: Medium - Light Mode */
 .risk-badge-medium {
-  background-color: transparent;
-  color: var(--warning-color);
-  border-left-color: var(--warning-color);
+  background-color: rgba(254, 243, 199, 0.8);
+  color: #92400e;
+  /* WCAG dark amber */
+  border-left-color: var(--medium-bg);
 }
 
-/* Variant: High */
+/* Variant: High - Light Mode */
 .risk-badge-high {
-  background-color: transparent;
-  color: var(--danger-color);
-  border-left-color: var(--danger-color);
+  background-color: rgba(254, 226, 226, 0.8);
+  color: #991b1b;
+  /* WCAG dark red */
+  border-left-color: var(--high-bg);
 }
+
+/* Variant: Critical - Light Mode */
+.risk-badge-critical {
+  background-color: rgba(254, 202, 202, 0.9);
+  color: #7f1d1d;
+  /* WCAG darkest red */
+  border-left-color: var(--critical-bg);
+  font-weight: 800;
+}
+
+/* 🌙 Dark Mode - Inverted for visibility */
+:root.dark .risk-badge-safe,
+:root.dark .risk-badge-low {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  /* Bright green on dark */
+}
+
+:root.dark .risk-badge-medium {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+  /* Bright amber on dark */
+}
+
+:root.dark .risk-badge-high {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  /* Bright red on dark */
+}
+
+:root.dark .risk-badge-critical {
+  background-color: rgba(220, 38, 38, 0.2);
+  color: #fca5a5;
+  border-left-color: #ef4444;
+}
+
 
 /* Size: Small */
 .risk-badge-small {
   padding: 0.25rem 0.75rem;
-  font-size: 0.8rem;
+  font-size: var(--text-small);
   border-left-width: 3px;
 }
 
 /* 🌙 Dark Mode Overrides for Visibility */
-:root.dark .risk-badge-low {
+/* Relies on token overrides in design-tokens.css now */
+:root.dark .risk-badge-low,
+:root.dark .risk-badge-medium,
+:root.dark .risk-badge-high,
+:root.dark .risk-badge-critical {
   background-color: transparent;
   box-shadow: none;
-  color: #4ade80;
-}
-
-:root.dark .risk-badge-medium {
-  background-color: transparent;
-  box-shadow: none;
-  color: #fbbf24;
-}
-
-:root.dark .risk-badge-high {
-  background-color: transparent;
-  box-shadow: none;
-  color: #f87171;
 }

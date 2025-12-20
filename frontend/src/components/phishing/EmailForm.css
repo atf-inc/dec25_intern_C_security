@@ -43,6 +43,20 @@
     cursor: not-allowed;
 }
 
+.form-group .error-input {
+    border-color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.05);
+    /* faint red tint */
+}
+
+.error-msg {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--danger-color);
+    font-weight: 500;
+}
+
 .form-group textarea {
     resize: vertical;
     font-family: inherit;
@@ -319,4 +333,20 @@
     }
 }
 
+
 /* Dark Mode overrides controlled by variables - redundant blocks removed */
+
+.form-group .error-input {
+    border-color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.05);
+    /* faint red tint */
+}
+
+.error-msg {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--danger-color);
+    font-weight: 500;
+}
+
