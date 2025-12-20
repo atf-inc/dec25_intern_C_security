@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ThemeToggle } from '../common/ThemeToggle'
@@ -7,6 +8,7 @@ import './Navbar.css'
 
 export function Navbar() {
     const { t } = useTranslation();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <nav className="navbar">
@@ -18,14 +20,24 @@ export function Navbar() {
                         <span className="brand-cyberx">CyberX</span>
                     </span>
                 </Link>
-                <div className="navbar-links">
-                    <Link to="/phishing" className="nav-link">
+
+                <button
+                    className="navbar-toggle-btn"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    aria-label="Toggle navigation menu"
+                    aria-expanded={isMenuOpen}
+                >
+                    <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
+                </button>
+
+                <div className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
+                    <Link to="/phishing" className="nav-link" onClick={() => setIsMenuOpen(false)}>
                         {t('navigation.phishing')}
                     </Link>
-                    <Link to="/voice" className="nav-link">
+                    <Link to="/voice" className="nav-link" onClick={() => setIsMenuOpen(false)}>
                         {t('navigation.voice')}
                     </Link>
-                    <Link to="/history" className="nav-link">
+                    <Link to="/history" className="nav-link" onClick={() => setIsMenuOpen(false)}>
                         {t('navigation.dashboard')}
                     </Link>
                     <div className="navbar-toggles">
@@ -33,6 +45,10 @@ export function Navbar() {
                         <ThemeToggle className="sm" />
                     </div>
                 </div>
+
+                {isMenuOpen && (
+                    <div className="navbar-overlay" onClick={() => setIsMenuOpen(false)} aria-hidden="true" />
+                )}
             </div>
         </nav>
     )

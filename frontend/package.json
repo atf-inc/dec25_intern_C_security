@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/dompurify": "^3.0.5",
+    "@types/react-window": "^1.8.8",
     "axios": "^1.6.2",
     "chart.js": "^4.5.1",
     "dompurify": "^3.3.1",
@@ -20,6 +21,7 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^16.5.0",
     "react-router-dom": "^6.20.0",
+    "react-window": "^2.2.3",
     "recharts": "^3.5.1"
   },
   "devDependencies": {
