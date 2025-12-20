@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*"],
-      "js": ["content/gmail.js"],
+      "js": ["i18n/translations.js", "content/gmail.js"],
       "css": ["content/gmail.css"],
       "run_at": "document_end"
     }
