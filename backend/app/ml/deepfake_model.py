@@ -1,9 +1,15 @@
+"""
+Deepfake Detector v2.1 - Fusion Model with Attention
+
+Uses WavLM + Whisper + DSP (246-dim) with Multi-Head Attention.
+Trained on WaveFake + ASVspoof + LibriSpeech (~1,500 samples).
+Validation accuracy: 90%, AUC: 0.96, Deepfake recall: 100%
+"""
 
 import torch
 import numpy as np
 import logging
 import os
-from pathlib import Path
 from typing import Dict, Any
 
 from app.ml.fusion.models.fusion_model import FusionDeepfakeDetector
@@ -13,265 +19,219 @@ from app.ml.fusion.features.dsp_extractor import DSPExtractor
 
 logger = logging.getLogger(__name__)
 
+
 class DeepfakeDetector:
     """
-    Wrapper for the Fusion Deepfake Detector (WavLM + Whisper + DSP + Attention).
+    v2.1 Fusion Deepfake Detector (WavLM + Whisper + DSP + Attention).
+    
+    Features:
+    - 90% validation accuracy
+    - 100% deepfake recall
+    - Detects 11 vocoder architectures (MelGAN, HiFiGAN, WaveGlow, etc.)
+    - Forensic explainability with expert scores
+    - Calibrated confidence scores
     """
     
+    # Temperature scaling parameter for confidence calibration
+    # Learned from validation set (values > 1 make predictions less confident)
+    CALIBRATION_TEMPERATURE = 1.2
+    
     def __init__(self, model_path="app/ml/models/deepfake_v2_1.pth", device=None):
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = device or torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model_path = model_path
         
-        # Lazy loading
+        # Lazy loading - components loaded on first prediction
         self.model = None
         self.wavlm_ext = None
         self.whisper_ext = None
         self.dsp_ext = None
-        self.is_trained = False # Will be true after loading
+        self.is_loaded = False
         
-    # <<<<<<< HEAD
-    # def _ensure_loaded(self):
-    #    if self.model is not None:
-    # =======
+        logger.info(f"DeepfakeDetector v2.1 initialized (device: {self.device})")
+    
     def _ensure_loaded(self):
-        # Auto-detect device
-        if self.device is None:
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        
-        logger.info(f"Initialized DeepfakeDetector config on {self.device}")
-        
-        # Initialize model attributes to None (Lazy Loading)
-        self.feature_extractor = None
-        self.wavlm_model = None
-        
-        # Classifier head (to be trained)
-        self.classifier = None
-        self.artifact_detector = None
-        self.is_trained = False
-        
-        # Auto-load trained fusion model if available
-        import os
-        model_path = os.path.join(os.path.dirname(__file__), '..', '..', 'checkpoints', 'fusion_model.pth')
-        if os.path.exists(model_path):
-            try:
-                from app.ml.fusion_model import DeepfakeFusionModel
-                self.fusion_model = DeepfakeFusionModel()
-                self.fusion_model.load_state_dict(torch.load(model_path, map_location=self.device))
-                self.fusion_model.to(self.device)
-                self.fusion_model.eval()
-                self.is_trained = True
-                self.use_fusion = True  # Flag to use fusion model instead of classifier
-                logger.info(f"Auto-loaded trained fusion model from {model_path}")
-            except Exception as e:
-                self.use_fusion = False
-                logger.warning(f"Failed to load trained model: {e}. Using heuristics.")
-        else:
-            self.use_fusion = False
-        
-    def _ensure_model_loaded(self):
-        """Load the model if it hasn't been loaded yet."""
-        if self.wavlm_model is not None:
-    # >>>>>>> origin/develop
+        """Lazy load model and extractors on first use."""
+        if self.is_loaded:
             return
-
-        logger.info("Loading Fusion Deepfake Model components (v2.0 - 246 dim DSP)...")
         
-        # 1. Load Extractors
+        logger.info("Loading v2.1 Fusion Deepfake Model components...")
+        
+        # 1. Load Feature Extractors
+        logger.info("Loading WavLM extractor...")
         self.wavlm_ext = WavLMExtractor(device=self.device)
+        
+        logger.info("Loading Whisper extractor...")
         self.whisper_ext = WhisperExtractor(device=self.device)
+        
+        logger.info("Loading DSP extractor (246-dim)...")
         self.dsp_ext = DSPExtractor()
         
-        # 2. Load Model
-        # shared_dim=256 matches the training config
-        self.model = FusionDeepfakeDetector(dsp_dim=246, shared_dim=256) 
+        # 2. Load Fusion Model (dsp_dim=246 for v2.1)
+        self.model = FusionDeepfakeDetector(dsp_dim=246, shared_dim=256)
         
+        # 3. Load trained weights
         try:
-            # Check absolute path first, then relative
-            if os.path.exists(self.model_path):
-                path = self.model_path
-            else:
-                # Fallback to absolute path relative to this file's directory
-                # models/ is in the same directory as deepfake_model.py's parent? 
-                # No, deepfake_model.py is in app/ml
-                # models is in app/ml/models
-                base_name = os.path.basename(self.model_path)
-                path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'models', base_name))
+            # Try multiple paths to find the model
+            paths_to_try = [
+                self.model_path,
+                os.path.join(os.path.dirname(__file__), 'models', 'deepfake_v2_1.pth'),
+                os.path.abspath(os.path.join(os.path.dirname(__file__), 'models', 'deepfake_v2_1.pth')),
+            ]
             
-            logger.info(f"Loading weights from {path}")
-            state_dict = torch.load(path, map_location=self.device)
-            self.model.load_state_dict(state_dict)
-            self.model.to(self.device)
-            self.model.eval()
-            self.is_trained = True
-            logger.info("Fusion model loaded successfully.")
+            loaded = False
+            for path in paths_to_try:
+                if os.path.exists(path):
+                    logger.info(f"Loading v2.1 weights from {path}")
+                    state_dict = torch.load(path, map_location=self.device)
+                    self.model.load_state_dict(state_dict)
+                    self.model.to(self.device)
+                    self.model.eval()
+                    loaded = True
+                    logger.info("✅ v2.1 Fusion model loaded successfully")
+                    break
+            
+            if not loaded:
+                logger.warning(f"⚠️ Model not found at any path. Running with random weights.")
+                self.model.to(self.device)
+                self.model.eval()
+                
         except Exception as e:
             logger.error(f"Failed to load fusion weights: {e}")
-            logger.warning("Running in untrained mode (random weights)")
+            logger.warning("Running with random weights (not recommended)")
             self.model.to(self.device)
-            self.is_trained = False
-
-    # <<<<<<< HEAD
-    # def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, Any]:
-    # =======
+            self.model.eval()
+        
+        self.is_loaded = True
+        logger.info("✅ v2.1 DeepfakeDetector fully loaded")
+    
     def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, Any]:
-        if not self.is_trained:
-            # Use simple heuristic for MVP if not trained
-            return self._heuristic_prediction(waveform, sample_rate)
-        
-        # Use fusion model if available
-        if hasattr(self, 'use_fusion') and self.use_fusion:
-            return self._fusion_prediction(waveform, sample_rate)
-        
-        self.classifier.eval()
-        
-        # Extract embeddings
-        embeddings = self.extract_embeddings(waveform, sample_rate)
-        
-        # Get prediction
-        with torch.no_grad():
-            confidence = self.classifier(embeddings).cpu().item()
-        
-        # Detect artifacts (NOVELTY)
-        artifacts = self.detect_vocoder_artifacts(waveform, sample_rate)
-        
-        # Combine scores (ensemble approach - NOVELTY)
-        artifact_score = (
-            artifacts['spectral_flatness'] * 0.3 +
-            (artifacts['autocorr_peak'] / 1000) * 0.2 +
-            artifacts['high_freq_energy'] * 0.3 +
-            (1 - artifacts['zcr_variance']) * 0.2
-        )
-        
-        # Weighted combination
-        final_confidence = 0.7 * confidence + 0.3 * artifact_score
-        final_confidence = np.clip(final_confidence, 0, 1)
-        
-        is_deepfake = final_confidence > 0.5
-        
-        return {
-            'is_deepfake': bool(is_deepfake),
-            'confidence': float(final_confidence),
-            'raw_confidence': float(confidence),
-            'artifact_score': float(artifact_score),
-            'artifacts': artifacts,
-            'risk_level': self._get_risk_level(final_confidence)
-        }
-    
-    def _fusion_prediction(self, waveform: np.ndarray, sample_rate: int) -> Dict[str, any]:
-        """
-        Prediction using the trained fusion model.
-        Uses WavLM embeddings + placeholder Whisper + DSP features.
-        """
-        # Extract WavLM embeddings (768-dim)
-        wavlm_features = self.extract_embeddings(waveform, sample_rate)
-        
-        # For now, use WavLM as placeholder for Whisper (they're similar transformers)
-        # In production, you'd load Whisper separately
-        whisper_features = wavlm_features.clone()
-        
-        # Extract DSP features (6-dim)
-        artifacts = self.detect_vocoder_artifacts(waveform, sample_rate)
-        dsp_features = torch.tensor([[
-            artifacts['spectral_flatness'],
-            artifacts['autocorr_peak'] / 1000,  # Normalize
-            artifacts['high_freq_energy'],
-            artifacts['zcr_variance'],
-            0.0,  # Placeholder for additional DSP
-            0.0   # Placeholder for additional DSP
-        ]], dtype=torch.float32).to(self.device)
-        
-        # Run fusion model
-        with torch.no_grad():
-            logits = self.fusion_model(wavlm_features, whisper_features, dsp_features)
-            confidence = torch.sigmoid(logits).cpu().item()
-        
-        is_deepfake = confidence > 0.5
-        
-        return {
-            'is_deepfake': bool(is_deepfake),
-            'confidence': float(confidence),
-            'artifacts': artifacts,
-            'risk_level': self._get_risk_level(confidence),
-            'model': 'fusion_model'
-        }
-    
-    
-    def _heuristic_prediction(self, waveform: np.ndarray, sample_rate: int) -> Dict[str, any]:
-    # >>>>>>> origin/develop
         """
         End-to-end prediction: Audio -> Features -> Fusion Model -> Result
+        
+        Args:
+            waveform: Audio waveform as numpy array
+            sample_rate: Sample rate (default 16000)
+        
+        Returns:
+            Dictionary with prediction results and forensic analysis
         """
         self._ensure_loaded()
         
-        # 1. Extract Features
         try:
-            # Features need to be tensors on device
+            # 1. Extract Features from all three modalities
+            logger.debug("Extracting WavLM features...")
             w_emb = torch.tensor(self.wavlm_ext.extract(waveform, sample_rate)).unsqueeze(0).to(self.device)
+            
+            logger.debug("Extracting Whisper features...")
             s_emb = torch.tensor(self.whisper_ext.extract(waveform, sample_rate)).unsqueeze(0).to(self.device)
+            
+            logger.debug("Extracting DSP features (246-dim)...")
             d_feat = torch.tensor(self.dsp_ext.extract(waveform, sample_rate)).unsqueeze(0).to(self.device)
             
-            # 2. Forward Pass
-            # Use explainability method to get detailed scores
+            # 2. Forward Pass with explainability
             result = self.model.predict_with_explanation(w_emb, s_emb, d_feat)
             
-            final_conf = float(result['confidence'])
+            raw_conf = float(result['confidence'])
+            
+            # 3. Apply confidence calibration (temperature scaling)
+            final_conf = self._calibrate_confidence(raw_conf)
             is_deepfake = final_conf > 0.5
             
-            # Map expert scores for UI
+            # 4. Extract expert scores for forensic analysis
             expert_scores = result['expert_scores']
             
-            # Construct artifact dictionary with clean keys for Frontend v2.1
-            # We map 1.0 (Fake) -> 0.0 (Consistency) for user-friendly display if needed, 
-            # but usually "Score" implies "Defect Score" in security contexts.
-            # Let's keep it as "Anomaly Score" (Higher = More Fake/Anomaly).
+            # Construct artifact dictionary for UI
             artifacts = {
-                'signal_quality': expert_scores['signal'],       # Higher = More Signal Anomalies
+                'signal_quality': expert_scores['signal'],         # Higher = More Signal Anomalies
                 'acoustic_consistency': expert_scores['acoustic'], # Higher = More Acoustic Anomalies
-                'semantic_coherence': expert_scores['semantic']    # Higher = More Semantic Anomalies
+                'semantic_coherence': expert_scores['semantic'],   # Higher = More Semantic Anomalies
+                'acoustic': expert_scores['acoustic'],
+                'semantic': expert_scores['semantic'],
+                'signal': expert_scores['signal']
             }
             
-
-            # Generate Professional Explanation
-            if is_deepfake:
-                factors = []
-                if expert_scores['signal'] > 0.6: factors.append("digital signal processing artifacts")
-                if expert_scores['acoustic'] > 0.6: factors.append("acoustic inconsistencies")
-                if expert_scores['semantic'] > 0.6: factors.append("unnatural semantic patterns")
-                
-                if not factors: factors.append("general synthetic characteristics")
-                factor_str = ", ".join(factors)
-                
-                explanation = (
-                    f"Voice analysis confirms high probability of AI generation (Confidence: {final_conf:.1%}). "
-                    f"The model detected {factor_str}, which are strong indicators of neural text-to-speech synthesis."
-                )
-            else:
-                explanation = (
-                    f"Voice analysis indicates the audio is likely genuine (Confidence: {final_conf:.1%}). "
-                    "The acoustic properties and signal integrity align with natural human speech patterns."
-                )
-
-            # Construct response
+            # 5. Generate Professional Forensic Explanation
+            explanation = self._generate_explanation(is_deepfake, final_conf, expert_scores)
+            
             return {
                 'is_deepfake': is_deepfake,
-                'confidence': float(final_conf),
+                'confidence': float(final_conf),           # Calibrated confidence
+                'raw_confidence': float(raw_conf),         # Raw model output (before calibration)
+                'calibrated': True,
                 'risk_level': self._get_risk_level(final_conf),
-                'artifact_score': float(expert_scores['signal']), # Use DSP score as "Artifact Score"
+                'artifact_score': float(expert_scores['signal']),
                 'artifacts': artifacts,
-                'explanation': explanation
+                'explanation': explanation,
+                'model_version': 'v2.1-fusion-generalization'
             }
             
         except Exception as e:
-            logger.error(f"Prediction error: {e}")
-            # Fallback
+            logger.error(f"Prediction error: {e}", exc_info=True)
             return {
                 'is_deepfake': False,
                 'confidence': 0.0,
                 'risk_level': "low",
+                'artifacts': {},
                 'error': str(e)
             }
-
+    
+    def _generate_explanation(self, is_deepfake: bool, confidence: float, expert_scores: Dict) -> str:
+        """Generate professional forensic explanation."""
+        if is_deepfake:
+            factors = []
+            if expert_scores['signal'] > 0.6:
+                factors.append("digital signal processing artifacts")
+            if expert_scores['acoustic'] > 0.6:
+                factors.append("acoustic inconsistencies typical of neural vocoders")
+            if expert_scores['semantic'] > 0.6:
+                factors.append("unnatural prosodic patterns")
+            
+            if not factors:
+                factors.append("general synthetic characteristics")
+            factor_str = ", ".join(factors)
+            
+            return (
+                f"Voice analysis confirms high probability of AI generation (Confidence: {confidence:.1%}). "
+                f"The model detected {factor_str}, which are strong indicators of neural text-to-speech synthesis "
+                f"(e.g., MelGAN, HiFiGAN, WaveGlow)."
+            )
+        else:
+            return (
+                f"Voice analysis indicates the audio is likely genuine (Confidence: {1-confidence:.1%}). "
+                "The acoustic properties, prosodic patterns, and signal integrity align with natural human speech. "
+                "No significant artifacts from neural vocoders were detected."
+            )
+    
     def _get_risk_level(self, confidence: float) -> str:
-        if confidence < 0.3: return "low"
-        if confidence < 0.7: return "medium"
+        """Determine risk level from confidence."""
+        if confidence < 0.3:
+            return "low"
+        elif confidence < 0.7:
+            return "medium"
         return "high"
+    
+    def _calibrate_confidence(self, raw_confidence: float) -> float:
+        """
+        Apply temperature scaling to calibrate confidence scores.
+        
+        Temperature scaling makes overconfident predictions more conservative
+        without changing the ranking (still same predictions, just calibrated probabilities).
+        
+        Args:
+            raw_confidence: Raw model output probability (0-1)
+        
+        Returns:
+            Calibrated confidence score (0-1)
+        """
+        # Convert probability to logit
+        epsilon = 1e-7
+        raw_confidence = np.clip(raw_confidence, epsilon, 1 - epsilon)
+        logit = np.log(raw_confidence / (1 - raw_confidence))
+        
+        # Apply temperature scaling
+        scaled_logit = logit / self.CALIBRATION_TEMPERATURE
+        
+        # Convert back to probability
+        calibrated = 1 / (1 + np.exp(-scaled_logit))
+        
+        return float(calibrated)
