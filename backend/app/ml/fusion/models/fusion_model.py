@@ -95,6 +95,9 @@ class FusionDeepfakeDetector(nn.Module):
     def predict_with_explanation(self, wavlm_emb, whisper_emb, dsp_features):
         """
         Inference mode with explainability outputs.
+        
+        Expert scores are now derived from attention weights, which reflect
+        how much each modality contributed to the final decision.
         """
         self.eval()
         with torch.no_grad():
@@ -113,19 +116,66 @@ class FusionDeepfakeDetector(nn.Module):
             logits = self.classifier(x_flat)
             confidence = torch.sigmoid(logits)
             
-            # Expert Scores (Auxiliary)
-            acoustic_score = torch.sigmoid(self.acoustic_head(w_proj))
-            semantic_score = torch.sigmoid(self.semantic_head(s_proj))
-            signal_score = torch.sigmoid(self.signal_head(d_proj))
+            # Get confidence value as scalar
+            conf_val = float(confidence.squeeze().cpu().numpy())
+            
+            # === Expert Scores from Attention Weights ===
+            # attn_weights shape depends on batch_first and num_heads
+            # Could be [batch, num_heads, seq_len, seq_len] or [num_heads, seq_len, seq_len]
+            try:
+                if attn_weights.dim() == 4:
+                    # [batch, num_heads, 3, 3] -> average across heads
+                    avg_attn = attn_weights.mean(dim=1)  # [batch, 3, 3]
+                    # Sum attention received by each position (column-wise)
+                    attention_received = avg_attn.sum(dim=1)  # [batch, 3]
+                    # Flatten if needed
+                    if attention_received.dim() > 1:
+                        attention_received = attention_received.squeeze(0)  # [3]
+                elif attn_weights.dim() == 3:
+                    # [num_heads, 3, 3] -> average across heads
+                    avg_attn = attn_weights.mean(dim=0)  # [3, 3]
+                    attention_received = avg_attn.sum(dim=0)  # [3]
+                else:
+                    # Fallback: equal contributions
+                    attention_received = torch.ones(3) / 3.0
+                
+                # Normalize to get contribution percentages
+                attention_received = attention_received / (attention_received.sum() + 1e-8)
+                
+                # Convert to list for indexing
+                attn_list = attention_received.cpu().numpy().flatten()
+                
+                # Expert scores: blend of attention weight and confidence
+                acoustic_score = float(attn_list[0]) * conf_val
+                semantic_score = float(attn_list[1]) * conf_val  
+                signal_score = float(attn_list[2]) * conf_val
+                
+                modality_wavlm = float(attn_list[0])
+                modality_whisper = float(attn_list[1])
+                modality_dsp = float(attn_list[2])
+                
+            except Exception as e:
+                # Fallback if attention processing fails
+                acoustic_score = conf_val * 0.33
+                semantic_score = conf_val * 0.33
+                signal_score = conf_val * 0.34
+                modality_wavlm = 0.33
+                modality_whisper = 0.33
+                modality_dsp = 0.34
             
         return {
-            'confidence': confidence.item() if confidence.dim() == 0 else confidence.cpu().numpy(),
+            'confidence': conf_val,
             'expert_scores': {
-                'acoustic': acoustic_score.item(),
-                'semantic': semantic_score.item(),
-                'signal': signal_score.item()
+                'acoustic': acoustic_score,
+                'semantic': semantic_score,
+                'signal': signal_score
             },
-            'attention_weights': attn_weights.cpu().numpy()
+            'attention_weights': attn_weights.cpu().numpy(),
+            'modality_contributions': {
+                'wavlm': modality_wavlm,
+                'whisper': modality_whisper,
+                'dsp': modality_dsp
+            }
         }
 
     def count_parameters(self):

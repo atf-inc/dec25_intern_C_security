@@ -1,19 +1,32 @@
 # backend/app/main.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from app.core.config import settings, configure_dotenv
 from app.db.session import init_db
 from app.api.v1.routes_upload import router as upload_router
 from app.api.v1.routes_analyze import router as analyze_router
 from app.api.v1.routes_misc import router as misc_router
 
+# Rate limiting
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 # load .env early
 configure_dotenv()
 
 from app.api.v1 import routes_voice
 
+# Initialize rate limiter (in-memory storage)
+limiter = Limiter(key_func=get_remote_address)
+
 def create_application():
     app = FastAPI(title="ATF CyberX - Phishing Detection MVP")
+    
+    # Add rate limiter to app state
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
     # Add CORS middleware - MUST be added BEFORE including routers
     app.add_middleware(
