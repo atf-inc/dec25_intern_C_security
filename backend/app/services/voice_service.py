@@ -22,11 +22,11 @@ class VoiceAnalysisService:
     """Service for analyzing voice files for deepfake detection."""
     
     def __init__(self):
-        """Initialize the service with ML model."""
-        logger.info("Initializing VoiceAnalysisService...")
-        self.detector = DeepfakeDetector()
-        self.model_version = "v2.1-fusion-generalization"
-        logger.info("VoiceAnalysisService initialized successfully")
+        # """Initialize the service with ML model."""
+        # logger.info("Initializing VoiceAnalysisService...")
+        # self.detector = DeepfakeDetector()
+        # self.model_version = "v2.1-fusion-generalization"
+        # logger.info("VoiceAnalysisService initialized successfully")
     
     
     async def analyze_voice(
