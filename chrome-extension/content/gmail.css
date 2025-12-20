@@ -24,13 +24,27 @@
 /* 📋 Explanation Panel */
 .atf-explanation-panel {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-    animation: panelSlideDown 0.3s ease-out;
+    animation: panelSlideDown 0.3s ease-out !important;
+    
+    /* Ensure visibility */
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    
+    /* Positioning */
+    position: absolute !important;
+    z-index: 10000 !important;
     
     /* Glassmorphism effect */
     background: rgba(255, 255, 255, 0.98) !important;
     -webkit-backdrop-filter: blur(10px) !important;
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(229, 231, 235, 0.8) !important;
+    
+    /* Ensure it's not hidden by Gmail styles */
+    max-width: none !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
 
 .atf-explanation-panel .close-panel:hover {

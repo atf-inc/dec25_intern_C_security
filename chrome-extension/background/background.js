@@ -6,27 +6,27 @@ console.log('🛡️ ATF CyberX Background Service - Starting...');
 class EmailSecurityService {
     constructor() {
         // ✅ TASK 1: API Endpoint
-        this.apiEndpoint = 'http://localhost:8000/api/v1/analyze/';
-        
+        this.apiEndpoint = 'http://localhost:8000/analyze/';
+
         this.cache = new Map(); // Simple in-memory cache
         this.cacheTimeout = 5 * 60 * 1000; // 5 minutes cache life
-        
+
         // ✅ TASK 5: Stats Tracking
         this.stats = {
             scanned: 0,
             threats: 0,
             lastReset: new Date().toDateString()
         };
-        
+
         this.init();
     }
 
     init() {
         console.log('🔧 Initializing background service...');
-        
+
         // Load persisted stats
         this.loadStats();
-        
+
         // Listen for messages from content scripts (Gmail)
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (request.action === 'analyzeEmail') {
@@ -41,16 +41,16 @@ class EmailSecurityService {
                     });
                 return true; // Keep message channel open for async response
             }
-            
+
             if (request.action === 'getStats') {
                 sendResponse({ success: true, stats: this.stats });
                 return false;
             }
         });
-        
+
         // Schedule daily stats reset
         this.scheduleDailyReset();
-        
+
         console.log('✅ Background service initialized');
     }
 
@@ -63,7 +63,7 @@ class EmailSecurityService {
             const result = await chrome.storage.local.get(['dailyStats']);
             if (result.dailyStats) {
                 const today = new Date().toDateString();
-                
+
                 // Reset if it's a new day
                 if (result.dailyStats.lastReset !== today) {
                     console.log('📅 New day detected, resetting stats');
@@ -81,15 +81,15 @@ class EmailSecurityService {
 
     async saveStats() {
         try {
-            await chrome.storage.local.set({ 
+            await chrome.storage.local.set({
                 dailyStats: this.stats,
                 lastScan: Date.now()
             });
-            
+
             // Notify popup to update if it's open
-            chrome.runtime.sendMessage({ 
+            chrome.runtime.sendMessage({
                 action: 'updateStats',
-                stats: this.stats 
+                stats: this.stats
             }).catch(() => { /* Popup closed */ });
         } catch (error) {
             console.error('Failed to save stats:', error);
@@ -105,7 +105,7 @@ class EmailSecurityService {
                 this.stats = { scanned: 0, threats: 0, lastReset: today };
                 this.saveStats();
             }
-        }, 60 * 60 * 1000); 
+        }, 60 * 60 * 1000);
     }
 
     // ==========================================
@@ -115,7 +115,7 @@ class EmailSecurityService {
     async handleEmailAnalysis(emailData) {
         try {
             console.log('📧 Processing email analysis request...');
-            
+
             // 1. Check Cache
             const cacheKey = this.createCacheKey(emailData);
             const cachedResult = this.getFromCache(cacheKey);
@@ -146,7 +146,7 @@ class EmailSecurityService {
     // ✅ TASK 4: Retry Logic
     async callPhishingAPIWithRetry(emailData, maxRetries = 2) {
         let lastError;
-        
+
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 // Attempt API call
@@ -154,24 +154,24 @@ class EmailSecurityService {
             } catch (error) {
                 lastError = error;
                 console.warn(`⚠️ API Attempt ${attempt} failed:`, error.message);
-                
+
                 // Don't retry on 4xx errors (client errors)
                 if (error.message.includes('400') || error.message.includes('403')) {
                     throw error;
                 }
-                
+
                 // If this was the last attempt, switch to fallback
                 if (attempt === maxRetries) {
                     console.warn('⚠️ All API retries failed, switching to OFFLINE FALLBACK.');
                     return this.getFallbackResult(emailData);
                 }
-                
+
                 // Exponential backoff wait
                 const waitTime = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
                 await new Promise(resolve => setTimeout(resolve, waitTime));
             }
         }
-        
+
         return this.getFallbackResult(emailData);
     }
 
@@ -217,8 +217,8 @@ class EmailSecurityService {
             // Ensure explanation exists
             if (!result.ai_explanation) {
                 result.ai_explanation = this.generateFallbackExplanation(
-                    result.label, 
-                    result.score, 
+                    result.label,
+                    result.score,
                     result.reasons || []
                 );
             }
@@ -272,19 +272,19 @@ class EmailSecurityService {
         const text = ((emailData.subject || '') + ' ' + (emailData.body || '')).toLowerCase();
         const from_email = (emailData.from_email || '').toLowerCase();
         const senderDomain = this.getDomain(from_email);
-        
+
         let score = 0;
         let reasons = [];
         let evidence = [];
 
         // 3. Analysis Logic
-        
+
         // Check Urgency
         let urgentCount = 0;
         URGENT_WORDS.forEach(word => {
             if (text.includes(word)) urgentCount++;
         });
-        
+
         if (urgentCount >= 3) {
             score += 45;
             reasons.push(`High urgency tactics detected (${urgentCount} keywords found)`);
@@ -307,15 +307,15 @@ class EmailSecurityService {
             if (text.includes(brand)) {
                 // If brand is mentioned, sender MUST match legitimate domains
                 const isLegit = legitDomains.some(d => senderDomain.endsWith(d));
-                
+
                 if (!isLegit && from_email.includes('@')) {
                     // Check for clearly suspicious sender traits
-                    const isSuspiciousSender = 
-                        from_email.includes('noreply') || 
-                        from_email.includes('security') || 
+                    const isSuspiciousSender =
+                        from_email.includes('noreply') ||
+                        from_email.includes('security') ||
                         from_email.includes('update') ||
                         !senderDomain.includes(brand); // Sender doesn't even contain brand name
-                    
+
                     if (isSuspiciousSender) {
                         score += 35;
                         reasons.push(`Potential ${brand.toUpperCase()} impersonation`);
@@ -327,7 +327,7 @@ class EmailSecurityService {
 
         // Check Links (Visible & Hidden)
         const allLinks = emailData.visible_links || [];
-        
+
         allLinks.forEach(link => {
             const uri = (link.uri || '').toLowerCase();
             const anchor = (link.anchor_text || '').toLowerCase();
@@ -378,7 +378,7 @@ class EmailSecurityService {
         // 5. Finalize Score & Label
         score = Math.min(100, score);
         let label = 'SAFE';
-        
+
         if (score >= 70) {
             label = 'PHISHING';
         } else if (score >= 40) {
@@ -395,8 +395,8 @@ class EmailSecurityService {
             evidence: this.dedupeEvidence(evidence),
             request_id: 'offline-' + Date.now(),
             ai_explanation,
-            model_meta: { 
-                analysis_method: 'offline_heuristic', 
+            model_meta: {
+                analysis_method: 'offline_heuristic',
                 llm_used: false,
                 backend_available: false
             }
@@ -440,7 +440,7 @@ class EmailSecurityService {
             if (!url) return '';
             // Handle email addresses
             if (url.includes('@')) return url.split('@')[1];
-            
+
             // Handle URLs
             const urlObj = new URL(url.startsWith('http') ? url : `http://${url}`);
             return urlObj.hostname;
@@ -480,10 +480,25 @@ class EmailSecurityService {
 
     // Cache Helpers
     createCacheKey(emailData) {
-        const keyString = (emailData.subject || '') + 
-                         (emailData.from_email || '') + 
-                         (emailData.body || '').substring(0, 50);
-        return btoa(keyString).substring(0, 16);
+        const keyString = (emailData.subject || '') +
+            (emailData.from_email || '') +
+            (emailData.body || '').substring(0, 50);
+
+        // Safe encoding that handles Unicode characters
+        try {
+            const safeString = encodeURIComponent(keyString);
+            return btoa(safeString).substring(0, 16);
+        } catch (error) {
+            // Fallback: simple hash without btoa
+            console.warn('Using fallback cache key due to encoding issue:', error);
+            let hash = 0;
+            for (let i = 0; i < keyString.length; i++) {
+                const char = keyString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            return Math.abs(hash).toString(16).substring(0, 16);
+        }
     }
 
     getFromCache(key) {
