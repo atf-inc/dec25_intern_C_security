@@ -18,6 +18,12 @@ class GmailSecurityAnalyzer {
         } else {
             this.startMonitoring();
         }
+
+        // Listen for language changes to update existing badges dynamically
+        window.addEventListener('extensionLanguageChanged', (event) => {
+            console.log('🌍 Language change detected, updating badges...', event.detail);
+            this.updateExistingBadges(event.detail.newLanguage);
+        });
     }
 
     startMonitoring() {
@@ -276,23 +282,114 @@ class GmailSecurityAnalyzer {
         try {
             console.log('🤖 Sending email for AI analysis...');
 
+            // Check user sensitivity setting
+            const settings = await chrome.storage.local.get(['sensitivityLevel']);
+            const sensitivityLevel = settings.sensitivityLevel || 'balanced'; // default: balanced
+
             // Send to background service (which handles API calls & caching)
             const response = await chrome.runtime.sendMessage({
                 action: 'analyzeEmail',
-                emailData: emailData
+                emailData: emailData,
+                sensitivityLevel: sensitivityLevel  // Pass sensitivity to backend
             });
 
             if (response && response.success) {
                 console.log('✅ Analysis complete:', response.result.label);
-                this.displaySecurityBadge(response.result, container);
+
+                // Apply sensitivity-based filtering
+                let finalResult = this.applySensitivityFilter(response.result, sensitivityLevel);
+
+                // Check current language preference for dynamic translation
+                const currentLang = window.extensionI18n.getCurrentLanguage();
+
+                // If user prefers Japanese and we have AI explanation, translate it automatically
+                if (currentLang === 'ja' && finalResult.ai_explanation) {
+                    console.log('🌍 User prefers Japanese, translating result automatically...');
+                    try {
+                        finalResult = await this.translateAnalysisResult(finalResult, currentLang);
+                        console.log('✅ Auto-translation to Japanese complete');
+                    } catch (error) {
+                        console.warn('⚠️ Auto-translation failed, using original result:', error);
+                    }
+                }
+
+                this.displaySecurityBadge(finalResult, container);
             } else {
                 console.error('❌ Analysis failed:', response?.error);
-                // Task 4: Enhanced Error Handling
-                this.displayErrorBadge(container, response?.error || 'Unknown Error');
+                this.displayErrorBadge(container, response?.error || window.extensionI18n.t('error_analysis_failed'));
             }
         } catch (error) {
             console.error('❌ Error during analysis:', error);
-            this.displayErrorBadge(container, 'Connection Error');
+            this.displayErrorBadge(container, window.extensionI18n.t('error_network'));
+        }
+    }
+
+    applySensitivityFilter(result, sensitivityLevel) {
+        // Adjust results based on user's sensitivity preference
+        const originalScore = result.score;
+        let adjustedResult = { ...result };
+
+        switch (sensitivityLevel) {
+            case 'conservative':
+                // More conservative - reduce false positives for presentations
+                if (result.label === 'PHISHING' && result.score < 85) {
+                    adjustedResult.label = 'SUSPICIOUS';
+                    adjustedResult.score = Math.max(40, result.score - 20);
+                    console.log(`🔧 Conservative mode: Reduced ${originalScore} → ${adjustedResult.score}`);
+                }
+                if (result.label === 'SUSPICIOUS' && result.score < 60) {
+                    adjustedResult.label = 'SAFE';
+                    adjustedResult.score = Math.max(10, result.score - 15);
+                    console.log(`🔧 Conservative mode: Reduced ${originalScore} → ${adjustedResult.score}`);
+                }
+                break;
+
+            case 'aggressive':
+                // More aggressive - catch more potential threats
+                if (result.label === 'SUSPICIOUS' && result.score > 50) {
+                    adjustedResult.label = 'PHISHING';
+                    adjustedResult.score = Math.min(100, result.score + 15);
+                    console.log(`🔧 Aggressive mode: Increased ${originalScore} → ${adjustedResult.score}`);
+                }
+                if (result.label === 'SAFE' && result.score > 30) {
+                    adjustedResult.label = 'SUSPICIOUS';
+                    adjustedResult.score = Math.min(70, result.score + 20);
+                    console.log(`🔧 Aggressive mode: Increased ${originalScore} → ${adjustedResult.score}`);
+                }
+                break;
+
+            case 'balanced':
+            default:
+                // No adjustment - use original results
+                break;
+        }
+
+        return adjustedResult;
+    }
+
+    async translateAnalysisResult(originalResult, targetLanguage) {
+        try {
+            console.log('🔄 Requesting translation to:', targetLanguage);
+
+            const response = await chrome.runtime.sendMessage({
+                action: 'translateResult',
+                originalResult: originalResult,
+                targetLanguage: targetLanguage
+            });
+
+            if (response && response.success) {
+                console.log('✅ Translation complete');
+                // Preserve the original English result for switching back
+                const translatedResult = response.result;
+                translatedResult._originalResult = originalResult;
+                return translatedResult;
+            } else {
+                console.warn('⚠️ Translation failed, using original result');
+                return originalResult;
+            }
+        } catch (error) {
+            console.warn('⚠️ Translation error:', error);
+            return originalResult;
         }
     }
 
@@ -343,6 +440,9 @@ class GmailSecurityAnalyzer {
         const badge = document.createElement('div');
         badge.className = 'atf-security-badge';
 
+        // Store analysis result for dynamic updates
+        badge._analysisResult = analysisResult;
+
         // Most styles are now in gmail.css (Task 6), we only set dynamic colors here
         badge.style.background = badgeConfig.background;
         badge.style.color = badgeConfig.color;
@@ -374,11 +474,13 @@ class GmailSecurityAnalyzer {
     getBadgeConfig(label, score) {
         console.log('🎨 Getting badge config for:', label, 'Score:', score);
 
+        const i18n = window.extensionI18n;
+
         switch (label) {
             case 'PHISHING':
                 return {
                     icon: '🚫',
-                    text: 'Phishing Detected',
+                    text: i18n.t('badge_phishing'),
                     background: '#FEF2F2',
                     color: '#DC2626',
                     border: '#FECACA'
@@ -386,7 +488,7 @@ class GmailSecurityAnalyzer {
             case 'SUSPICIOUS':
                 return {
                     icon: '⚠️',
-                    text: 'Suspicious',
+                    text: i18n.t('badge_suspicious'),
                     background: '#FFFBEB',
                     color: '#D97706',
                     border: '#FDE68A'
@@ -394,7 +496,7 @@ class GmailSecurityAnalyzer {
             case 'SAFE':
                 return {
                     icon: '✅',
-                    text: 'Safe',
+                    text: i18n.t('badge_safe'),
                     background: '#ECFDF5',
                     color: '#059669',
                     border: '#A7F3D0'
@@ -403,7 +505,7 @@ class GmailSecurityAnalyzer {
                 console.warn('⚠️ Unknown label:', label, 'defaulting to SAFE');
                 return {
                     icon: '❓',
-                    text: 'Unknown',
+                    text: i18n.t('badge_error'),
                     background: '#F3F4F6',
                     color: '#6B7280',
                     border: '#D1D5DB'
@@ -447,6 +549,10 @@ class GmailSecurityAnalyzer {
 
         const panel = document.createElement('div');
         panel.className = 'atf-explanation-panel';
+
+        // Store both original and current results for language switching
+        panel._originalResult = analysisResult._originalResult || analysisResult; // Store original English
+        panel._currentResult = analysisResult; // Store current (possibly translated) result
 
         // Enhanced styling with maximum visibility
         panel.style.position = 'fixed'; // Changed from absolute to fixed
@@ -494,10 +600,12 @@ class GmailSecurityAnalyzer {
         try {
             console.log('🏗️ Building panel HTML...');
 
+            const i18n = window.extensionI18n;
+
             // Safely get values with fallbacks
-            const summary = ai_explanation?.summary || `Analysis complete. Email classified as ${label}.`;
+            const summary = ai_explanation?.summary || i18n.t(`default_${label.toLowerCase()}_summary`);
             const reasoning = ai_explanation?.ai_reasoning || `This email was analyzed and classified as ${label} with a confidence score of ${score}%.`;
-            const action = ai_explanation?.recommended_action || 'Exercise standard email caution when handling this email.';
+            const action = ai_explanation?.recommended_action || i18n.t(`default_${label.toLowerCase()}_action`);
 
             panel.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -505,7 +613,18 @@ class GmailSecurityAnalyzer {
                         <span style="font-size: 18px; margin-right: 8px;">${threatConfig.icon}</span>
                         <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: ${threatConfig.color};">${threatConfig.title}</h4>
                     </div>
-                    <span class="close-panel" style="cursor: pointer; font-size: 20px; color: #9CA3AF;">&times;</span>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <!-- Modern Language Toggle Switch -->
+                        <div class="panel-language-toggle" style="position: relative;">
+                            <input type="checkbox" id="panel-language-switch" class="panel-language-input" style="display: none;" ${i18n.getCurrentLanguage() === 'ja' ? 'checked' : ''}>
+                            <label for="panel-language-switch" class="panel-language-label" style="display: block; width: 60px; height: 28px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 14px; cursor: pointer; position: relative; transition: all 0.3s ease;">
+                                <span class="panel-language-switch" style="position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: white; border-radius: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); transform: ${i18n.getCurrentLanguage() === 'ja' ? 'translateX(32px)' : 'translateX(0)'};"></span>
+                                <span class="panel-lang-text" style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 9px; font-weight: 700; transition: all 0.3s ease; left: 6px; color: ${i18n.getCurrentLanguage() === 'en' ? 'white' : 'rgba(255,255,255,0.5)'};">EN</span>
+                                <span class="panel-lang-text" style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 9px; font-weight: 700; transition: all 0.3s ease; right: 4px; color: ${i18n.getCurrentLanguage() === 'ja' ? 'white' : 'rgba(255,255,255,0.5)'};">日本</span>
+                            </label>
+                        </div>
+                        <span class="close-panel" style="cursor: pointer; font-size: 24px; color: #9CA3AF; transition: all 0.3s ease; padding: 4px; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</span>
+                    </div>
                 </div>
 
                 <div style="background: ${threatConfig.background}; border: 1px solid ${threatConfig.border}; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
@@ -516,7 +635,7 @@ class GmailSecurityAnalyzer {
 
                 <div style="margin-bottom: 16px;">
                     <h5 style="margin: 0 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #374151;">
-                        🤖 AI Analysis
+                        ${i18n.t('section_ai_analysis')}
                     </h5>
                     <p style="margin: 0; font-size: 12px; color: #4B5563; line-height: 1.5; background: #F9FAFB; padding: 10px; border-radius: 6px;">
                         ${reasoning}
@@ -525,7 +644,7 @@ class GmailSecurityAnalyzer {
 
                 <div style="margin-bottom: 16px;">
                     <h5 style="margin: 0 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #374151;">
-                        💡 Recommended Action
+                        ${i18n.t('section_recommended_action')}
                     </h5>
                     <p style="margin: 0; font-size: 12px; color: #1F2937; line-height: 1.5; background: #EFF6FF; padding: 10px; border-radius: 6px; border-left: 3px solid #3B82F6;">
                         ${action}
@@ -534,21 +653,21 @@ class GmailSecurityAnalyzer {
 
                 <div style="margin-bottom: 16px;">
                     <h5 style="margin: 0 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #374151;">
-                        📊 Technical Details
+                        ${i18n.t('section_technical_details')}
                     </h5>
                     <div style="background: #F3F4F6; padding: 8px; border-radius: 6px; font-size: 11px; color: #6B7280;">
-                        <div>Threat Score: ${score}/100</div>
-                        <div>Classification: ${label}</div>
-                        <div>Analysis Method: ${analysisResult.model_meta?.analysis_method || 'AI + Heuristics'}</div>
+                        <div>${i18n.t('tech_threat_score')}: ${score}/100</div>
+                        <div>${i18n.t('tech_classification')}: ${label}</div>
+                        <div>${i18n.t('tech_analysis_method')}: ${analysisResult.model_meta?.analysis_method || 'AI + Heuristics'}</div>
                     </div>
                 </div>
 
                 <div style="display: flex; gap: 8px; margin-top: 16px;">
-                    <button class="close-panel" style="flex: 1; padding: 8px 12px; background: #F3F4F6; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; color: #374151;">
-                        Dismiss
+                    <button class="close-panel" style="flex: 1;">
+                        ${i18n.t('action_dismiss')}
                     </button>
                     <button class="report-btn" style="flex: 1; padding: 8px 12px; background: #3B82F6; border: 1px solid #3B82F6; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; color: white;">
-                        Report Issue
+                        ${i18n.t('action_report')}
                     </button>
                 </div>
             `;
@@ -558,12 +677,13 @@ class GmailSecurityAnalyzer {
         } catch (error) {
             console.error('❌ Error building panel HTML:', error);
             // Fallback to very simple panel
+            const i18n = window.extensionI18n;
             panel.innerHTML = `
                 <div style="padding: 16px; background: white; border: 1px solid #ccc; border-radius: 8px;">
-                    <h4 style="margin: 0 0 12px 0;">Security Analysis</h4>
-                    <p style="margin: 0 0 12px 0;">Classification: ${label} (Score: ${score})</p>
-                    <p style="margin: 0 0 12px 0;">${ai_explanation?.summary || 'Analysis complete.'}</p>
-                    <button class="close-panel" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Close</button>
+                    <h4 style="margin: 0 0 12px 0;">${i18n.t('section_ai_analysis')}</h4>
+                    <p style="margin: 0 0 12px 0;">${i18n.t('tech_classification')}: ${label} (${i18n.t('tech_threat_score')}: ${score})</p>
+                    <p style="margin: 0 0 12px 0;">${ai_explanation?.summary || i18n.t(`default_${label.toLowerCase()}_summary`)}</p>
+                    <button class="close-panel" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">${i18n.t('action_close')}</button>
                 </div>
             `;
         }
@@ -581,6 +701,150 @@ class GmailSecurityAnalyzer {
                 panel.remove();
             });
         });
+
+        // Add modern language toggle functionality
+        const languageToggle = panel.querySelector('#panel-language-switch');
+        if (languageToggle) {
+            console.log('🌍 Modern language toggle found, adding listener');
+            languageToggle.addEventListener('change', async (e) => {
+                console.log('🌍 Language toggle changed:', e.target.checked);
+                e.stopPropagation();
+
+                const newLanguage = e.target.checked ? 'ja' : 'en';
+
+                // Update toggle visual state immediately
+                const toggleSwitch = panel.querySelector('.panel-language-switch');
+                const enText = panel.querySelector('.panel-lang-text:first-of-type');
+                const jaText = panel.querySelector('.panel-lang-text:last-of-type');
+
+                if (toggleSwitch && enText && jaText) {
+                    toggleSwitch.style.transform = newLanguage === 'ja' ? 'translateX(32px)' : 'translateX(0)';
+                    enText.style.color = newLanguage === 'en' ? 'white' : 'rgba(255,255,255,0.5)';
+                    jaText.style.color = newLanguage === 'ja' ? 'white' : 'rgba(255,255,255,0.5)';
+                }
+
+                try {
+                    // Save language preference
+                    await chrome.storage.local.set({ preferredLanguage: newLanguage });
+
+                    // Update extension language
+                    if (window.extensionI18n) {
+                        await window.extensionI18n.setLanguage(newLanguage);
+                    }
+
+                    // Show modern loading state
+                    const loadingText = newLanguage === 'ja' ? '翻訳中...' : 'Translating...';
+                    panel.style.opacity = '0.7';
+                    panel.style.pointerEvents = 'none';
+
+                    // Add modern loading indicator
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'modern-translation-loading';
+                    loadingDiv.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(102, 126, 234, 0.95);
+                        backdrop-filter: blur(10px);
+                        color: white;
+                        padding: 16px 24px;
+                        border-radius: 16px;
+                        font-size: 13px;
+                        font-weight: 600;
+                        z-index: 1000000;
+                        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    `;
+                    loadingDiv.innerHTML = `
+                        <div style="width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        ${loadingText}
+                    `;
+
+                    // Add spin animation
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+                    panel.appendChild(loadingDiv);
+
+                    let finalResult = panel._currentResult;
+
+                    // If switching to Japanese and we have AI explanation, translate it
+                    if (newLanguage === 'ja' && panel._originalResult.ai_explanation) {
+                        console.log('🔄 Translating AI explanation to Japanese...');
+                        finalResult = await gmailAnalyzer.translateAnalysisResult(panel._originalResult, newLanguage);
+                    }
+                    // If switching back to English, use original English result
+                    else if (newLanguage === 'en') {
+                        console.log('🔄 Switching back to original English content...');
+                        finalResult = panel._originalResult; // Use stored original English result
+                    }
+
+                    // Remove loading and recreate panel with new language
+                    panel.remove();
+                    const newPanel = gmailAnalyzer.createExplanationPanel(finalResult);
+                    document.body.appendChild(newPanel);
+
+                    console.log('✅ Dynamic translation complete');
+
+                } catch (error) {
+                    console.error('❌ Translation failed:', error);
+
+                    // Remove loading state and show error
+                    const loadingDiv = panel.querySelector('.modern-translation-loading');
+                    if (loadingDiv) loadingDiv.remove();
+                    panel.style.opacity = '1';
+                    panel.style.pointerEvents = 'auto';
+
+                    // Revert toggle state
+                    languageToggle.checked = !languageToggle.checked;
+                    if (toggleSwitch && enText && jaText) {
+                        const revertLang = languageToggle.checked ? 'ja' : 'en';
+                        toggleSwitch.style.transform = revertLang === 'ja' ? 'translateX(32px)' : 'translateX(0)';
+                        enText.style.color = revertLang === 'en' ? 'white' : 'rgba(255,255,255,0.5)';
+                        jaText.style.color = revertLang === 'ja' ? 'white' : 'rgba(255,255,255,0.5)';
+                    }
+
+                    // Show modern error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = `
+                        position: absolute;
+                        top: 20px;
+                        right: 20px;
+                        background: rgba(220, 38, 38, 0.95);
+                        backdrop-filter: blur(10px);
+                        color: white;
+                        padding: 12px 16px;
+                        border-radius: 12px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        z-index: 1000001;
+                        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+                        animation: slideInFromTop 0.3s ease-out;
+                    `;
+                    errorDiv.innerHTML = `⚠️ ${window.extensionI18n.t('error_translation_failed')}`;
+                    panel.appendChild(errorDiv);
+
+                    // Remove error after 4 seconds
+                    setTimeout(() => {
+                        if (errorDiv.parentNode) {
+                            errorDiv.style.animation = 'slideOutToTop 0.3s ease-in';
+                            setTimeout(() => errorDiv.remove(), 300);
+                        }
+                    }, 4000);
+                }
+            });
+        } else {
+            console.log('⚠️ Modern language toggle not found');
+        }
 
         // Add report button functionality
         const reportBtn = panel.querySelector('.report-btn');
@@ -601,11 +865,13 @@ class GmailSecurityAnalyzer {
     }
 
     getThreatLevelConfig(label, score) {
+        const i18n = window.extensionI18n;
+
         switch (label) {
             case 'PHISHING':
                 return {
                     icon: '🚨',
-                    title: 'Phishing Detected',
+                    title: i18n.t('panel_title_phishing'),
                     color: '#DC2626',
                     background: '#FEF2F2',
                     border: '#FECACA',
@@ -614,7 +880,7 @@ class GmailSecurityAnalyzer {
             case 'SUSPICIOUS':
                 return {
                     icon: '⚠️',
-                    title: 'Suspicious Email',
+                    title: i18n.t('panel_title_suspicious'),
                     color: '#D97706',
                     background: '#FFFBEB',
                     border: '#FDE68A',
@@ -624,7 +890,7 @@ class GmailSecurityAnalyzer {
             default:
                 return {
                     icon: '✅',
-                    title: 'Email Appears Safe',
+                    title: i18n.t('panel_title_safe'),
                     color: '#059669',
                     background: '#ECFDF5',
                     border: '#A7F3D0',
@@ -649,6 +915,7 @@ class GmailSecurityAnalyzer {
         const existingBadge = document.querySelector('.atf-security-badge');
         if (existingBadge) existingBadge.remove();
 
+        const i18n = window.extensionI18n;
         const badge = document.createElement('div');
         badge.className = 'atf-security-badge';
         badge.style.background = '#F3F4F6';
@@ -660,12 +927,12 @@ class GmailSecurityAnalyzer {
         badge.style.fontWeight = '500';
         badge.style.marginLeft = '12px';
 
-        // Task 4: Friendly Error Messages
-        let text = 'Analysis Unavailable';
+        // Friendly Error Messages with translation
+        let text = i18n.t('badge_error');
         if (errorMessage.includes('offline') || errorMessage.includes('Network') || errorMessage.includes('fetch')) {
-            text = 'Offline';
+            text = i18n.t('badge_offline');
         } else if (errorMessage.includes('timeout')) {
-            text = 'Server Busy';
+            text = i18n.t('badge_error');
         }
 
         badge.innerHTML = `<span>⚠️ ${text}</span>`;
@@ -677,6 +944,29 @@ class GmailSecurityAnalyzer {
         } else {
             container.insertBefore(badge, container.firstChild);
         }
+    }
+
+    // Dynamic badge update when language changes
+    updateExistingBadges(newLanguage) {
+        const existingBadges = document.querySelectorAll('.atf-security-badge');
+        console.log(`🔄 Updating ${existingBadges.length} existing badges to ${newLanguage}`);
+
+        existingBadges.forEach(badge => {
+            // Get the stored analysis result from the badge
+            const analysisResult = badge._analysisResult;
+            if (analysisResult) {
+                console.log('🔄 Updating badge with stored analysis result');
+
+                // Update badge text with new language
+                const badgeConfig = this.getBadgeConfig(analysisResult.label, analysisResult.score);
+                const textSpan = badge.querySelector('span:last-child');
+                if (textSpan) {
+                    textSpan.textContent = badgeConfig.text;
+                }
+            } else {
+                console.log('⚠️ No stored analysis result found for badge, skipping update');
+            }
+        });
     }
 }
 

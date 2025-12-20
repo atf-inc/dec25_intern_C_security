@@ -31,12 +31,25 @@ class EmailSecurityService {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (request.action === 'analyzeEmail') {
                 // Async analysis handler
-                this.handleEmailAnalysis(request.emailData)
+                this.handleEmailAnalysis(request.emailData, request.sensitivityLevel)
                     .then(result => {
                         sendResponse({ success: true, result });
                     })
                     .catch(error => {
                         console.error('❌ Analysis error:', error);
+                        sendResponse({ success: false, error: error.message });
+                    });
+                return true; // Keep message channel open for async response
+            }
+
+            if (request.action === 'translateResult') {
+                // Handle translation requests
+                this.handleTranslationRequest(request.originalResult, request.targetLanguage)
+                    .then(result => {
+                        sendResponse({ success: true, result });
+                    })
+                    .catch(error => {
+                        console.error('❌ Translation error:', error);
                         sendResponse({ success: false, error: error.message });
                     });
                 return true; // Keep message channel open for async response
@@ -109,12 +122,85 @@ class EmailSecurityService {
     }
 
     // ==========================================
+    // 🌍 TRANSLATION HANDLING
+    // ==========================================
+
+    async handleTranslationRequest(originalResult, targetLanguage) {
+        try {
+            console.log('🌍 Processing translation request to:', targetLanguage);
+
+            // Check cache first
+            const cacheKey = this.createTranslationCacheKey(originalResult, targetLanguage);
+            const cachedTranslation = this.getFromCache(cacheKey);
+            if (cachedTranslation) {
+                console.log('⚡ Returning cached translation');
+                return cachedTranslation;
+            }
+
+            // Call backend translation API
+            const translatedResult = await this.callTranslationAPI(originalResult, targetLanguage);
+
+            // Cache the translation
+            this.saveToCache(cacheKey, translatedResult);
+
+            return translatedResult;
+
+        } catch (error) {
+            console.error('❌ Translation request failed:', error);
+            throw error;
+        }
+    }
+
+    async callTranslationAPI(originalResult, targetLanguage) {
+        console.log('🔄 Calling backend translation API...');
+
+        try {
+            const requestPayload = {
+                original_result: originalResult,
+                target_language: targetLanguage,
+                meta: {
+                    consent: true,  // Required by backend
+                    source: 'chrome_extension',
+                    timestamp: new Date().toISOString()
+                }
+            };
+
+            const response = await fetch('http://localhost:8000/analyze/retranslate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(requestPayload),
+                signal: AbortSignal.timeout(15000) // 15 second timeout
+            });
+
+            if (!response.ok) {
+                throw new Error(`Translation API Request Failed: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ Translation API call successful');
+            return result;
+
+        } catch (error) {
+            console.error('❌ Translation API call failed:', error);
+            throw error;
+        }
+    }
+
+    createTranslationCacheKey(originalResult, targetLanguage) {
+        const keyString = `${originalResult.request_id || 'unknown'}_${targetLanguage}`;
+        return `trans_${keyString}`;
+    }
+
+    // ==========================================
     // 📧 EMAIL ANALYSIS LOGIC
     // ==========================================
 
-    async handleEmailAnalysis(emailData) {
+    async handleEmailAnalysis(emailData, sensitivityLevel = 'balanced') {
         try {
-            console.log('📧 Processing email analysis request...');
+            console.log('📧 Processing email analysis request...', { sensitivityLevel });
 
             // 1. Check Cache
             const cacheKey = this.createCacheKey(emailData);
@@ -124,8 +210,8 @@ class EmailSecurityService {
                 return cachedResult;
             }
 
-            // 2. Call API (with Retry Logic)
-            const result = await this.callPhishingAPIWithRetry(emailData);
+            // 2. Call API (with Retry Logic) - pass sensitivity level
+            const result = await this.callPhishingAPIWithRetry(emailData, sensitivityLevel);
 
             // 3. Cache & Update Stats
             this.saveToCache(cacheKey, result);
@@ -144,13 +230,13 @@ class EmailSecurityService {
     }
 
     // ✅ TASK 4: Retry Logic
-    async callPhishingAPIWithRetry(emailData, maxRetries = 2) {
+    async callPhishingAPIWithRetry(emailData, sensitivityLevel = 'balanced', maxRetries = 2) {
         let lastError;
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 // Attempt API call
-                return await this.callPhishingAPI(emailData);
+                return await this.callPhishingAPI(emailData, sensitivityLevel);
             } catch (error) {
                 lastError = error;
                 console.warn(`⚠️ API Attempt ${attempt} failed:`, error.message);
@@ -163,7 +249,7 @@ class EmailSecurityService {
                 // If this was the last attempt, switch to fallback
                 if (attempt === maxRetries) {
                     console.warn('⚠️ All API retries failed, switching to OFFLINE FALLBACK.');
-                    return this.getFallbackResult(emailData);
+                    return this.getFallbackResult(emailData, sensitivityLevel);
                 }
 
                 // Exponential backoff wait
@@ -172,11 +258,11 @@ class EmailSecurityService {
             }
         }
 
-        return this.getFallbackResult(emailData);
+        return this.getFallbackResult(emailData, sensitivityLevel);
     }
 
-    async callPhishingAPI(emailData) {
-        console.log('🤖 Calling ATF CyberX API...');
+    async callPhishingAPI(emailData, sensitivityLevel = 'balanced') {
+        console.log('🤖 Calling ATF CyberX API...', { sensitivityLevel });
 
         try {
             // Prepare payload for backend
@@ -194,7 +280,8 @@ class EmailSecurityService {
                 meta: {
                     consent: true,
                     source: 'chrome_extension',
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    sensitivity_level: sensitivityLevel  // 🚀 NEW: Pass sensitivity to backend
                 }
             };
 
@@ -236,8 +323,8 @@ class EmailSecurityService {
     // ==========================================
     // This mirrors the Python logic in app/ml/phishing_model.py
 
-    getFallbackResult(emailData) {
-        console.log('🔄 Running Advanced Fallback Analysis (Offline Mode)...');
+    getFallbackResult(emailData, sensitivityLevel = 'balanced') {
+        console.log('🔄 Running Advanced Fallback Analysis (Offline Mode)...', { sensitivityLevel });
 
         // 1. Setup Constants (Matches Python Backend)
         const URGENT_WORDS = [
@@ -375,8 +462,38 @@ class EmailSecurityService {
             reasons.push("Generic greeting or grammar errors detected");
         }
 
-        // 5. Finalize Score & Label
+        // 5. Finalize Score & Label with Sensitivity Adjustment
         score = Math.min(100, score);
+
+        // 🚀 NEW: Apply sensitivity-based adjustments to offline analysis
+        const originalScore = score;
+        switch (sensitivityLevel) {
+            case 'conservative':
+                // More conservative - reduce false positives for presentations
+                if (score >= 70) {
+                    score = Math.max(40, score - 20); // Reduce PHISHING threshold
+                    console.log(`🔧 Conservative mode: Reduced ${originalScore} → ${score}`);
+                }
+                if (score >= 40 && score < 70) {
+                    score = Math.max(10, score - 15); // Reduce SUSPICIOUS threshold
+                    console.log(`🔧 Conservative mode: Reduced ${originalScore} → ${score}`);
+                }
+                break;
+
+            case 'aggressive':
+                // More aggressive - catch more potential threats
+                if (score >= 30 && score < 70) {
+                    score = Math.min(100, score + 20); // Increase sensitivity
+                    console.log(`🔧 Aggressive mode: Increased ${originalScore} → ${score}`);
+                }
+                break;
+
+            case 'balanced':
+            default:
+                // No adjustment - use original results
+                break;
+        }
+
         let label = 'SAFE';
 
         if (score >= 70) {
