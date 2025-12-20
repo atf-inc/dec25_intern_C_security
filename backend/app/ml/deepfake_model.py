@@ -29,8 +29,49 @@ class DeepfakeDetector:
         self.dsp_ext = None
         self.is_trained = False # Will be true after loading
         
+    # <<<<<<< HEAD
+    # def _ensure_loaded(self):
+    #    if self.model is not None:
+    # =======
     def _ensure_loaded(self):
-        if self.model is not None:
+        # Auto-detect device
+        if self.device is None:
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        logger.info(f"Initialized DeepfakeDetector config on {self.device}")
+        
+        # Initialize model attributes to None (Lazy Loading)
+        self.feature_extractor = None
+        self.wavlm_model = None
+        
+        # Classifier head (to be trained)
+        self.classifier = None
+        self.artifact_detector = None
+        self.is_trained = False
+        
+        # Auto-load trained fusion model if available
+        import os
+        model_path = os.path.join(os.path.dirname(__file__), '..', '..', 'checkpoints', 'fusion_model.pth')
+        if os.path.exists(model_path):
+            try:
+                from app.ml.fusion_model import DeepfakeFusionModel
+                self.fusion_model = DeepfakeFusionModel()
+                self.fusion_model.load_state_dict(torch.load(model_path, map_location=self.device))
+                self.fusion_model.to(self.device)
+                self.fusion_model.eval()
+                self.is_trained = True
+                self.use_fusion = True  # Flag to use fusion model instead of classifier
+                logger.info(f"Auto-loaded trained fusion model from {model_path}")
+            except Exception as e:
+                self.use_fusion = False
+                logger.warning(f"Failed to load trained model: {e}. Using heuristics.")
+        else:
+            self.use_fusion = False
+        
+    def _ensure_model_loaded(self):
+        """Load the model if it hasn't been loaded yet."""
+        if self.wavlm_model is not None:
+    # >>>>>>> origin/develop
             return
 
         logger.info("Loading Fusion Deepfake Model components (v2.0 - 246 dim DSP)...")
@@ -69,7 +110,94 @@ class DeepfakeDetector:
             self.model.to(self.device)
             self.is_trained = False
 
+    # <<<<<<< HEAD
+    # def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, Any]:
+    # =======
     def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, Any]:
+        if not self.is_trained:
+            # Use simple heuristic for MVP if not trained
+            return self._heuristic_prediction(waveform, sample_rate)
+        
+        # Use fusion model if available
+        if hasattr(self, 'use_fusion') and self.use_fusion:
+            return self._fusion_prediction(waveform, sample_rate)
+        
+        self.classifier.eval()
+        
+        # Extract embeddings
+        embeddings = self.extract_embeddings(waveform, sample_rate)
+        
+        # Get prediction
+        with torch.no_grad():
+            confidence = self.classifier(embeddings).cpu().item()
+        
+        # Detect artifacts (NOVELTY)
+        artifacts = self.detect_vocoder_artifacts(waveform, sample_rate)
+        
+        # Combine scores (ensemble approach - NOVELTY)
+        artifact_score = (
+            artifacts['spectral_flatness'] * 0.3 +
+            (artifacts['autocorr_peak'] / 1000) * 0.2 +
+            artifacts['high_freq_energy'] * 0.3 +
+            (1 - artifacts['zcr_variance']) * 0.2
+        )
+        
+        # Weighted combination
+        final_confidence = 0.7 * confidence + 0.3 * artifact_score
+        final_confidence = np.clip(final_confidence, 0, 1)
+        
+        is_deepfake = final_confidence > 0.5
+        
+        return {
+            'is_deepfake': bool(is_deepfake),
+            'confidence': float(final_confidence),
+            'raw_confidence': float(confidence),
+            'artifact_score': float(artifact_score),
+            'artifacts': artifacts,
+            'risk_level': self._get_risk_level(final_confidence)
+        }
+    
+    def _fusion_prediction(self, waveform: np.ndarray, sample_rate: int) -> Dict[str, any]:
+        """
+        Prediction using the trained fusion model.
+        Uses WavLM embeddings + placeholder Whisper + DSP features.
+        """
+        # Extract WavLM embeddings (768-dim)
+        wavlm_features = self.extract_embeddings(waveform, sample_rate)
+        
+        # For now, use WavLM as placeholder for Whisper (they're similar transformers)
+        # In production, you'd load Whisper separately
+        whisper_features = wavlm_features.clone()
+        
+        # Extract DSP features (6-dim)
+        artifacts = self.detect_vocoder_artifacts(waveform, sample_rate)
+        dsp_features = torch.tensor([[
+            artifacts['spectral_flatness'],
+            artifacts['autocorr_peak'] / 1000,  # Normalize
+            artifacts['high_freq_energy'],
+            artifacts['zcr_variance'],
+            0.0,  # Placeholder for additional DSP
+            0.0   # Placeholder for additional DSP
+        ]], dtype=torch.float32).to(self.device)
+        
+        # Run fusion model
+        with torch.no_grad():
+            logits = self.fusion_model(wavlm_features, whisper_features, dsp_features)
+            confidence = torch.sigmoid(logits).cpu().item()
+        
+        is_deepfake = confidence > 0.5
+        
+        return {
+            'is_deepfake': bool(is_deepfake),
+            'confidence': float(confidence),
+            'artifacts': artifacts,
+            'risk_level': self._get_risk_level(confidence),
+            'model': 'fusion_model'
+        }
+    
+    
+    def _heuristic_prediction(self, waveform: np.ndarray, sample_rate: int) -> Dict[str, any]:
+    # >>>>>>> origin/develop
         """
         End-to-end prediction: Audio -> Features -> Fusion Model -> Result
         """

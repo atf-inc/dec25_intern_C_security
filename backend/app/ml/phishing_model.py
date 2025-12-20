@@ -22,6 +22,135 @@ URGENT_WORDS = [
     "account will be closed", "temporary hold", "restricted access", "verify identity"
 ]
 
+# 🚀 IMPROVED: Trusted domains to reduce false positives
+TRUSTED_DOMAINS = [
+    'github.com', 'gitlab.com', 'bitbucket.org',  # Code repositories
+    'google.com', 'gmail.com', 'googlemail.com', 'calendar.google.com',  # Google services
+    'microsoft.com', 'outlook.com', 'hotmail.com', 'live.com',  # Microsoft
+    'apple.com', 'icloud.com',  # Apple
+    'amazon.com', 'amazon.net', 'aboutamazon.com',  # Amazon
+    'paypal.com', 'paypal.net', 'paypal.org',  # PayPal
+    'netflix.com',  # Netflix
+    'chase.com', 'jpmorgan.com',  # Chase
+    'wellsfargo.com',  # Wells Fargo
+    'bankofamerica.com',  # Bank of America
+    'citi.com',  # Citi
+    'visa.com', 'mastercard.com',  # Credit cards
+    'linkedin.com',  # LinkedIn
+    'facebook.com', 'meta.com',  # Meta/Facebook
+    'twitter.com', 'x.com',  # Twitter/X
+    'slack.com',  # Slack
+    'zoom.us',  # Zoom
+    'dropbox.com',  # Dropbox
+    'atlassian.com', 'atlassian.net',  # Atlassian
+    'salesforce.com',  # Salesforce
+    'adobe.com',  # Adobe
+]
+
+# Business communication patterns that should NOT be flagged as phishing
+LEGITIMATE_BUSINESS_PATTERNS = [
+    # Calendar/Meeting patterns
+    'google calendar', 'calendar invitation', 'meeting invitation', 'event invitation',
+    'has invited you', 'join by phone', 'meeting id', 'dial-in number',
+    'weekly from', 'daily from', 'monthly from', 'recurring meeting',
+    'organizer', 'attendees', 'guests', 'location changed', 'event updated',
+    
+    # Internal business communication
+    'team meeting', 'standup', 'retrospective', 'sprint planning',
+    'quarterly review', 'performance review', 'one-on-one',
+    'all hands', 'company meeting', 'department meeting',
+    
+    # Legitimate business actions
+    'please review', 'for your approval', 'needs your attention',
+    'quarterly report', 'monthly report', 'status update',
+    'project update', 'milestone reached', 'deadline reminder'
+]
+
+def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Check if email is a legitimate business communication that should not be flagged.
+    Returns dict with is_business, reason, confidence_boost, and evidence.
+    """
+    subject = payload.get("subject", "").lower()
+    body = payload.get("raw_text", "").lower()
+    from_email = payload.get("from_email", "").lower()
+    combined_text = f"{subject} {body}"
+    
+    # Extract domain from sender
+    sender_domain = ""
+    if "@" in from_email:
+        sender_domain = from_email.split("@")[1]
+    
+    # Check 1: Google Calendar invitations
+    if any(pattern in combined_text for pattern in [
+        "google calendar", "calendar invitation", "has invited you to", 
+        "join by phone", "meeting id", "dial-in number", "event has been updated",
+        "location changed", "weekly from", "daily from", "monthly from"
+    ]):
+        # Additional validation for Google Calendar
+        if ("google.com" in sender_domain or 
+            "calendar" in combined_text or 
+            "organizer" in combined_text or
+            "guests" in combined_text):
+            return {
+                "is_business": True,
+                "reason": "Google Calendar meeting invitation",
+                "confidence_boost": 25,
+                "evidence": ["calendar_invitation", "google_service"]
+            }
+    
+    # Check 2: Trusted domain senders
+    if sender_domain in TRUSTED_DOMAINS:
+        return {
+            "is_business": True,
+            "reason": f"Email from trusted domain: {sender_domain}",
+            "confidence_boost": 20,
+            "evidence": ["trusted_domain"]
+        }
+    
+    # Check 3: Internal business communication patterns
+    business_pattern_count = sum(1 for pattern in LEGITIMATE_BUSINESS_PATTERNS 
+                                if pattern in combined_text)
+    
+    if business_pattern_count >= 2:  # Multiple business patterns
+        return {
+            "is_business": True,
+            "reason": f"Multiple business communication patterns detected ({business_pattern_count})",
+            "confidence_boost": 15,
+            "evidence": ["business_patterns"]
+        }
+    
+    # Check 4: Meeting/Event specific patterns
+    meeting_indicators = [
+        "meeting", "conference", "webinar", "call", "standup", "sync",
+        "attendees", "participants", "agenda", "minutes", "action items"
+    ]
+    meeting_count = sum(1 for indicator in meeting_indicators if indicator in combined_text)
+    
+    if meeting_count >= 3:  # Strong meeting indicators
+        return {
+            "is_business": True,
+            "reason": f"Meeting/conference communication ({meeting_count} indicators)",
+            "confidence_boost": 10,
+            "evidence": ["meeting_communication"]
+        }
+    
+    # Check 5: Corporate email patterns (multiple recipients, professional language)
+    visible_links = payload.get("visible_links", [])
+    if len(visible_links) > 0:
+        # Check if links are to legitimate business domains
+        legitimate_links = sum(1 for link in visible_links 
+                             if any(domain in link.get("uri", "") for domain in TRUSTED_DOMAINS))
+        if legitimate_links > 0 and legitimate_links == len(visible_links):
+            return {
+                "is_business": True,
+                "reason": "All links point to trusted business domains",
+                "confidence_boost": 15,
+                "evidence": ["trusted_links"]
+            }
+    
+    return {"is_business": False}
+
 def _dedupe_evidence(evidence_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     seen = set()
     out = []
@@ -41,6 +170,83 @@ def _domain_of(uri: str) -> str:
         return ".".join(p for p in (parsed.domain, parsed.suffix) if p).lower()
     except Exception:
         return ""
+
+def _is_legitimate_link_context(anchor_text: str, domain: str, from_email: str) -> bool:
+    """Check if a link is in a legitimate context to reduce false positives"""
+    if not anchor_text or not domain:
+        return False
+        
+    anchor_lower = anchor_text.lower().strip()
+    domain_lower = domain.lower()
+    from_domain = from_email.split('@')[1].lower() if '@' in from_email else ''
+    
+    # Check if domain is trusted
+    if any(trusted in domain_lower for trusted in TRUSTED_DOMAINS):
+        # Additional check: sender domain should match or be related
+        if from_domain:
+            # Same domain or subdomain
+            if from_domain == domain_lower or domain_lower.endswith('.' + from_domain) or from_domain.endswith('.' + domain_lower):
+                return True
+            
+            # Known legitimate cross-domain patterns
+            legitimate_cross_domain = [
+                ('github.com' in from_domain and 'github.com' in domain_lower),
+                ('google.com' in from_domain and 'google.com' in domain_lower),
+                ('microsoft.com' in from_domain and any(ms in domain_lower for ms in ['microsoft.com', 'outlook.com', 'live.com'])),
+            ]
+            
+            if any(legitimate_cross_domain):
+                return True
+    
+    # Legitimate anchor patterns
+    legitimate_patterns = [
+        # Technical/development contexts
+        ('view', ['github.com', 'gitlab.com', 'bitbucket.org']),
+        ('review', ['github.com', 'gitlab.com', 'bitbucket.org']),
+        ('merge', ['github.com', 'gitlab.com', 'bitbucket.org']),
+        ('commit', ['github.com', 'gitlab.com', 'bitbucket.org']),
+        ('pull request', ['github.com', 'gitlab.com', 'bitbucket.org']),
+        ('pr', ['github.com', 'gitlab.com', 'bitbucket.org']),
+        
+        # Business contexts
+        ('unsubscribe', ['*']),  # Unsubscribe is always legitimate
+        ('manage preferences', ['*']),
+        ('contact support', ['*']),
+        ('help center', ['*']),
+        ('customer service', ['*']),
+        
+        # Specific legitimate patterns
+        ('view order', ['amazon.com']),
+        ('track package', ['amazon.com', 'ups.com', 'fedex.com']),
+        ('view statement', ['chase.com', 'wellsfargo.com', 'bankofamerica.com']),
+        ('pay bill', ['chase.com', 'wellsfargo.com', 'bankofamerica.com']),
+    ]
+    
+    # Check for legitimate anchor patterns
+    for pattern, allowed_domains in legitimate_patterns:
+        if pattern in anchor_lower:
+            if '*' in allowed_domains or any(allowed in domain_lower for allowed in allowed_domains):
+                return True
+    
+    return False
+
+def _is_technical_urgency_context(text: str, subject: str) -> bool:
+    """Check if urgency words are in a legitimate technical context"""
+    text_lower = (text + ' ' + subject).lower()
+    
+    # Technical contexts where urgency words are legitimate
+    technical_contexts = [
+        'pull request', 'pr #', 'merge request', 'mr #',
+        'commit', 'repository', 'repo',
+        'implementation', 'feature', 'bug fix', 'hotfix',
+        'deployment', 'release', 'version',
+        'code review', 'review requested',
+        'ci/cd', 'build', 'pipeline',
+        'feat:', 'fix:', 'docs:', 'style:', 'refactor:', 'test:', 'chore:',  # Conventional commits
+    ]
+    
+    # If we find technical context, urgency words are likely legitimate
+    return any(context in text_lower for context in technical_contexts)
 
 def _url_entropy(url: str) -> float:
     if not url or "/" not in url:
@@ -73,16 +279,25 @@ def _heuristic_signals(payload: Dict[str, Any]) -> Dict[str, Any]:
         evidence.append({"type": "credential_request"})
         score += 40  # Increased from 35
     
-    # 🚀 IMPROVED: More aggressive urgency detection
+    # 🚀 IMPROVED: Context-aware urgency detection
     urgent_count = sum(1 for w in URGENT_WORDS if w in text_l + " " + subject)
-    if urgent_count >= 3:
+    
+    # Check if urgency is in a legitimate technical context
+    is_technical_context = _is_technical_urgency_context(text, subject)
+    
+    if urgent_count >= 3 and not is_technical_context:
         reasons.append(f"Multiple urgency tactics detected ({urgent_count} matches).")
         evidence.append({"type": "high_urgency", "count": urgent_count})
         score += 45  # High urgency = very suspicious
-    elif urgent_count >= 1:
+    elif urgent_count >= 1 and not is_technical_context:
         reasons.append(f"Urgency language detected ({urgent_count} matches).")
         evidence.append({"type": "urgency", "count": urgent_count})
         score += min(30, 10 * urgent_count)  # Increased scoring
+    elif urgent_count >= 1 and is_technical_context:
+        # Technical context - much lower penalty
+        reasons.append(f"Technical urgency context detected ({urgent_count} matches).")
+        evidence.append({"type": "technical_urgency", "count": urgent_count})
+        score += max(5, urgent_count * 2)  # Much lower penalty for technical context
     
     # 🚀 IMPROVED: Enhanced brand impersonation detection with legitimate domain checking
     brands = {
@@ -128,40 +343,50 @@ def _heuristic_signals(payload: Dict[str, Any]) -> Dict[str, Any]:
             continue
         dom = _domain_of(uri)
         
-        # 🚀 IMPROVED: Better anchor text vs domain matching
+        # 🚀 IMPROVED: Context-aware anchor text vs domain matching
         if anchor and "http" not in anchor and dom:
             anchor_low = anchor.lower()
             
-            # Check for legitimate domains that should match
-            legitimate_matches = [
-                ('chase.com' in dom and 'chase' in anchor_low),
-                ('amazon.com' in dom and ('amazon' in anchor_low or 'order' in anchor_low)),
-                ('microsoft.com' in dom and 'microsoft' in anchor_low),
-                ('paypal.com' in dom and 'paypal' in anchor_low),
-                # Generic legitimate patterns
-                ('help' in anchor_low and any(legit in dom for legit in ['amazon.com', 'microsoft.com', 'chase.com'])),
-                ('unsubscribe' in anchor_low),
-                ('contact' in anchor_low and not any(suspicious in dom for suspicious in ['.tk', '.ml', '.ga', '.cf']))
-            ]
+            # Check if this is a legitimate link context
+            is_legitimate = _is_legitimate_link_context(anchor, dom, from_email)
             
-            # Only flag as mismatch if it's not a legitimate match
-            if not any(legitimate_matches):
+            if not is_legitimate:
+                # Check for basic domain matching
                 domain_root = dom.split(".")[0]
                 if domain_root not in anchor_low and anchor_low and len(anchor_low) > 1:
-                    # 🚀 IMPROVED: Higher score for suspicious mismatches
+                    # 🚀 IMPROVED: Only flag if domain is suspicious or context is suspicious
                     suspicious_mismatch = any(suspicious in dom for suspicious in ['.tk', '.ml', '.ga', '.cf', 'verify', 'secure', 'update'])
-                    mismatch_score = 40 if suspicious_mismatch else 25
                     
-                    reasons.append(f"Anchor text '{anchor}' does not match link domain '{dom}'.")
-                    evidence.append({"type": "link_mismatch", "anchor": anchor, "uri": uri, "suspicious": suspicious_mismatch})
-                    score += mismatch_score
+                    # Don't flag trusted domains with generic anchor text
+                    if any(trusted in dom for trusted in TRUSTED_DOMAINS):
+                        # Only flag trusted domains if anchor text is very suspicious
+                        very_suspicious_anchor = any(sus in anchor_low for sus in ['click here', 'verify now', 'urgent', 'suspended'])
+                        if very_suspicious_anchor:
+                            mismatch_score = 20  # Lower score for trusted domains
+                            reasons.append(f"Suspicious anchor text '{anchor}' on trusted domain '{dom}'.")
+                            evidence.append({"type": "suspicious_anchor_trusted_domain", "anchor": anchor, "uri": uri})
+                            score += mismatch_score
+                    else:
+                        # Non-trusted domain with mismatched anchor
+                        mismatch_score = 40 if suspicious_mismatch else 25
+                        reasons.append(f"Anchor text '{anchor}' does not match link domain '{dom}'.")
+                        evidence.append({"type": "link_mismatch", "anchor": anchor, "uri": uri, "suspicious": suspicious_mismatch})
+                        score += mismatch_score
         
-        # 🚀 IMPROVED: Enhanced URL entropy detection
+        # 🚀 IMPROVED: Context-aware URL entropy detection
         ent = _url_entropy(uri)
         if ent > 3.5:
-            reasons.append(f"High URL path entropy for {uri}.")
-            evidence.append({"type": "high_entropy_uri", "uri": uri, "entropy": ent})
-            score += 15  # Increased from 10
+            # Don't penalize high entropy for trusted domains (they often have complex URLs)
+            if any(trusted in dom for trusted in TRUSTED_DOMAINS):
+                # Only flag if entropy is extremely high (> 4.5) for trusted domains
+                if ent > 4.5:
+                    reasons.append(f"Very high URL path entropy for trusted domain {uri}.")
+                    evidence.append({"type": "high_entropy_trusted_uri", "uri": uri, "entropy": ent})
+                    score += 5  # Much lower penalty for trusted domains
+            else:
+                reasons.append(f"High URL path entropy for {uri}.")
+                evidence.append({"type": "high_entropy_uri", "uri": uri, "entropy": ent})
+                score += 15  # Full penalty for untrusted domains
     for h in hidden:
         uri = (h.get("uri") or "")
         if re.search(r"\b\d{1,3}(?:\.\d{1,3}){3}\b", uri):
@@ -528,6 +753,23 @@ Provide specific, actionable reasons."""
         return {"label": label, "score": base, "reasons": heur["reasons"], "evidence": heur["evidence"], "model_meta": {"llm": "error_fallback"}}
 
 def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
+    # 🚀 NEW: Check for legitimate business communications first
+    business_check = _check_legitimate_business_email(payload)
+    if business_check["is_business"]:
+        logger.info(f"Email identified as legitimate business communication: {business_check['reason']}")
+        return {
+            "label": "SAFE",
+            "score": max(0, 30 - business_check["confidence_boost"]),  # Low score for business emails
+            "reasons": [f"Legitimate business communication: {business_check['reason']}"],
+            "evidence": business_check.get("evidence", []),
+            "model_meta": {
+                "analysis_method": "business_pattern_recognition",
+                "llm_used": False,
+                "business_pattern": business_check["reason"]
+            },
+            "request_id": f"business-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        }
+    
     heur = _heuristic_signals(payload)
     
     # Cost estimation constants (based on Gemini API pricing)

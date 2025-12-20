@@ -7,11 +7,10 @@ transformers>=4.30.0
 
 # Audio processing
 librosa>=0.10.0
-soundfile>=0.12.0
 
 # Machine learning utilities
 scikit-learn>=1.3.0
 numpy>=1.24.0
 
-# Progress bars
+# Optional: Progress bars
 tqdm>=4.65.0

@@ -32,6 +32,8 @@ backend/uploads/
 
 # Allow specifically the deployed model IF <100MB (Verified: ~5MB)
 # !backend/app/ml/models/deepfake_v2_1.pth
+# But allow backend checkpoints
+!backend/checkpoints/*.pth
 
 # IDE
 .vscode/
