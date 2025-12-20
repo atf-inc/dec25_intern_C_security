@@ -12,12 +12,15 @@ import { useMediaQuery } from '../hooks/useMediaQuery'
 import { getVoiceHistory, VoiceAnalysisResponse, deleteScan } from '../api/voiceApi'
 import { VoiceHistoryTable } from '../components/history/VoiceHistoryTable'
 
-import { HistoryChart } from '../components/history/HistoryChart'
+import { Suspense, lazy } from 'react'
+
+// Lazy Load Chart to reduce initial bundle size
+const HistoryChart = lazy(() => import('../components/history/HistoryChart').then(module => ({ default: module.HistoryChart })))
 import { HistoryFilters } from '../components/history/HistoryFilters'
 import { storage } from '../utils/storage'
-import { Loader } from '../components/common/Loader'
 import { ErrorAlert } from '../components/common/ErrorAlert'
 import { ConfirmationModal } from '../components/common/ConfirmationModal'
+import { SkeletonCard } from '../components/common/SkeletonLoader'
 
 type TabType = 'email' | 'voice'
 
@@ -136,7 +139,9 @@ export function HistoryPage() {
             {activeTab === 'email' && (
                 <>
                     <div className="chart-section">
-                        <HistoryChart data={emailData} />
+                        <Suspense fallback={<SkeletonCard />}>
+                            <HistoryChart data={emailData} />
+                        </Suspense>
                     </div>
                     <HistoryFilters filters={filters} onFilterChange={setFilters} />
                 </>
@@ -144,22 +149,29 @@ export function HistoryPage() {
 
             {activeTab === 'voice' && (
                 <div className="chart-section">
-                    <HistoryChart title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')} data={voiceData.map(item => ({
-                        id: item.id || 0,
-                        date: item.created_at || new Date().toISOString(),
-                        type: 'voice',
-                        // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
-                        risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
-                        risk_level: item.risk_level,
-                        subject: item.file_name, // Map filename to subject for the tooltip
-                        sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
-                    }))} />
+                    <Suspense fallback={<SkeletonCard />}>
+                        <HistoryChart title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')} data={voiceData.map(item => ({
+                            id: item.id || 0,
+                            date: item.created_at || new Date().toISOString(),
+                            type: 'voice',
+                            // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
+                            risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
+                            risk_level: item.risk_level,
+                            subject: item.file_name, // Map filename to subject for the tooltip
+                            sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
+                        }))} />
+                    </Suspense>
                 </div>
             )}
 
             {isLoading ? (
-                <div className="loader-container">
-                    <Loader />
+                <div className="skeleton-grid">
+                    {/* Render 6 skeletons grid/list based on view */}
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="skeleton-wrapper" style={{ marginBottom: '1rem' }}>
+                            <SkeletonCard />
+                        </div>
+                    ))}
                 </div>
             ) : (
                 <>

@@ -1,14 +1,26 @@
 .voice-page {
-    padding: 2rem 0;
+    padding: 0 0 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 /* Hero Section */
+/* 🎨 Animated Gradient Hero */
 .voice-page .page-header {
     text-align: center;
-    margin-bottom: 3rem;
-    padding: 0 1rem;
+    max-width: var(--container-max, 1200px);
+    width: 100%;
+    margin: 0 auto 2rem;
+    padding: 3rem var(--container-padding, 24px) 2.5rem;
+
+    border-top: 4px solid var(--voice-accent);
+    background: linear-gradient(135deg,
+            rgba(6, 182, 212, 0.05) 0%,
+            rgba(6, 182, 212, 0.08) 50%,
+            rgba(6, 182, 212, 0.05) 100%);
+    background-size: 200% 200%;
+    border-radius: 0 0 var(--radius-xl, 16px) var(--radius-xl, 16px);
+    animation: gradientShift 15s ease infinite;
 }
 
 .voice-page .page-header h1 {
@@ -110,9 +122,18 @@
     gap: 1.5rem;
     margin-top: 3rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    /* Light mode default: Subtle gradient */
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
     border-radius: 16px;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+:root.dark .stats-section {
+    /* Dark mode override: Deep blue gradient */
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     color: white;
+    border: none;
 }
 
 .stat-card {
@@ -129,7 +150,7 @@
 
 .stat-label {
     font-size: 0.875rem;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 600;
@@ -173,12 +194,27 @@
 
     .stats-section {
         grid-template-columns: 1fr;
-        padding: 1.5rem;
-        margin-top: 2rem;
+        padding: 16px;
+        margin-top: 24px;
+        gap: 16px;
+    }
+
+    .stat-card {
+        padding: 16px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-align: left;
     }
 
     .stat-number {
         font-size: 2rem;
+        margin-bottom: 0;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
     }
 }
 
@@ -189,10 +225,11 @@
 
     .voice-page .page-header p {
         font-size: 0.9rem;
+        padding: 0 8px;
     }
 
     .info-card {
-        padding: 1.25rem;
+        padding: 16px;
     }
 
     .info-card h3 {
@@ -201,6 +238,45 @@
 
     .info-card p {
         font-size: 0.875rem;
+    }
+
+    .stats-section {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+    }
+
+    /* Dropzone touch-friendly improvements */
+    .dropzone,
+    .file-upload-area {
+        min-height: 140px;
+        padding: 24px 16px;
+    }
+
+    .dropzone:active,
+    .file-upload-area:active {
+        transform: scale(0.98);
+        border-color: var(--voice-accent);
+        background-color: rgba(6, 182, 212, 0.08);
+    }
+}
+
+/* 🎭 Reduced motion for mobile performance */
+@media (prefers-reduced-motion: reduce) {
+    .voice-page>* {
+        animation: none;
+    }
+
+    .voice-page .page-header {
+        animation: none;
+        background-size: 100% 100%;
     }
 }
 
@@ -270,6 +346,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

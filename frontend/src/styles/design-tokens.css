@@ -113,6 +113,16 @@
   --glow-phishing: 0 0 20px rgba(239, 68, 68, 0.3);
   --glow-primary: 0 0 20px rgba(59, 130, 246, 0.3);
 
+  /* Colored Shadows (for buttons/cards) */
+  --shadow-primary: 0 8px 16px -2px rgba(59, 130, 246, 0.25);
+  --shadow-success: 0 8px 16px -2px rgba(16, 185, 129, 0.25);
+  --shadow-danger: 0 8px 16px -2px rgba(239, 68, 68, 0.25);
+  --shadow-warning: 0 8px 16px -2px rgba(245, 158, 11, 0.25);
+
+  /* Layout Container */
+  --container-max: 1200px;
+  --container-padding: 24px;
+
   /* Glass-morphism Properties */
   --glass-bg-light: rgba(255, 255, 255, 0.1);
   --glass-bg-medium: rgba(255, 255, 255, 0.15);
@@ -137,6 +147,36 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+
+  /* 🎨 Section Accents (Light Mode) */
+  --phishing-accent: #8b5cf6;
+  /* Purple */
+  --voice-accent: #06b6d4;
+  /* Cyan */
+  --history-accent: #10b981;
+  /* Green */
+
+  /* 🚦 Risk & Status Colors (Light Mode) */
+  --safe-bg: #dcfce7;
+  --safe-text: #065f46;
+  --low-bg: #dcfce7;
+  --low-text: #065f46;
+  --medium-bg: #fef3c7;
+  --medium-text: #92400e;
+  --high-bg: #fecaca;
+  --high-text: #991b1b;
+  --critical-bg: #fee2e2;
+  --critical-text: #7f1d1d;
+
+  /* ✅ WCAG Badge Text Colors (Light Mode - Dark text on light bg) */
+  --badge-safe-text: #065f46;
+  /* Emerald-800 - 6.8:1 contrast */
+  --badge-warning-text: #92400e;
+  /* Amber-800 - 5.4:1 contrast */
+  --badge-danger-text: #991b1b;
+  /* Red-800 - 5.2:1 contrast */
+  --badge-info-text: #1e40af;
+  /* Blue-800 - 5.1:1 contrast */
 }
 
 /* Dark Mode Support */
@@ -158,10 +198,78 @@
   --glass-bg-strong: rgba(0, 0, 0, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
 
+  /* 🎨 Semantic Colors (Dark Mode) */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-muted-strong: #9ca3af;
+  /* Improved contrast for verified legibility */
+
+  --border-color: #334155;
+  --input-bg: #1e293b;
+
+  --card-bg: rgba(30, 41, 59, 0.7);
+  /* Slightly transparent for glassmorphism */
+
+  /* 🚦 Risk & Status Colors (Comprehensive) */
+  --safe-bg: #10b981;
+  --safe-text: #065f46;
+  --low-bg: #10b981;
+  --low-text: #065f46;
+  --medium-bg: #f59e0b;
+  --medium-text: #92400e;
+  --high-bg: #ef4444;
+  --high-text: #991b1b;
+  --critical-bg: #dc2626;
+  --critical-text: #7f1d1d;
+
+  /* Section Accents */
+  --phishing-accent: #8b5cf6;
+  --voice-accent: #06b6d4;
+  --history-accent: #10b981;
+
+  /* WCAG Badge Colors (Dark Mode - Bright Text) */
+  --badge-safe-text: #6ee7b7;
+  --badge-warning-text: #fcd34d;
+  --badge-danger-text: #fca5a5;
+
   /* Adjusted shadows for dark mode */
   /* Performance: Optimized shadows for dark mode (reduced blur radius) */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* 🆕 New Semantic Tokens (Playbook) */
+:root {
+  --info-color: #3b82f6;
+  /* blue-500 */
+  --info-color-600: #2563eb;
+  /* blue-600 */
+  --neutral-color: #9ca3af;
+  /* gray-400 */
+  --text-muted-strong: #4b5563;
+  /* gray-600 - WCAG compliant on light bg */
+
+  /* Focus Ring */
+  --focus-ring-color: rgba(37, 99, 235, 0.4);
+}
+
+:root.dark {
+  --info-color: #60a5fa;
+  /* blue-400 */
+  --info-color-600: #3b82f6;
+  /* blue-500 */
+  --neutral-color: #94a3b8;
+  /* slate-400 */
+  --text-muted-strong: #cbd5e1;
+  /* slate-300 - WCAG compliant on dark bg */
+
+  /* Focus Ring */
+  --focus-ring-color: rgba(96, 165, 250, 0.4);
 }

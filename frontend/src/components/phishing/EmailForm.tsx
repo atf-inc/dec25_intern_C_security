@@ -37,8 +37,37 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
     const [body, setBody] = useState(initialData?.body || '') // Initialized with initialData
     const [urls, setUrls] = useState('')
     const [pdfFile, setPdfFile] = useState<File | null>(null)
-    const [inputMode, setInputMode] = useState<'manual' | 'pdf'>('manual') // This was not replaced by scanType in the provided snippet, so keeping it.
+    const [inputMode, setInputMode] = useState<'manual' | 'pdf'>('manual')
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Validation State
+    const [shouldValidate, setShouldValidate] = useState(false)
+    const [errors, setErrors] = useState<{ [key: string]: string }>({})
+
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    }
+
+    // Real-time validation
+    useEffect(() => {
+        if (!shouldValidate && inputMode === 'manual') return
+
+        const newErrors: { [key: string]: string } = {}
+
+        if (inputMode === 'manual') {
+            if (!subject.trim()) newErrors.subject = t('phishing.requiredField', 'This field is required')
+
+            if (!sender.trim()) {
+                newErrors.sender = t('phishing.requiredField', 'This field is required')
+            } else if (!validateEmail(sender)) {
+                newErrors.sender = t('phishing.invalidEmail', 'Please enter a valid email address')
+            }
+
+            if (!body.trim()) newErrors.body = t('phishing.requiredField', 'This field is required')
+        }
+
+        setErrors(newErrors)
+    }, [subject, sender, body, inputMode, shouldValidate, t])
 
     // Update state if initialData changes (e.g. loading from history)
     useEffect(() => {
@@ -246,7 +275,10 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                             placeholder={t('phishing.subjectPlaceholder')}
                             required
                             disabled={loading}
+                            className={errors.subject ? 'error-input' : ''}
+                            onBlur={() => setShouldValidate(true)}
                         />
+                        {errors.subject && <span className="error-msg">{errors.subject}</span>}
                     </div>
 
                     <div className="form-group">
@@ -259,7 +291,10 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                             placeholder={t('phishing.senderPlaceholder')}
                             required
                             disabled={loading}
+                            className={errors.sender ? 'error-input' : ''}
+                            onBlur={() => setShouldValidate(true)}
                         />
+                        {errors.sender && <span className="error-msg">{errors.sender}</span>}
                     </div>
 
                     <div className="form-group">
@@ -272,7 +307,10 @@ export function EmailForm({ onSubmit, loading, initialData }: EmailFormProps) { 
                             rows={8}
                             required
                             disabled={loading}
+                            className={errors.body ? 'error-input' : ''}
+                            onBlur={() => setShouldValidate(true)}
                         />
+                        {errors.body && <span className="error-msg">{errors.body}</span>}
                     </div>
 
                     <div className="form-group">

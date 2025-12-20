@@ -18,7 +18,8 @@
 
   --text-primary: #111827;
   --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
+  --text-muted: #6b7280;
+  /* Darkened for WCAG AA compliance (was #9ca3af) */
 
   /* Legacy mapping support */
   --text-color: var(--text-primary);
@@ -92,21 +93,54 @@
 }
 
 body,
-.card,
-button,
-input,
-select,
-textarea,
 .navbar,
 .modal-content,
 .toast,
 .email-form,
 .history-filters,
 .evidence-card,
-.voice-result-card,
-.evidence-count-badge {
-  /* Performance: Ultra-fast color transitions (60ms) for snappy feel */
-  transition: background-color 60ms ease, color 60ms ease, border-color 60ms ease;
+.voice-result-card {
+  /* REMOVED background-color transitions to prevent theme flicker */
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+button,
+input,
+select,
+textarea,
+.card,
+.evidence-count-badge,
+a {
+  /* Keep transitions on small interactive elements */
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* 🖱️ Micro-interactions */
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ♿ Accessibility: Global Focus Styles */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-radius: var(--radius-sm, 4px);
+}
+
+:root.dark *:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
 /* 🔒 Transition Lock Utility */
@@ -123,12 +157,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  /* Safe area for notched devices */
+  padding-bottom: env(safe-area-inset-bottom);
+  /* Prevent pull-to-refresh interference */
+  overscroll-behavior-y: contain;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: var(--container-max, 1200px);
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 var(--container-padding, 24px);
 }
 
 button {
@@ -144,56 +182,7 @@ textarea {
   color: var(--text-primary);
 }
 
-/* Core Animation Keyframes */
-@keyframes cardEnter {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes dangerPulse {
-
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 1;
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(2);
-    opacity: 0;
-  }
-}
-
-@keyframes gentleGlow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-  }
-}
+/* Note: Keyframes removed as they are now centralized in animations.css */
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
@@ -214,14 +203,6 @@ textarea {
     --spacing-lg: 1.5rem;
   }
 
-  h1 {
-    font-size: 1.75rem !important;
-  }
-
-  h2 {
-    font-size: 1.5rem !important;
-  }
-
   body {
     font-size: 0.95rem;
   }
@@ -231,8 +212,414 @@ textarea {
   }
 }
 
-@media (min-width: 1024px) {
-  h1 {
+/* 🔘 Button Reset & Base */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* 🔘 Primary Button (4 States) */
+.primary-btn,
+.action-btn.btn-view,
+.hero-cta {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: var(--text-body);
+  transition: all 200ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 1. Hover - Lift */
+.primary-btn:hover,
+.action-btn.btn-view:hover,
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+  filter: brightness(1.1);
+}
+
+/* 2. Active - Press */
+.primary-btn:active,
+.action-btn.btn-view:active,
+.hero-cta:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 3. Focus - Accessibility */
+.primary-btn:focus-visible,
+.action-btn.btn-view:focus-visible,
+.hero-cta:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 4. Disabled */
+.primary-btn:disabled,
+.action-btn.btn-view:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  filter: grayscale(0.5);
+}
+
+/* 🅰️ Typography Utilities */
+h1 {
+  font-size: var(--text-h1);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: var(--text-h2);
+  font-weight: 600;
+}
+
+h3 {
+  font-size: var(--text-h3);
+  font-weight: 600;
+}
+
+body {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+small {
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+/* 📱 Global Touch Targets */
+@media (max-width: 768px) {
+
+  a[class*="btn"],
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    min-height: 48px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 16px;
+    /* Prevent iOS zoom */
+  }
+}
+
+/* 🪟 Glassmorphism Utilities */
+.glass {
+  background: var(--glass-bg-light);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-strong {
+  background: var(--glass-bg-medium);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-border);
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(10px)) {
+
+  .glass,
+  .glass-strong {
+    background: var(--card-bg);
+  }
+}
+
+/* 🃏 Card Hover States */
+.card-hover {
+  transition: transform 300ms var(--anim-ease),
+    box-shadow 300ms var(--anim-ease),
+    border-color 300ms var(--anim-ease);
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-hover:active {
+  transform: translateY(-2px);
+}
+
+/* Colored hover accents */
+.card-hover.accent-primary:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-primary);
+}
+
+.card-hover.accent-success:hover {
+  border-color: var(--success-color);
+  box-shadow: var(--shadow-success);
+}
+
+.card-hover.accent-danger:hover {
+  border-color: var(--danger-color);
+  box-shadow: var(--shadow-danger);
+}
+
+/* ================================================
+   📱 COMPREHENSIVE MOBILE RESPONSIVENESS
+   ================================================ */
+
+/* 🔤 Text Truncation Utilities */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.break-word {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 📱 Mobile-First Spacing Adjustments */
+@media (max-width: 768px) {
+
+  /* Reduce card padding on mobile */
+  .card,
+  .info-card,
+  .stat-card,
+  .result-card {
+    padding: var(--space-4, 1rem);
+  }
+
+  /* Single column grids */
+  .feature-highlights,
+  .stats-section,
+  .info-cards,
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4, 1rem);
+  }
+
+  /* Reduce section padding */
+  .page-header {
+    padding: 2rem var(--container-padding, 16px) 1.5rem;
+  }
+
+  /* Container padding reduction */
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+/* 📱 Touch Targets & Buttons */
+@media (max-width: 768px) {
+
+  button,
+  .btn,
+  .action-btn,
+  .mode-tab,
+  .nav-link,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Larger click areas for close/remove buttons */
+  .remove-file-btn,
+  .toast-close,
+  .modal-close {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px;
+  }
+}
+
+/* 📁 Dropzone Touch Improvements */
+.file-upload-area {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  .file-upload-area {
+    min-height: 120px;
+  }
+
+  .file-upload-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .upload-icon {
     font-size: 2.5rem;
+  }
+
+  /* Touch feedback instead of hover */
+  .file-upload-area:active {
+    border-color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.05);
+  }
+}
+
+/* 🎭 Reduced Motion for Mobile & Accessibility */
+@media (prefers-reduced-motion: reduce),
+(max-width: 768px) {
+
+  /* Disable heavy animations on mobile */
+  .page-header,
+  .glass-panel,
+  .animated-gradient {
+    animation: none !important;
+    background-size: 100% 100% !important;
+  }
+
+  /* Faster transitions */
+  * {
+    transition-duration: 0.15s !important;
+  }
+}
+
+/* Full reduced-motion respect */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 🎨 Card Hover - Disable on touch devices */
+@media (hover: none) {
+  .card-hover:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-hover:active {
+    transform: scale(0.98);
+  }
+}
+
+/* 📐 Icon & Text Alignment */
+.risk-badge,
+.detection-badge {
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+
+  .risk-badge,
+  .detection-badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.625rem;
+  }
+
+  .risk-icon {
+    font-size: 1rem;
+  }
+}
+
+/* 🔒 Overflow Protection */
+.table-cell,
+.file-name,
+.email-subject,
+.sender-email {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+
+  .table-cell,
+  .file-name,
+  .email-subject,
+  .sender-email {
+    max-width: 150px;
+  }
+}
+
+/* 📱 Small Screen Specific Rules */
+@media (max-width: 480px) {
+
+  /* Prevent iOS text zoom */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Stack action buttons vertically */
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Larger form elements */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+    padding: 0.875rem;
+  }
+
+  /* Full-width buttons */
+  .primary-btn,
+  .submit-button {
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+/* 📊 Responsive Typography */
+h1,
+.h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+h2,
+.h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+h3,
+.h3 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+}
+
+/* Tablet breakpoint gap */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .feature-highlights,
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
