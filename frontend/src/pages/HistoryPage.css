@@ -66,6 +66,11 @@
 
 .chart-section {
     margin-bottom: 2rem;
+    width: 100%;
+    min-width: 0;
+    /* Prevents flex overflow issues */
+    min-height: 320px;
+    /* Ensures minimum space for chart */
 }
 
 .loader-container {

@@ -333,7 +333,6 @@
     }
 }
 
-
 /* Dark Mode overrides controlled by variables - redundant blocks removed */
 
 .form-group .error-input {
@@ -349,4 +348,3 @@
     color: var(--danger-color);
     font-weight: 500;
 }
-

@@ -51,6 +51,17 @@ export function HistoryPage() {
         fetchData()
     }, [activeTab, filters])
 
+    // Force Recharts re-measurement when voice tab becomes active
+    useEffect(() => {
+        if (activeTab === 'voice') {
+            // Small delay to allow DOM to fully render and layout to complete
+            const timer = setTimeout(() => {
+                window.dispatchEvent(new Event('resize'))
+            }, 100)
+            return () => clearTimeout(timer)
+        }
+    }, [activeTab])
+
     const fetchData = async () => {
         setIsLoading(true)
         setError(null)
@@ -61,11 +72,19 @@ export function HistoryPage() {
             } else {
                 // Voice API doesn't support the same filters yet, so we pass default pagination
                 const response = await getVoiceHistory(0, 100)
-                setVoiceData(response.scans)
+                console.log('Voice history response:', response)
+                if (!response.scans) {
+                    console.error('Voice history response missing scans array:', response)
+                    setError('Invalid response format from server')
+                    setVoiceData([])
+                } else {
+                    setVoiceData(response.scans)
+                }
             }
         } catch (err) {
             console.error('Failed to fetch history:', err)
-            setError(getText('dashboard.failedToLoadHistory', 'Failed to load scan history.'))
+            const errorMsg = err instanceof Error ? err.message : 'Unknown error'
+            setError(`${getText('dashboard.failedToLoadHistory', 'Failed to load scan history.')} ${activeTab === 'voice' ? `(${errorMsg})` : ''}`)
         } finally {
             setIsLoading(false)
         }
@@ -150,16 +169,20 @@ export function HistoryPage() {
             {activeTab === 'voice' && (
                 <div className="chart-section">
                     <Suspense fallback={<SkeletonCard />}>
-                        <HistoryChart title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')} data={voiceData.map(item => ({
-                            id: item.id || 0,
-                            date: item.created_at || new Date().toISOString(),
-                            type: 'voice',
-                            // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
-                            risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
-                            risk_level: item.risk_level,
-                            subject: item.file_name, // Map filename to subject for the tooltip
-                            sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
-                        }))} />
+                        <HistoryChart
+                            key={`voice-chart-${activeTab}`}
+                            title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')}
+                            data={voiceData.map(item => ({
+                                id: item.id || 0,
+                                date: item.created_at || new Date().toISOString(),
+                                type: 'voice',
+                                // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
+                                risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
+                                risk_level: item.risk_level,
+                                subject: item.file_name, // Map filename to subject for the tooltip
+                                sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
+                            }))}
+                        />
                     </Suspense>
                 </div>
             )}

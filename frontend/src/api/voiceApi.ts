@@ -99,7 +99,6 @@ export async function getVoiceHistory(
         { params: { skip, limit } }
     )
     return response.data
-    return response.data
 }
 
 /**
