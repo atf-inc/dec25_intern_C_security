@@ -1,0 +1,30 @@
+.risk-meter-container {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.risk-meter-bg {
+    fill: none;
+    stroke: var(--border-color);
+    opacity: 0.3;
+}
+
+.risk-meter-progress {
+    fill: none;
+    transition: stroke-dashoffset 1s ease-out, stroke 0.3s ease;
+    stroke-linecap: round;
+}
+
+.risk-meter-text {
+    font-size: 2rem;
+    font-weight: 700;
+    fill: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .risk-meter-progress {
+        transition: none;
+    }
+}

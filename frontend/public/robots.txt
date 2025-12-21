@@ -1,0 +1,8 @@
+# CyberX Frontend
+# Allow all crawlers access to all pages
+
+User-agent: *
+Allow: /
+
+# Sitemap location (when deployed)
+# Sitemap: https://your-domain.com/sitemap.xml

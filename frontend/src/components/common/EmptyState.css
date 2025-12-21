@@ -1,0 +1,36 @@
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16, 4rem) var(--space-8, 2rem);
+    text-align: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-6, 1.5rem);
+    opacity: 0.8;
+}
+
+.empty-state-title {
+    font-size: var(--text-xl, 1.25rem);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.empty-state-message {
+    font-size: var(--text-base, 1rem);
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 0 var(--space-6, 1.5rem);
+    line-height: 1.6;
+}
+
+.empty-state-action {
+    margin-top: var(--space-4, 1rem);
+}

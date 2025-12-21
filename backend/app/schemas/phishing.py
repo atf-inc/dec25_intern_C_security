@@ -55,4 +55,3 @@ class AnalyzeResponse(BaseModel):
     suggested_reply: Optional[str] = None
     ai_explanation: Optional[AIExplanation] = None
     model_meta: Optional[dict] = None
-
