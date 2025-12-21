@@ -43,6 +43,20 @@
     cursor: not-allowed;
 }
 
+.form-group .error-input {
+    border-color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.05);
+    /* faint red tint */
+}
+
+.error-msg {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--danger-color);
+    font-weight: 500;
+}
+
 .form-group textarea {
     resize: vertical;
     font-family: inherit;
@@ -291,4 +305,46 @@
     }
 }
 
+@media (max-width: 640px) {
+    .email-form {
+        padding: 1rem;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px;
+        /* Prevents iOS zoom */
+        padding: 0.875rem;
+    }
+
+    .submit-button {
+        padding: 1.125rem;
+        position: sticky;
+        bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+    }
+}
+
 /* Dark Mode overrides controlled by variables - redundant blocks removed */
+
+.form-group .error-input {
+    border-color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.05);
+    /* faint red tint */
+}
+
+.error-msg {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--danger-color);
+    font-weight: 500;
+}

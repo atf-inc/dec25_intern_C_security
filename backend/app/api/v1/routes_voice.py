@@ -1,17 +1,30 @@
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse, FileResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 import logging
+
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from ...services.voice_service import VoiceAnalysisService
 from ...services.explanation_service import ExplanationService
 from ...schemas.voice import VoiceAnalysisResponse, VoiceAnalysisRequest
 from ...db.session import get_db
 from ...db.crud_voice import get_all_voice_scans, get_scan_statistics
+from ...core.exceptions import (
+    UnsupportedFormatError,
+    FileTooLargeError,
+    ScanNotFoundError,
+    AudioFileNotFoundError,
+    AudioProcessingError
+)
 
 logger = logging.getLogger(__name__)
+
+# Rate limiter instance
+limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter(prefix="/voice", tags=["voice"])
 
@@ -20,7 +33,9 @@ voice_service = VoiceAnalysisService()
 explanation_service = ExplanationService()
 
 @router.post("/analyze", response_model=VoiceAnalysisResponse)
+@limiter.limit("20/minute")  # Rate limit: 20 analyses per minute per IP
 async def analyze_voice(
+    request: Request,  # Required for rate limiting
     file: UploadFile = File(...),
     include_explanation: bool = True,
     db: Session = Depends(get_db)
@@ -28,7 +43,10 @@ async def analyze_voice(
     """
     Analyze uploaded voice file for deepfake detection.
     
+    Rate limited to 20 requests per minute per IP address.
+    
     Args:
+        request: FastAPI request object (for rate limiting)
         file: Audio file (WAV, MP3, M4A, FLAC supported)
         include_explanation: Whether to generate LLM explanation
         db: Database session
@@ -42,10 +60,7 @@ async def analyze_voice(
         file_ext = '.' + file.filename.split('.')[-1].lower()
         
         if file_ext not in allowed_extensions:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Unsupported file type. Allowed: {', '.join(allowed_extensions)}"
-            )
+            raise UnsupportedFormatError(file_ext)
         
         # Read file bytes
         file_bytes = await file.read()
@@ -53,10 +68,7 @@ async def analyze_voice(
         # Validate file size (max 10MB)
         max_size = 10 * 1024 * 1024  # 10MB
         if len(file_bytes) > max_size:
-            raise HTTPException(
-                status_code=400,
-                detail=f"File too large. Maximum size: {max_size / (1024*1024):.0f}MB"
-            )
+            raise FileTooLargeError(len(file_bytes), max_size)
             
         await file.seek(0)  # Reset file pointer after reading
         
@@ -67,7 +79,7 @@ async def analyze_voice(
             file_bytes=file_bytes,
             filename=file.filename,
             db=db,
-            use_cache=True
+            use_cache=False  # User requested fresh analysis every time
         )
         
         # Generate explanation if requested and not cached
@@ -85,13 +97,16 @@ async def analyze_voice(
         
         return VoiceAnalysisResponse(**result)
     
+    except (UnsupportedFormatError, FileTooLargeError):
+        raise  # Re-raise our custom exceptions as-is
+    
     except ValueError as e:
         logger.error(f"Validation error: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
+        raise AudioProcessingError(str(e))
     
     except Exception as e:
         logger.error(f"Analysis error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Internal server error during analysis")
+        raise AudioProcessingError(f"Unexpected error: {type(e).__name__}")
 
 
 @router.get("/history")
@@ -177,7 +192,7 @@ async def get_voice_scan(scan_id: int, db: Session = Depends(get_db)):
         
         scan = get_voice_scan_by_id(db, scan_id)
         if not scan:
-            raise HTTPException(status_code=404, detail="Scan not found")
+            raise ScanNotFoundError(scan_id)
             
         response_data = scan.to_dict()
         
@@ -187,7 +202,7 @@ async def get_voice_scan(scan_id: int, db: Session = Depends(get_db)):
             
         return VoiceAnalysisResponse(**response_data)
     
-    except HTTPException:
+    except ScanNotFoundError:
         raise
     except Exception as e:
         logger.error(f"Error fetching scan details: {e}")
@@ -205,14 +220,14 @@ async def get_scan_audio(scan_id: int, db: Session = Depends(get_db)):
         
         scan = get_voice_scan_by_id(db, scan_id)
         if not scan:
-            raise HTTPException(status_code=404, detail="Scan not found")
+            raise ScanNotFoundError(scan_id)
             
         if not scan.file_path or not os.path.exists(scan.file_path):
-            raise HTTPException(status_code=404, detail="Audio file not found")
+            raise AudioFileNotFoundError(scan_id)
             
         return FileResponse(scan.file_path, media_type="audio/wav", filename=scan.file_name)
         
-    except HTTPException:
+    except (ScanNotFoundError, AudioFileNotFoundError):
         raise
     except Exception as e:
         logger.error(f"Error streaming audio: {e}")
@@ -237,11 +252,11 @@ async def delete_scan(scan_id: int, db: Session = Depends(get_db)):
         success = delete_voice_scan(db, scan_id)
         
         if not success:
-            raise HTTPException(status_code=404, detail="Scan not found")
+            raise ScanNotFoundError(scan_id)
         
-        return {"message": "Scan deleted successfully"}
+        return {"message": "Scan deleted successfully", "scan_id": scan_id}
     
-    except HTTPException:
+    except ScanNotFoundError:
         raise
     except Exception as e:
         logger.error(f"Error deleting scan: {e}")

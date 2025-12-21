@@ -126,17 +126,17 @@ def evaluate(model, dataloader, criterion, device):
 
 def main():
     parser = argparse.ArgumentParser(description="Train Fusion Deepfake Detector")
-    parser.add_argument('--features_dir', type=str, required=True, help='Directory with extracted features')
-    parser.add_argument('--epochs', type=int, default=20, help='Number of epochs')
+    parser.add_argument('--features_dir', type=str, default='features_v3_gen', help='Directory with extracted features')
+    parser.add_argument('--epochs', type=int, default=30, help='Number of epochs')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
-    parser.add_argument('--output', type=str, default='models/fusion_detector.pth', help='Output model path')
+    parser.add_argument('--output', type=str, default='models/fusion_detector_v2_1.pth', help='Output model path')
     parser.add_argument('--cpu', action='store_true', help='Force CPU training')
     
     args = parser.parse_args()
     
     print("\n" + "="*60)
-    print("Fusion Deepfake Detector - Training")
+    print("Fusion Deepfake Detector - Training (v2.1 Generalization)")
     print("="*60)
     
     # Device
@@ -146,28 +146,53 @@ def main():
     # Load features
     print("\nLoading features...")
     train_wavlm, train_whisper, train_dsp, train_labels = load_features(args.features_dir, 'train')
-    dev_wavlm, dev_whisper, dev_dsp, dev_labels = load_features(args.features_dir, 'dev')
     
-    print(f"Train samples: {len(train_labels)} ({sum(train_labels == 0)} real, {sum(train_labels == 1)} fake)")
-    print(f"Dev samples: {len(dev_labels)} ({sum(dev_labels == 0)} real, {sum(dev_labels == 1)} fake)")
+    # Handle optional Dev set
+    dev_path = os.path.join(args.features_dir, 'dev')
+    if os.path.exists(dev_path) and os.listdir(dev_path):
+        dev_wavlm, dev_whisper, dev_dsp, dev_labels = load_features(args.features_dir, 'dev')
+        print(f"Dev samples: {len(dev_labels)} ({sum(dev_labels == 0)} real, {sum(dev_labels == 1)} fake)")
+    else:
+        print("No Dev set found. Will auto-split from Train.")
+        dev_wavlm, dev_whisper, dev_dsp, dev_labels = [], [], [], []
     
+    # Create datasets
     # Create datasets
     train_dataset = FeatureDataset(train_wavlm, train_whisper, train_dsp, train_labels)
     dev_dataset = FeatureDataset(dev_wavlm, dev_whisper, dev_dsp, dev_labels)
     
+    # If dev set is empty, split train set (90/10)
+    if len(dev_dataset) == 0:
+        total_size = len(train_dataset)
+        train_size = int(0.9 * total_size)
+        val_size = total_size - train_size
+        train_dataset, dev_dataset = torch.utils.data.random_split(train_dataset, [train_size, val_size])
+        print(f"Split training data: {len(train_dataset)} train, {len(dev_dataset)} val")
+    
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    dev_loader = DataLoader(dev_dataset, batch_size=args.batch_size, shuffle=False)
+    
+    if len(dev_dataset) > 0:
+        dev_loader = DataLoader(dev_dataset, batch_size=args.batch_size, shuffle=False)
+    else:
+        dev_loader = None
     
     # Initialize model
     print("\nInitializing model...")
-    model = FusionDeepfakeDetector()
+    model = FusionDeepfakeDetector(dsp_dim=246)
     model.to(device)
     print(f"Total parameters: {model.count_parameters():,}")
     
+    # Calculate class weights for imbalance
+    num_real = sum(train_labels == 0)
+    num_fake = sum(train_labels == 1)
+    pos_weight = torch.tensor([num_real / num_fake]).to(device)
+    print(f"Class Weight (Pos Weight): {pos_weight.item():.2f}")
+    
     # Loss and optimizer
-    criterion = nn.BCELoss()
+    # Use BCEWithLogitsLoss for numerical stability with logits
+    criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=3, verbose=True)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=3)
     
     # Training loop
     print(f"\n{'='*60}")

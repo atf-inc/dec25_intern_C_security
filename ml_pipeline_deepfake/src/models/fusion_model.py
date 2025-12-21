@@ -1,132 +1,133 @@
 """
-Fusion Deepfake Detector Model
+Advanced Fusion Model with Attention
 
-Multi-modal fusion combining:
-- WavLM acoustic features (768-dim)
-- Whisper semantic features (768-dim)  
-- DSP signal features (8-dim)
-
-Total input: 1544 dimensions
-Output: Binary classification (Real vs Deepfake)
+Architecture:
+1. Feature Projections: Project each modality (WavLM, Whisper, DSP) to shared 256-dim space.
+2. Cross-Modal Attention: Learn interactions between modalities.
+3. Residual Fusion Head: Deep classifier with skip connections.
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class FusionDeepfakeDetector(nn.Module):
-    """
-    Multi-modal fusion model for deepfake voice detection.
-    
-    Architecture:
-        Input (1544) → FC(512) → ReLU → Dropout → BatchNorm →
-        FC(256) → ReLU → Dropout → BatchNorm →
-        FC(128) → ReLU → Dropout →
-        FC(1) → Sigmoid
-    """
-    
-    def __init__(self, wavlm_dim=768, whisper_dim=768, dsp_dim=8):
+    def __init__(self, wavlm_dim=768, whisper_dim=768, dsp_dim=246, shared_dim=256):
         super().__init__()
         
-        total_dim = wavlm_dim + whisper_dim + dsp_dim  # 1544
-        
-        self.fusion = nn.Sequential(
-            nn.Linear(total_dim, 512),
+        # 1. Feature Projection Layers (Project to shared latent space)
+        self.wavlm_proj = nn.Sequential(
+            nn.Linear(wavlm_dim, shared_dim),
             nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.BatchNorm1d(512),
+            nn.BatchNorm1d(shared_dim),
+            nn.Dropout(0.3)
+        )
+        
+        self.whisper_proj = nn.Sequential(
+            nn.Linear(whisper_dim, shared_dim),
+            nn.ReLU(),
+            nn.BatchNorm1d(shared_dim),
+            nn.Dropout(0.3)
+        )
+        
+        self.dsp_proj = nn.Sequential(
+            nn.Linear(dsp_dim, 64),  # Intermediate step for small input
+            nn.ReLU(),
+            nn.Linear(64, shared_dim),
+            nn.ReLU(),
+            nn.BatchNorm1d(shared_dim),
+            nn.Dropout(0.1)
+        )
+        
+        # 2. Attention Mechanism
+        # Self-attention processing of the 3 modality vectors
+        self.attention = nn.MultiheadAttention(embed_dim=shared_dim, num_heads=4, batch_first=True)
+        
+        # 3. Fusion Classifier
+        # Input = 3 * shared_dim (concatenated attention output)
+        fusion_input_dim = 3 * shared_dim
+        
+        self.classifier = nn.Sequential(
+            nn.Linear(fusion_input_dim, 512),
+            nn.ReLU(),
+            nn.LayerNorm(512),
+            nn.Dropout(0.4),
             
             nn.Linear(512, 256),
             nn.ReLU(),
-            nn.Dropout(0.2),
-            nn.BatchNorm1d(256),
+            nn.LayerNorm(256),
+            nn.Dropout(0.3),
             
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            
-            nn.Linear(128, 1),
-            nn.Sigmoid()
+            nn.Linear(256, 1)  # Logits (BCEWithLogitsLoss expected)
         )
         
-        # Expert scoring layers (for explainability)
-        self.acoustic_scorer = nn.Linear(wavlm_dim, 1)
-        self.semantic_scorer = nn.Linear(whisper_dim, 1)
-        self.signal_scorer = nn.Linear(dsp_dim, 1)
-    
+        # Expert Explainability Heads (Auxiliary tasks)
+        self.acoustic_head = nn.Linear(shared_dim, 1)
+        self.semantic_head = nn.Linear(shared_dim, 1)
+        self.signal_head = nn.Linear(shared_dim, 1)
+
     def forward(self, wavlm_emb, whisper_emb, dsp_features):
-        """
-        Forward pass.
+        # 1. Project to shared space
+        # [batch, 256]
+        w_proj = self.wavlm_proj(wavlm_emb) 
+        s_proj = self.whisper_proj(whisper_emb)
+        d_proj = self.dsp_proj(dsp_features)
         
-        Args:
-            wavlm_emb: WavLM embeddings (batch, 768)
-            whisper_emb: Whisper embeddings (batch, 768)
-            dsp_features: DSP features (batch, 8)
+        # 2. Stack for Attention
+        # [batch, 3, 256]
+        stacked = torch.stack([w_proj, s_proj, d_proj], dim=1)
         
-        Returns:
-            confidence: Probability of being deepfake (batch, 1)
-        """
-        # Concatenate all modalities
-        x = torch.cat([wavlm_emb, whisper_emb, dsp_features], dim=1)
+        # Apply Attention
+        # attn_output: [batch, 3, 256]
+        attn_output, _ = self.attention(stacked, stacked, stacked)
         
-        # Fusion prediction
-        confidence = self.fusion(x)
+        # Residual connection (Add original projections)
+        x = attn_output + stacked
         
-        return confidence
-    
+        # 3. Flatten and Classify
+        # [batch, 768]
+        x_flat = x.reshape(x.size(0), -1)
+        
+        logits = self.classifier(x_flat)
+        
+        return logits
+
     def predict_with_explanation(self, wavlm_emb, whisper_emb, dsp_features):
         """
-        Predict with explainability.
-        
-        Returns which expert contributed most to the decision.
+        Inference mode with explainability outputs.
         """
-        # Set to eval mode to avoid BatchNorm issues with batch_size=1
         self.eval()
-        
         with torch.no_grad():
-            # Get fusion prediction
-            confidence = self.forward(wavlm_emb, whisper_emb, dsp_features)
+            # Projections
+            w_proj = self.wavlm_proj(wavlm_emb)
+            s_proj = self.whisper_proj(whisper_emb)
+            d_proj = self.dsp_proj(dsp_features)
             
-            # Get individual expert scores
-            acoustic_score = torch.sigmoid(self.acoustic_scorer(wavlm_emb))
-            semantic_score = torch.sigmoid(self.semantic_scorer(whisper_emb))
-            signal_score = torch.sigmoid(self.signal_scorer(dsp_features))
-        
+            # Attention
+            stacked = torch.stack([w_proj, s_proj, d_proj], dim=1)
+            attn_output, attn_weights = self.attention(stacked, stacked, stacked)
+            
+            # Classifier
+            x = attn_output + stacked
+            x_flat = x.reshape(x.size(0), -1)
+            logits = self.classifier(x_flat)
+            confidence = torch.sigmoid(logits)
+            
+            # Expert Scores (Auxiliary)
+            acoustic_score = torch.sigmoid(self.acoustic_head(w_proj))
+            semantic_score = torch.sigmoid(self.semantic_head(s_proj))
+            signal_score = torch.sigmoid(self.signal_head(d_proj))
+            
         return {
-            'confidence': confidence.item() if confidence.dim() == 0 else confidence.squeeze().tolist(),
+            'confidence': confidence.item() if confidence.dim() == 0 else confidence.cpu().numpy(),
             'expert_scores': {
-                'acoustic': acoustic_score.item() if acoustic_score.dim() == 0 else acoustic_score.squeeze().tolist(),
-                'semantic': semantic_score.item() if semantic_score.dim() == 0 else semantic_score.squeeze().tolist(),
-                'signal': signal_score.item() if signal_score.dim() == 0 else signal_score.squeeze().tolist()
-            }
+                'acoustic': acoustic_score.item(),
+                'semantic': semantic_score.item(),
+                'signal': signal_score.item()
+            },
+            'attention_weights': attn_weights.cpu().numpy()
         }
-    
+
     def count_parameters(self):
         """Count trainable parameters."""
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
-
-
-if __name__ == '__main__':
-    # Test the model
-    print("Testing Fusion Model...")
-    
-    batch_size = 4
-    wavlm = torch.randn(batch_size, 768)
-    whisper = torch.randn(batch_size, 768)
-    dsp = torch.randn(batch_size, 8)
-    
-    model = FusionDeepfakeDetector()
-    
-    print(f"Total parameters: {model.count_parameters():,}")
-    
-    # Test forward pass
-    output = model(wavlm, whisper, dsp)
-    print(f"Output shape: {output.shape}")
-    print(f"Output values: {output.squeeze()}")
-    
-    # Test explainability
-    result = model.predict_with_explanation(wavlm[0:1], whisper[0:1], dsp[0:1])
-    print(f"\nExplainability test:")
-    print(f"Confidence: {result['confidence']:.4f}")
-    print(f"Expert scores: {result['expert_scores']}")

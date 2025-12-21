@@ -77,7 +77,7 @@ export function PhishingResultCard({ result: initialResult }: PhishingResultCard
     }, [i18n.language, lastLanguage, result])
 
     return (
-        <div className="result-card">
+        <div className="result-card slide-in-up">
             {isTranslating && (
                 <div className="translation-indicator">
                     <span className="translation-spinner">🔄</span>

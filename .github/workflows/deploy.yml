@@ -1,0 +1,43 @@
+name: Deploy to GCP VM
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to GCP VM
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'ENDSSH'
+            cd ~/dec25_intern_C_security
+            
+            echo "=== Pulling latest code ==="
+            git pull origin develop
+            
+            echo "=== Updating backend ==="
+            cd backend
+            source venv/bin/activate
+            pip install -r requirements.txt --quiet
+            sudo systemctl restart cyberx-backend
+            
+            echo "=== Updating frontend ==="
+            cd ../frontend
+            npm install --silent
+            npm run build
+            sudo rm -rf /var/www/html/*
+            sudo cp -r dist/* /var/www/html/
+            
+            echo "=== Deployment complete! ==="
+          ENDSSH

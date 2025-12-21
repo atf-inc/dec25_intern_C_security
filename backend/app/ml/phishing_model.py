@@ -915,6 +915,7 @@ def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
         "llm_confidence": merged.get("model_meta", {}).get("confidence", 0.8) if use_llm else None
     })
 
+
     # 🚀 GEMINI-POWERED: Full AI explanation system
     ai_explanation = _generate_human_explanation(label, final_score, reasons, evidence, payload)
     

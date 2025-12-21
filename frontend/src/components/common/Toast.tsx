@@ -23,27 +23,25 @@ export function Toast({ message, type = 'info', duration = 3000, onClose }: Toas
     }, [duration, onClose])
 
     return (
-        <div className={`toast toast-${type} ${isVisible ? 'show' : 'hide'}`}>
-            <span className="toast-icon">
+        <div
+            className={`toast toast-${type} ${isVisible ? 'show' : 'hide'}`}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            <span className="toast-icon" aria-hidden="true">
                 {type === 'success' && '✅'}
                 {type === 'error' && '❌'}
                 {type === 'info' && 'ℹ️'}
             </span>
             <p className="toast-message">{message}</p>
-            <button className="toast-close" onClick={() => setIsVisible(false)}>×</button>
+            <button
+                className="toast-close"
+                onClick={() => setIsVisible(false)}
+                aria-label="Dismiss notification"
+            >×</button>
         </div>
     )
 }
 
-// Simple hook for managing toasts in parent components
-export function useToast() {
-    const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
 
-    const showToast = (message: string, type: ToastType = 'info') => {
-        setToast({ message, type })
-    }
-
-    const closeToast = () => setToast(null)
-
-    return { toast, showToast, closeToast }
-}

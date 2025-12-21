@@ -4,21 +4,29 @@ import './HistoryPage.css'
 // Email Imports
 import { getScanHistory, ScanHistoryItem, ScanHistoryParams } from '../api/phishingApi'
 import { HistoryTable } from '../components/history/HistoryTable'
+// New Imports
+import { VirtualizedHistoryList } from '../components/history/VirtualizedHistoryList'
+import { useMediaQuery } from '../hooks/useMediaQuery'
+
 // Voice Imports
 import { getVoiceHistory, VoiceAnalysisResponse, deleteScan } from '../api/voiceApi'
 import { VoiceHistoryTable } from '../components/history/VoiceHistoryTable'
 
-import { HistoryChart } from '../components/history/HistoryChart'
+import { Suspense, lazy } from 'react'
+
+// Lazy Load Chart to reduce initial bundle size
+const HistoryChart = lazy(() => import('../components/history/HistoryChart').then(module => ({ default: module.HistoryChart })))
 import { HistoryFilters } from '../components/history/HistoryFilters'
 import { storage } from '../utils/storage'
-import { Loader } from '../components/common/Loader'
 import { ErrorAlert } from '../components/common/ErrorAlert'
 import { ConfirmationModal } from '../components/common/ConfirmationModal'
+import { SkeletonCard } from '../components/common/SkeletonLoader'
 
 type TabType = 'email' | 'voice'
 
 export function HistoryPage() {
     const { t } = useTranslation()
+    const isMobile = useMediaQuery('(max-width: 768px)')
     const [activeTab, setActiveTab] = useState<TabType>('email')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -43,6 +51,17 @@ export function HistoryPage() {
         fetchData()
     }, [activeTab, filters])
 
+    // Force Recharts re-measurement when voice tab becomes active
+    useEffect(() => {
+        if (activeTab === 'voice') {
+            // Small delay to allow DOM to fully render and layout to complete
+            const timer = setTimeout(() => {
+                window.dispatchEvent(new Event('resize'))
+            }, 100)
+            return () => clearTimeout(timer)
+        }
+    }, [activeTab])
+
     const fetchData = async () => {
         setIsLoading(true)
         setError(null)
@@ -53,11 +72,19 @@ export function HistoryPage() {
             } else {
                 // Voice API doesn't support the same filters yet, so we pass default pagination
                 const response = await getVoiceHistory(0, 100)
-                setVoiceData(response.scans)
+                console.log('Voice history response:', response)
+                if (!response.scans) {
+                    console.error('Voice history response missing scans array:', response)
+                    setError('Invalid response format from server')
+                    setVoiceData([])
+                } else {
+                    setVoiceData(response.scans)
+                }
             }
         } catch (err) {
             console.error('Failed to fetch history:', err)
-            setError(getText('dashboard.failedToLoadHistory', 'Failed to load scan history.'))
+            const errorMsg = err instanceof Error ? err.message : 'Unknown error'
+            setError(`${getText('dashboard.failedToLoadHistory', 'Failed to load scan history.')} ${activeTab === 'voice' ? `(${errorMsg})` : ''}`)
         } finally {
             setIsLoading(false)
         }
@@ -131,7 +158,9 @@ export function HistoryPage() {
             {activeTab === 'email' && (
                 <>
                     <div className="chart-section">
-                        <HistoryChart data={emailData} />
+                        <Suspense fallback={<SkeletonCard />}>
+                            <HistoryChart data={emailData} />
+                        </Suspense>
                     </div>
                     <HistoryFilters filters={filters} onFilterChange={setFilters} />
                 </>
@@ -139,31 +168,51 @@ export function HistoryPage() {
 
             {activeTab === 'voice' && (
                 <div className="chart-section">
-                    <HistoryChart title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')} data={voiceData.map(item => ({
-                        id: item.id || 0,
-                        date: item.created_at || new Date().toISOString(),
-                        type: 'voice',
-                        // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
-                        risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
-                        risk_level: item.risk_level,
-                        subject: item.file_name, // Map filename to subject for the tooltip
-                        sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
-                    }))} />
+                    <Suspense fallback={<SkeletonCard />}>
+                        <HistoryChart
+                            key={`voice-chart-${activeTab}`}
+                            title={getText('dashboard.deepfakeConfidenceTrend', 'Deepfake Confidence Trend')}
+                            data={voiceData.map(item => ({
+                                id: item.id || 0,
+                                date: item.created_at || new Date().toISOString(),
+                                type: 'voice',
+                                // Check range: if < 1 assume 0.0-1.0 and multiply by 100. If > 1 assume 0-100.
+                                risk_score: item.confidence > 1 ? item.confidence : item.confidence * 100,
+                                risk_level: item.risk_level,
+                                subject: item.file_name, // Map filename to subject for the tooltip
+                                sender: getText('history.voiceScan', 'Voice Scan') // Placeholder for sender
+                            }))}
+                        />
+                    </Suspense>
                 </div>
             )}
 
             {isLoading ? (
-                <div className="loader-container">
-                    <Loader />
+                <div className="skeleton-grid">
+                    {/* Render 6 skeletons grid/list based on view */}
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="skeleton-wrapper" style={{ marginBottom: '1rem' }}>
+                            <SkeletonCard />
+                        </div>
+                    ))}
                 </div>
             ) : (
                 <>
                     {activeTab === 'email' ? (
-                        <HistoryTable
-                            data={emailData}
-                            onViewDetails={handleEmailView}
-                            onDelete={handleEmailDelete}
-                        />
+                        isMobile ? (
+                            <VirtualizedHistoryList
+                                data={emailData}
+                                onViewDetails={handleEmailView}
+                                onDelete={handleEmailDelete}
+                                height={600}
+                            />
+                        ) : (
+                            <HistoryTable
+                                data={emailData}
+                                onViewDetails={handleEmailView}
+                                onDelete={handleEmailDelete}
+                            />
+                        )
                     ) : (
                         <VoiceHistoryTable
                             data={voiceData}

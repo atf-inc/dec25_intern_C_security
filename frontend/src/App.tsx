@@ -3,12 +3,16 @@ import { AppRouter } from './router'
 import { Layout } from './components/layout/Layout'
 import './i18n' // Initialize i18n
 
+import { ToastProvider } from './components/common/ToastContext'
+
 function App() {
     return (
         <BrowserRouter>
-            <Layout>
-                <AppRouter />
-            </Layout>
+            <ToastProvider>
+                <Layout>
+                    <AppRouter />
+                </Layout>
+            </ToastProvider>
         </BrowserRouter>
     )
 }
