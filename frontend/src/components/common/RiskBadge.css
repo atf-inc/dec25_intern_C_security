@@ -1,113 +1,65 @@
-/* Base Badge Style */
+/* ========== RISK BADGES ========== */
+.badge,
 .risk-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  border-left-width: 4px;
-  border-left-style: solid;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  line-height: normal;
 }
 
-.risk-score {
-  font-size: 0.9em;
-  opacity: 0.8;
-  font-family: 'Monaco', monospace;
+/* Variant: Safe / Low */
+.badge-safe,
+.risk-badge-safe,
+.risk-badge-low {
+  background: var(--status-safe-bg);
+  color: var(--status-safe);
+  border: 1px solid var(--status-safe-border);
+}
+
+/* Variant: Medium */
+.badge-warning,
+.risk-badge-medium {
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+/* Variant: High */
+.badge-danger,
+.risk-badge-high,
+.risk-badge-critical {
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+  border: 1px solid var(--status-danger-border);
 }
 
 .risk-level {
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .risk-icon {
-  font-size: 1.25rem;
+  font-size: 1.1em;
   line-height: 1;
 }
 
-.risk-icon-small {
-  margin-right: 4px;
+.risk-score {
+  font-family: 'Monaco', monospace;
+  opacity: 0.8;
+  font-size: 0.9em;
+  margin-left: 0.25rem;
 }
-
-/* Variant: Safe / Low - Light Mode */
-.risk-badge-safe,
-.risk-badge-low {
-  background-color: rgba(220, 252, 231, 0.8);
-  color: #065f46;
-  /* WCAG dark green */
-  border-left-color: var(--safe-bg);
-}
-
-/* Variant: Medium - Light Mode */
-.risk-badge-medium {
-  background-color: rgba(254, 243, 199, 0.8);
-  color: #92400e;
-  /* WCAG dark amber */
-  border-left-color: var(--medium-bg);
-}
-
-/* Variant: High - Light Mode */
-.risk-badge-high {
-  background-color: rgba(254, 226, 226, 0.8);
-  color: #991b1b;
-  /* WCAG dark red */
-  border-left-color: var(--high-bg);
-}
-
-/* Variant: Critical - Light Mode */
-.risk-badge-critical {
-  background-color: rgba(254, 202, 202, 0.9);
-  color: #7f1d1d;
-  /* WCAG darkest red */
-  border-left-color: var(--critical-bg);
-  font-weight: 800;
-}
-
-/* 🌙 Dark Mode - Inverted for visibility */
-:root.dark .risk-badge-safe,
-:root.dark .risk-badge-low {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
-  /* Bright green on dark */
-}
-
-:root.dark .risk-badge-medium {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #fcd34d;
-  /* Bright amber on dark */
-}
-
-:root.dark .risk-badge-high {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-  /* Bright red on dark */
-}
-
-:root.dark .risk-badge-critical {
-  background-color: rgba(220, 38, 38, 0.2);
-  color: #fca5a5;
-  border-left-color: #ef4444;
-}
-
 
 /* Size: Small */
 .risk-badge-small {
-  padding: 0.25rem 0.75rem;
-  font-size: var(--text-small);
-  border-left-width: 3px;
-}
-
-/* 🌙 Dark Mode Overrides for Visibility */
-/* Relies on token overrides in design-tokens.css now */
-:root.dark .risk-badge-low,
-:root.dark .risk-badge-medium,
-:root.dark .risk-badge-high,
-:root.dark .risk-badge-critical {
-  background-color: transparent;
-  box-shadow: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
 }
