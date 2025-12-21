@@ -4,6 +4,8 @@
     border-radius: 12px;
     border: 1px solid var(--border-color);
     background: var(--card-bg);
+    min-width: 0; /* Prevents flex overflow issues */
+    width: 100%;
 }
 
 /* On mobile, remove container border since cards have their own */
@@ -201,7 +203,9 @@
 /* Chart Styles */
 .chart-container {
     height: 300px;
+    min-height: 300px; /* Ensures height doesn't collapse */
     width: 100%;
+    min-width: 0; /* Prevents flex overflow issues */
     margin-bottom: 2rem;
     padding: 1rem;
     background: var(--card-bg);
