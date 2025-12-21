@@ -4,8 +4,10 @@
     border-radius: 12px;
     border: 1px solid var(--border-color);
     background: var(--card-bg);
+
     min-width: 0;
     /* Prevents flex overflow issues */
+
     width: 100%;
 }
 
@@ -247,9 +249,12 @@
 
 /* Chart Styles */
 .chart-container {
+
     height: 350px;
     min-height: 350px;
+
     width: 100%;
+    min-width: 0; /* Prevents flex overflow issues */
     margin-bottom: 2rem;
     padding: 1.5rem;
     background: var(--bg-secondary);
