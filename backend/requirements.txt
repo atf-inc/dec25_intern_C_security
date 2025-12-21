@@ -46,3 +46,6 @@ beautifulsoup4==4.12.2
 pymupdf
 requests==2.31.0
 tldextract==4.0.0
+
+# RATE LIMITING
+slowapi>=0.1.9
