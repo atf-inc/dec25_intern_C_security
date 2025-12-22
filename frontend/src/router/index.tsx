@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { Suspense, lazy } from 'react'
 
 // 🚀 Lazy load pages for better performance (code splitting)
+const HomePage = lazy(() => import('../pages/HomePage').then(m => ({ default: m.HomePage })))
 const PhishingPage = lazy(() => import('../pages/PhishingPage').then(m => ({ default: m.PhishingPage })))
 const VoicePage = lazy(() => import('../pages/VoicePage').then(m => ({ default: m.VoicePage })))
 const HistoryPage = lazy(() => import('../pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
@@ -26,7 +27,7 @@ export function AppRouter() {
     return (
         <Suspense fallback={<PageLoader />}>
             <Routes>
-                <Route path="/" element={<Navigate to="/phishing" replace />} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/phishing" element={<PhishingPage />} />
                 <Route path="/voice" element={<VoicePage />} />
                 <Route path="/history" element={<HistoryPage />} />

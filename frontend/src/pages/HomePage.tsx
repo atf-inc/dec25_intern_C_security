@@ -49,7 +49,6 @@ export function HomePage() {
             {/* Hero Section */}
             <section className="hero-section">
                 <div className="hero-background">
-                    <div className="hero-gradient"></div>
                     <div className="hero-particles"></div>
                 </div>
 

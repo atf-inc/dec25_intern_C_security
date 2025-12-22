@@ -52,6 +52,9 @@ export function Navbar() {
                     id="navbar-menu"
                     className={`navbar-links ${isMenuOpen ? 'active' : ''}`}
                 >
+                    <NavLink to="/" className={getNavLinkClass} onClick={() => setIsMenuOpen(false)}>
+                        {t('navigation.home')}
+                    </NavLink>
                     <NavLink to="/phishing" className={getNavLinkClass} onClick={() => setIsMenuOpen(false)}>
                         {t('navigation.phishing')}
                     </NavLink>
