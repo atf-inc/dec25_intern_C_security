@@ -31,7 +31,7 @@ export function Navbar() {
         >
             <div className="navbar-container">
                 <NavLink to="/" className="navbar-brand">
-                    <img src={logoImage} alt="ATF Shield" className="navbar-logo" />
+                    <img src={logoImage} alt="ATF Shield" className="navbar-logo" width="32" height="32" />
                     <span className="brand-text">
                         <span className="brand-atf"></span>
                         <span className="brand-cyberx">CyberX</span>

@@ -26,8 +26,59 @@ export function VoiceHistoryTable({ data, onViewDetails, onDelete }: VoiceHistor
         )
     }
 
+    // Mobile Card Component
+    const MobileVoiceCard = ({ item }: { item: VoiceAnalysisResponse }) => {
+        const isSafe = !item.is_deepfake;
+
+        return (
+            <div className="history-card-mobile">
+                <div className="history-card-header">
+                    <div className="history-card-file">
+                        <div className="history-card-file-name">
+                            🎵 {item.file_name}
+                        </div>
+                        <div className="history-card-meta">
+                            <span>📅 {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</span>
+                            <span>⏱ {item.duration.toFixed(1)}s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="history-card-status">
+                    <span className={`badge-mobile badge-detection-${isSafe ? 'safe' : 'deepfake'}`}>
+                        {item.is_deepfake ? `⚠️ ${getText('history.deepfake', 'Deepfake')}` : `✅ ${getText('history.real', 'Real')}`}
+                    </span>
+                    <span className={`badge-mobile badge-risk-${item.risk_level.toLowerCase()}`}>
+                        {/* Icon based on risk level */}
+                        {item.risk_level.toLowerCase() === 'high' ? '✕' : item.risk_level.toLowerCase() === 'low' ? '✓' : '⚠'}
+                        {item.risk_level} ({Math.round(item.confidence * 100)})
+                    </span>
+                </div>
+
+                <div className="history-card-actions">
+                    <button
+                        className="btn-mobile-view"
+                        onClick={() => onViewDetails?.(item)}
+                    >
+                        {getText('history.view', 'View')}
+                    </button>
+                    {onDelete && (
+                        <button
+                            className="btn-mobile-delete"
+                            onClick={() => item.id && onDelete(item.id)}
+                            title={getText('history.deleteScanTitle', 'Delete Scan')}
+                        >
+                            🗑
+                        </button>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="table-container">
+            {/* Desktop Table View */}
             <table className="history-table">
                 <thead className="table-head">
                     <tr>
@@ -85,6 +136,13 @@ export function VoiceHistoryTable({ data, onViewDetails, onDelete }: VoiceHistor
                     ))}
                 </tbody>
             </table>
+
+            {/* Mobile Card View (Visible only on mobile via CSS) */}
+            <div className="mobile-history-list">
+                {data.map((item) => (
+                    <MobileVoiceCard key={item.id} item={item} />
+                ))}
+            </div>
         </div>
     )
 }

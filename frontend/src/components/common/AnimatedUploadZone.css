@@ -7,30 +7,45 @@
 }
 
 .upload-zone {
-  border: 2px dashed var(--color-slate-300);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-12);
+  background: var(--bg-tertiary);
+  border: 2px dashed var(--border-primary);
+  border-radius: 16px;
+  padding: 3rem;
   text-align: center;
   cursor: pointer;
-  transition: all var(--anim-duration-normal) var(--anim-ease);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  background: var(--color-slate-50);
   min-height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Pulse Animation */
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(-10%, -10%) scale(1.1);
+  }
+}
+
 .upload-zone::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-  transition: left var(--anim-duration-slow) var(--anim-ease);
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 /* Drag Over State */
@@ -142,20 +157,20 @@
     padding: var(--space-8);
     min-height: 160px;
   }
-  
+
   .upload-content {
     gap: var(--space-3);
   }
-  
+
   .upload-icon svg {
     width: 36px;
     height: 36px;
   }
-  
+
   .upload-text h3 {
     font-size: var(--text-base);
   }
-  
+
   .upload-text p {
     font-size: var(--text-xs);
   }
@@ -163,9 +178,17 @@
 
 /* Animation for file processing */
 @keyframes fileProcess {
-  0% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.05) rotate(2deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.05) rotate(2deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .upload-zone.uploading .upload-content {
@@ -174,10 +197,10 @@
 
 /* Hover effects */
 .upload-zone:not(.uploading):not(.disabled):hover {
-  border-color: var(--color-primary);
-  background: rgba(59, 130, 246, 0.02);
+  border-color: var(--primary-color);
+  background: rgba(14, 165, 233, 0.1);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.15);
 }
 
 /* Focus styles for accessibility */
@@ -192,27 +215,27 @@
     background: var(--color-slate-800);
     border-color: var(--color-slate-600);
   }
-  
+
   .upload-zone.drag-over {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
   }
-  
+
   .upload-zone.success {
     background: rgba(16, 185, 129, 0.1);
   }
-  
+
   .upload-zone.error {
     background: rgba(239, 68, 68, 0.1);
   }
-  
+
   .upload-text h3 {
     color: var(--color-slate-200);
   }
-  
+
   .upload-text p {
     color: var(--color-slate-400);
   }
-  
+
   .upload-icon {
     color: var(--color-slate-500);
   }

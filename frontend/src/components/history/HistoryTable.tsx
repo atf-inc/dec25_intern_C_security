@@ -26,8 +26,62 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
         )
     }
 
+    // Mobile Card Component
+    const MobileHistoryCard = ({ item }: { item: ScanHistoryItem }) => {
+        const normalizeRisk = (r: string) => {
+            const l = r.toLowerCase();
+            if (['safe', 'low', 'clean', 'legit'].includes(l)) return 'low';
+            if (['suspicious', 'medium'].includes(l)) return 'medium';
+            return 'high';
+        };
+        const riskLevel = normalizeRisk(item.risk_level);
+        const isSafe = riskLevel === 'low';
+
+        return (
+            <div className="history-card-mobile">
+                <div className="history-card-header">
+                    <div className="history-card-file">
+                        <div className="history-card-file-name">
+                            {item.type === 'voice' ? '🎤' : '📧'} {item.subject || 'Unknown Subject'}
+                        </div>
+                        <div className="history-card-meta">
+                            <span>📅 {new Date(item.date).toLocaleDateString()}</span>
+                            <span>👤 {item.sender || 'Unknown'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="history-card-status">
+                    <span className={`badge-mobile badge-detection-${isSafe ? 'safe' : 'phishing'}`}>
+                        {isSafe ? '✅ Safe' : '⚠️ Phishing'}
+                    </span>
+                    <span className={`badge-mobile badge-risk-${riskLevel}`}>
+                        {riskLevel === 'high' ? '✕' : riskLevel === 'low' ? '✓' : '⚠'}
+                        {item.risk_level} ({item.risk_score})
+                    </span>
+                </div>
+
+                <div className="history-card-actions">
+                    <button
+                        className="btn-mobile-view"
+                        onClick={() => onViewDetails?.(item.id)}
+                    >
+                        View Details
+                    </button>
+                    <button
+                        className="btn-mobile-delete"
+                        onClick={() => onDelete?.(item.id)}
+                    >
+                        🗑
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="table-container">
+            {/* Desktop Table View */}
             <table className="history-table">
                 <thead className="table-head">
                     <tr>
@@ -37,7 +91,6 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
                         <th className="table-header-cell">{getText('history.sender', 'Sender')}</th>
                         <th className="table-header-cell">{getText('history.detection', 'Detection')}</th>
                         <th className="table-header-cell">{getText('history.riskLevel', 'Risk Level')}</th>
-                        {/* <th className="table-header-cell">Score</th> Removed as it's in badge */}
                         <th className="table-header-cell">{getText('history.actions', 'Actions')}</th>
                     </tr>
                 </thead>
@@ -75,7 +128,6 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
                                 <td className="table-cell" data-label={getText('history.riskLevel', 'Risk')}>
                                     <RiskBadge level={item.risk_level} score={item.risk_score} size="small" />
                                 </td>
-                                {/* Score is now included in RiskBadge */}
                                 <td className="table-cell" data-label={getText('history.actions', 'Actions')}>
                                     <div className="action-buttons">
                                         <button
@@ -100,6 +152,13 @@ export function HistoryTable({ data, onViewDetails, onDelete }: HistoryTableProp
                     })}
                 </tbody>
             </table>
+
+            {/* Mobile Card View (Visible only on mobile via CSS) */}
+            <div className="mobile-history-list">
+                {data.map((item) => (
+                    <MobileHistoryCard key={item.id} item={item} />
+                ))}
+            </div>
         </div>
     )
 }

@@ -2,48 +2,95 @@
 @import './design-tokens.css';
 @import './animations.css';
 
+/* ============================================
+   ATF CyberX - Enhanced Color System
+   Fixed contrast & readability for both modes
+   ============================================ */
+
 :root {
-  /* Semantic Variables - Light Mode Default */
-  --primary-color: #2563eb;
-  --danger-color: #dc2626;
-  --warning-color: #f59e0b;
-  --success-color: #16a34a;
+  /* ========== DARK MODE (Default) ========== */
 
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f1f5f9;
+  /* Background Layers */
+  --bg-primary: #0a0e1a;
+  /* Deepest background */
+  --bg-secondary: #111827;
+  /* Cards, panels */
+  --bg-tertiary: #1e293b;
+  /* Hover states, elevated cards */
+  --bg-elevated: #2d3748;
+  /* Modal, dropdown */
 
-  /* Legacy mapping support */
-  --bg-color: var(--bg-secondary);
+  /* Text Colors - High Contrast */
+  --text-primary: #f8fafc;
+  /* Main headings - WCAG AAA */
+  --text-secondary: #cbd5e1;
+  /* Body text - WCAG AA */
+  --text-tertiary: #94a3b8;
+  /* Labels, captions */
+  --text-muted: #64748b;
+  /* Placeholder, disabled */
 
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #6b7280;
-  /* Darkened for WCAG AA compliance (was #9ca3af) */
+  /* Brand Colors - Vibrant */
+  --brand-primary: #6366f1;
+  /* Indigo - Main CTA */
+  --brand-primary-hover: #4f46e5;
+  --brand-primary-light: rgba(99, 102, 241, 0.1);
 
-  /* Legacy mapping support */
-  --text-color: var(--text-primary);
+  --brand-secondary: #8b5cf6;
+  /* Purple - Accents */
+  --brand-secondary-hover: #7c3aed;
 
-  --border-color: #e5e7eb;
-  --input-bg: #ffffff;
-  --input-border: #d1d5db;
+  /* Status Colors - Enhanced */
+  --status-safe: #10b981;
+  --status-safe-bg: rgba(16, 185, 129, 0.12);
+  --status-safe-border: rgba(16, 185, 129, 0.3);
 
-  --card-bg: #ffffff;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --status-warning: #f59e0b;
+  --status-warning-bg: rgba(245, 158, 11, 0.12);
+  --status-warning-border: rgba(245, 158, 11, 0.3);
 
-  --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --status-danger: #ef4444;
+  --status-danger-bg: rgba(239, 68, 68, 0.12);
+  --status-danger-border: rgba(239, 68, 68, 0.3);
+
+  /* Borders & Dividers */
+  --border-primary: rgba(148, 163, 184, 0.15);
+  --border-secondary: rgba(148, 163, 184, 0.08);
+  --border-focus: #6366f1;
+
+  /* Shadows - Depth */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+
+  /* Interactive States */
+  --hover-overlay: rgba(99, 102, 241, 0.08);
+  --active-overlay: rgba(99, 102, 241, 0.15);
+
+  /* Chart Colors */
+  --chart-primary: #6366f1;
+  --chart-gradient-start: rgba(99, 102, 241, 0.4);
+  --chart-gradient-end: rgba(99, 102, 241, 0);
+  --chart-grid: rgba(148, 163, 184, 0.1);
+
+  /* Legacy Glue Variables */
+  --primary-color: var(--brand-primary);
+  --danger-color: var(--status-danger);
+  --warning-color: var(--status-warning);
+  --success-color: var(--status-safe);
+  --card-bg: var(--bg-secondary);
+  --border-color: var(--border-primary);
+  --input-bg: var(--bg-tertiary);
+  --input-border: var(--border-primary);
 
   /* Animation Durations */
   --anim-duration-fast: 200ms;
   --anim-duration-normal: 300ms;
   --anim-duration-slow: 500ms;
 
-  /* Easing Curves */
   --anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --anim-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Spacing Variables - Mobile First */
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
   --spacing-md: 1.5rem;
@@ -51,38 +98,159 @@
   --header-height: 64px;
 }
 
-:root.dark {
-  /* Dark Mode Overrides */
-  --primary-color: #3b82f6;
+/* ========== LIGHT MODE ========== */
+[data-theme="light"],
+:root:not(.dark) {
+  /* Background Layers */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-elevated: #ffffff;
 
-  --bg-primary: #0f172a;
-  /* slate-900 */
-  --bg-secondary: #1e293b;
-  /* slate-800 */
-  --bg-tertiary: #334155;
-  /* slate-700 */
-  --bg-color: var(--bg-primary);
-  /* Update legacy */
-
-  --text-primary: #f1f5f9;
-  /* slate-100 */
-  --text-secondary: #cbd5e1;
-  /* slate-300 */
+  /* Text Colors - High Contrast */
+  --text-primary: #0f172a;
+  /* WCAG AAA on white */
+  --text-secondary: #334155;
+  /* WCAG AAA on white */
+  --text-tertiary: #64748b;
+  /* WCAG AA on white */
   --text-muted: #94a3b8;
-  /* slate-400 */
-  --text-color: var(--text-primary);
-  /* Update legacy */
 
-  --border-color: #334155;
-  /* slate-700 */
-  --input-bg: #0f172a;
-  --input-border: #475569;
+  /* Brand Colors - Adjusted for light bg */
+  --brand-primary: #4f46e5;
+  --brand-primary-hover: #4338ca;
+  --brand-primary-light: rgba(79, 70, 229, 0.08);
 
-  --card-bg: #1e293b;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --brand-secondary: #7c3aed;
+  --brand-secondary-hover: #6d28d9;
 
-  --gradient-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  /* Status Colors */
+  --status-safe: #059669;
+  --status-safe-bg: rgba(5, 150, 105, 0.08);
+  --status-safe-border: rgba(5, 150, 105, 0.2);
+
+  --status-warning: #d97706;
+  --status-warning-bg: rgba(217, 119, 6, 0.08);
+  --status-warning-border: rgba(217, 119, 6, 0.2);
+
+  --status-danger: #dc2626;
+  --status-danger-bg: rgba(220, 38, 38, 0.08);
+  --status-danger-border: rgba(220, 38, 38, 0.2);
+
+  /* Borders & Dividers */
+  --border-primary: rgba(15, 23, 42, 0.12);
+  --border-secondary: rgba(15, 23, 42, 0.06);
+  --border-focus: #4f46e5;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 6px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.15);
+  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.2);
+
+  /* Interactive States */
+  --hover-overlay: rgba(79, 70, 229, 0.05);
+  --active-overlay: rgba(79, 70, 229, 0.1);
+
+  /* Chart Colors */
+  --chart-grid: rgba(15, 23, 42, 0.08);
+
+  /* Legacy Glue Variables for Light Mode */
+  --primary-color: var(--brand-primary);
+  --danger-color: var(--status-danger);
+  --warning-color: var(--status-warning);
+  --success-color: var(--status-safe);
+  --card-bg: var(--bg-secondary);
+  --border-color: var(--border-primary);
+  --input-bg: var(--bg-tertiary);
+  --input-border: var(--border-primary);
+}
+
+/* Reset existing dark class usage to map to default dark variables if needed, 
+   but ensuring :root has the dark defaults covers most cases. 
+   We explicitly handle light theme via [data-theme="light"]. 
+   If there is a hard .dark class on root, it will just use default :root vars 
+   or we can force it: */
+:root.dark {
+  /* Reuse default variables designated for dark mode */
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  /* ...others inherit from :root default */
+}
+
+/* ============================================
+   COMPONENT STYLES - FIXED CONTRAST
+   ============================================ */
+
+/* Base Typography & Elements */
+body {
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+p,
+span,
+div {
+  color: var(--text-secondary);
+}
+
+/* Labels & Small Text */
+label,
+.label {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Input Styles Update */
+input,
+textarea,
+select {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 0 3px var(--brand-primary-light);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
 }
 
 /* Base Styles */
@@ -159,8 +327,8 @@ body {
   color: var(--text-primary);
   /* Safe area for notched devices */
   padding-bottom: env(safe-area-inset-bottom);
-  /* Prevent pull-to-refresh interference */
-  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll from off-canvas menu */
 }
 
 .container {
@@ -624,26 +792,50 @@ h3,
   }
 }
 
-/* Mobile-First Breakpoints */
-@media (max-width: 639px) {
-  :root {
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
+/* Mobile-First/* Responsive Design */
+@media (max-width: 1024px) {
+  .container {
+    padding: 2rem 1rem;
+    width: 100%;
+    margin: 0;
+    max-width: 100%;
   }
 
   h1 {
-    font-size: 1.75rem !important;
+    font-size: 2rem;
   }
+}
 
-  h2 {
-    font-size: 1.5rem !important;
-  }
-
-  body {
-    font-size: 0.95rem;
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+    /* Slightly smaller base for mobile */
   }
 
   .container {
+    padding: 1.5rem 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .card {
     padding: 1rem;
   }
 }
