@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { Suspense, lazy } from 'react'
 
 // 🚀 Lazy load pages for better performance (code splitting)
