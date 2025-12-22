@@ -1,60 +1,115 @@
+/* ================================================
+   🎨 OPTIMIZED EMAIL FORM DESIGN - PERFORMANCE FIRST
+   ================================================ */
+
 .email-form {
     background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    border: 1px solid var(--border-color);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
     margin: 0 auto;
+    position: relative;
+    /* PERFORMANCE: Removed all backdrop-filter effects for smooth scrolling */
 }
+
+/* PERFORMANCE: Removed glassmorphism effects entirely */
+
+/* ================================================
+   📝 OPTIMIZED FORM GROUPS & INPUTS
+   ================================================ */
 
 .form-group {
     margin-bottom: 1.5rem;
+    /* Removed heavy animations for performance */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
+    font-size: 1rem;
     color: var(--text-primary);
+    position: relative;
+    padding-left: 0.5rem;
+}
+
+.form-group label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    background: var(--primary-color);
+    border-radius: 2px;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--input-border);
-    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
     font-size: 1rem;
-    transition: border-color 0.2s;
-    background-color: var(--input-bg);
+    font-weight: 500;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: var(--input-bg);
     color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    /* Simplified focus effect */
+}
+
+.form-group input:hover:not(:disabled):not(:focus),
+.form-group textarea:hover:not(:disabled):not(:focus) {
+    border-color: var(--primary-color);
 }
 
 .form-group input:disabled,
 .form-group textarea:disabled {
-    background-color: var(--bg-tertiary);
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .form-group .error-input {
     border-color: var(--danger-color);
-    background-color: rgba(239, 68, 68, 0.05);
-    /* faint red tint */
+    background: rgba(239, 68, 68, 0.05);
 }
 
 .error-msg {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
     color: var(--danger-color);
     font-weight: 500;
+    padding: 0.5rem 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--danger-color);
+}
+
+.error-msg::before {
+    content: '⚠️';
+    font-size: 1rem;
 }
 
 .form-group textarea {
@@ -69,69 +124,88 @@
     color: var(--text-secondary);
 }
 
+/* ================================================
+   🎯 OPTIMIZED SUBMIT BUTTON
+   ================================================ */
+
 .submit-button {
     width: 100%;
-    padding: 1rem;
-    background-color: var(--primary-color);
+    padding: 1.25rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .submit-button:hover:not(:disabled) {
-    background-color: #1d4ed8;
-}
-
-.submit-button:disabled {
-    background-color: var(--text-muted);
-    cursor: not-allowed;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
 .submit-button:active:not(:disabled) {
-    transform: translateY(1px);
+    transform: translateY(0);
 }
 
-/* Input Mode Selector */
+.submit-button:disabled {
+    background: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0.6;
+}
+
+/* ================================================
+   🔄 OPTIMIZED INPUT MODE SELECTOR
+   ================================================ */
+
 .input-mode-selector {
     margin-bottom: 2rem;
+    text-align: center;
 }
 
 .mode-tabs {
     display: flex;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     padding: 4px;
-    margin-bottom: 0.5rem;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .mode-tab {
     flex: 1;
-    padding: 0.75rem 1rem;
+    padding: 1rem 1.5rem;
     border: none;
     background: transparent;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
-.mode-tab:hover:not(:disabled) {
+.mode-tab:hover:not(:disabled):not(.active) {
     color: var(--text-primary);
     background: var(--bg-tertiary);
-    transform: translateY(-1px);
 }
 
 .mode-tab.active {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .mode-tab:disabled {
@@ -140,22 +214,27 @@
 }
 
 .mode-description {
-    font-size: 0.875rem;
+    font-size: 1rem;
     color: var(--text-secondary);
     margin: 0;
-    text-align: center;
+    font-weight: 500;
+    padding: 0 1rem;
 }
 
-/* PDF Upload Section */
+/* ================================================
+   📄 OPTIMIZED FILE UPLOAD SECTION
+   ================================================ */
+
 .pdf-upload-section {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .file-upload-area {
     position: relative;
-    border: 2px dashed var(--input-border);
-    border-radius: 8px;
-    transition: border-color 0.2s;
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    transition: border-color 0.2s ease;
+    background: var(--bg-secondary);
 }
 
 .file-upload-area:hover {
@@ -173,7 +252,6 @@
     z-index: 1;
 }
 
-/* Hide file input when file is selected to prevent interference */
 .file-upload-area:has(.file-selected) .file-input {
     pointer-events: none;
     z-index: 0;
@@ -184,7 +262,7 @@
 }
 
 .file-upload-content {
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     text-align: center;
 }
 
@@ -192,46 +270,49 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
 .upload-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     margin-bottom: 0.5rem;
-    color: var(--text-primary);
+    color: var(--primary-color);
 }
 
 .file-upload-prompt p {
     margin: 0;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.1rem;
     color: var(--text-primary);
 }
 
 .file-upload-prompt small {
     color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .file-selected {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
-    background-color: var(--bg-tertiary);
-    border: 1px solid var(--primary-color);
-    border-radius: 6px;
+    padding: 1.5rem;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
     position: relative;
     z-index: 10;
-    /* Ensure it's above the file input */
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .file-info {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
 .file-icon {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     color: var(--primary-color);
 }
 
@@ -242,33 +323,40 @@
 }
 
 .file-name {
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1rem;
     color: var(--text-primary);
 }
 
 .file-size {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    font-weight: 500;
 }
 
 .remove-file-btn {
-    background: none;
-    border: none;
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid transparent;
     color: var(--danger-color);
     font-size: 1.25rem;
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
     position: relative;
     z-index: 20;
-    /* Ensure button is above everything */
     pointer-events: auto;
-    /* Ensure button receives clicks */
+    font-weight: bold;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .remove-file-btn:hover:not(:disabled) {
-    background-color: rgba(239, 68, 68, 0.1);
+    background: rgba(239, 68, 68, 0.2);
+    border-color: var(--danger-color);
 }
 
 .remove-file-btn:disabled {
@@ -276,22 +364,61 @@
     opacity: 0.5;
 }
 
-/* Manual Input Section - Inherits existing form styles */
+/* ================================================
+   💡 FORM HINTS & HELPERS
+   ================================================ */
 
-/* Responsive Design */
+.form-group textarea {
+    resize: vertical;
+    font-family: inherit;
+    min-height: 120px;
+}
+
+.form-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.form-hint::before {
+    content: '💡';
+    font-size: 1.1rem;
+}
+
+/* ================================================
+   📱 RESPONSIVE DESIGN
+   ================================================ */
+
+@media (max-width: 1024px) {
+    .email-form {
+        padding: 2.5rem;
+        margin: 0 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     .email-form {
-        padding: 1.5rem;
+        padding: 2rem;
         margin: 0 1rem;
+        border-radius: 20px;
     }
 
     .mode-tabs {
         flex-direction: column;
-        gap: 4px;
+        gap: 6px;
     }
 
     .mode-tab {
         text-align: center;
+        padding: 1rem;
     }
 
     .file-selected {
@@ -303,48 +430,160 @@
     .remove-file-btn {
         align-self: flex-end;
     }
+
+    .file-upload-content {
+        padding: 2rem 1.5rem;
+    }
 }
 
 @media (max-width: 640px) {
     .email-form {
-        padding: 1rem;
+        padding: 1.5rem;
         margin: 0;
-        border-radius: 0;
-        box-shadow: none;
+        border-radius: 16px;
+        box-shadow: 
+            0 4px 16px rgba(0, 0, 0, 0.1),
+            0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
     }
 
     .form-group label {
         font-size: 0.95rem;
+        margin-bottom: 0.5rem;
     }
 
     .form-group input,
     .form-group textarea {
-        font-size: 16px;
-        /* Prevents iOS zoom */
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .submit-button {
+        padding: 1.25rem;
+        position: sticky;
+        bottom: 1rem;
+        box-shadow: 
+            0 8px 24px rgba(59, 130, 246, 0.4),
+            0 4px 16px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+        font-size: 1rem;
+    }
+
+    .mode-description {
+        font-size: 0.9rem;
+        padding: 0;
+    }
+
+    .file-upload-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .upload-icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .email-form {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    .form-group input,
+    .form-group textarea {
         padding: 0.875rem;
     }
 
     .submit-button {
-        padding: 1.125rem;
-        position: sticky;
-        bottom: 1rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 10;
+        padding: 1rem;
+        font-size: 0.95rem;
     }
 }
 
-/* Dark Mode overrides controlled by variables - redundant blocks removed */
+/* ================================================
+   🌙 DARK MODE ENHANCEMENTS - PERFORMANCE OPTIMIZED
+   ================================================ */
 
-.form-group .error-input {
-    border-color: var(--danger-color);
-    background-color: rgba(239, 68, 68, 0.05);
-    /* faint red tint */
+:root.dark .email-form {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    /* PERFORMANCE: Simplified dark mode styling */
 }
 
-.error-msg {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.8rem;
-    color: var(--danger-color);
-    font-weight: 500;
+:root.dark .form-group input,
+:root.dark .form-group textarea {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .form-group input:focus,
+:root.dark .form-group textarea:focus {
+    background: var(--input-bg);
+    /* PERFORMANCE: Simplified focus effects */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+:root.dark .mode-tabs {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .file-upload-area {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root.dark .file-selected {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+:root.dark .form-hint {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================
+   ♿ ACCESSIBILITY & PERFORMANCE IMPROVEMENTS
+   ================================================ */
+
+/* PERFORMANCE: Disable all animations and transforms for smooth scrolling */
+@media (prefers-reduced-motion: reduce) {
+    .email-form,
+    .form-group,
+    .upload-icon,
+    .file-icon,
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .submit-button:hover,
+    .mode-tab:hover,
+    .file-upload-area:hover {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* Focus states for keyboard navigation */
+.mode-tab:focus-visible,
+.remove-file-btn:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .email-form {
+        border-width: 3px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        border-width: 2px;
+    }
+    
+    .submit-button {
+        border: 2px solid var(--primary-color);
+    }
 }
