@@ -2,56 +2,84 @@
     padding: 0 0 2rem;
 }
 
-/* 🎨 Animated Gradient Hero */
+/* 🎨 Optimized Header - Restored Gradient Background */
 .page-header {
     text-align: center;
     max-width: var(--container-max, 1200px);
     width: 100%;
-    margin: 0 auto 2rem;
-    padding: 3rem var(--container-padding, 24px) 2.5rem;
+    margin: 0 auto 3rem;
+    padding: 4rem var(--container-padding, 24px) 3rem;
+    position: relative;
+    overflow: hidden;
 
-    border-top: 4px solid var(--phishing-accent);
+    border-top: 4px solid #8b5cf6;
     background: linear-gradient(135deg,
-            rgba(139, 92, 246, 0.05) 0%,
-            rgba(124, 58, 237, 0.08) 50%,
-            rgba(139, 92, 246, 0.05) 100%);
-    background-size: 200% 200%;
-    border-radius: 0 0 var(--radius-xl, 16px) var(--radius-xl, 16px);
-    animation: gradientShift 15s ease infinite;
+            rgba(139, 92, 246, 0.08) 0%,
+            rgba(124, 58, 237, 0.12) 50%,
+            rgba(139, 92, 246, 0.08) 100%);
+    border-radius: 0 0 var(--radius-2xl, 24px) var(--radius-2xl, 24px);
+    
+    /* Light glassmorphism effect - optimized */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes gradientShift {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
+/* Dark mode header background */
+:root.dark .page-header {
+    background: linear-gradient(135deg,
+            rgba(139, 92, 246, 0.15) 0%,
+            rgba(124, 58, 237, 0.20) 50%,
+            rgba(139, 92, 246, 0.15) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+    z-index: -1;
+}
+
+/* Removed heavy gradient animation for performance */
 @media (prefers-reduced-motion: reduce) {
     .page-header {
-        animation: none;
         background-position: center;
     }
 }
 
 .page-header h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    /* Fluid type */
-    margin-bottom: 0.5rem;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    /* Enhanced fluid type */
+    margin-bottom: 1rem;
     color: var(--text-primary);
     font-weight: 800;
+    background: linear-gradient(135deg, #1e293b 0%, #8b5cf6 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode gradient text */
+:root.dark .page-header h1 {
+    background: linear-gradient(135deg, #f8fafc 0%, #a855f7 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .page-header p {
-    font-size: 1.125rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 500;
 }
 
 /* Loading State */
