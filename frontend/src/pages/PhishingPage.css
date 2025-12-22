@@ -1,5 +1,8 @@
 .phishing-page {
     padding: 0 0 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 80%;
 }
 
 /* 🎨 Optimized Header - Restored Gradient Background */

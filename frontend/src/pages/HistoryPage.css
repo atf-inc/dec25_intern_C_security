@@ -2,6 +2,8 @@
     padding: 0 1.5rem 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
+    width: 80%;
+    /* Ensures consistent width regardless of tab content */
     /* Smoother momentum scrolling on mobile */
     -webkit-overflow-scrolling: touch;
 }

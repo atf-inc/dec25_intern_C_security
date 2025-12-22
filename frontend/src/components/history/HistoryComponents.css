@@ -254,7 +254,8 @@
     min-height: 350px;
 
     width: 100%;
-    min-width: 0; /* Prevents flex overflow issues */
+    min-width: 0;
+    /* Prevents flex overflow issues */
     margin-bottom: 2rem;
     padding: 1.5rem;
     background: var(--bg-secondary);
