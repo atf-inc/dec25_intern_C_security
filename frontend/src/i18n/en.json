@@ -7,6 +7,7 @@
     "language": "Language"
   },
   "navigation": {
+    "home": "Home",
     "phishing": "Phishing Detection",
     "voice": "Voice Analysis",
     "dashboard": "Dashboard"
