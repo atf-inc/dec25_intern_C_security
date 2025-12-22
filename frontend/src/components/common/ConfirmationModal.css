@@ -12,7 +12,7 @@
     animation: fadeIn 0.2s ease-in-out;
 }
 
-.modal-content {
+.confirmation-modal-box {
     background: var(--card-bg);
     padding: 24px;
     border-radius: 12px;
