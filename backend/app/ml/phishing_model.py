@@ -96,7 +96,7 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
                 "is_business": True,
                 "reason": "Google Calendar meeting invitation",
                 "confidence_boost": 25,
-                "evidence": ["calendar_invitation", "google_service"]
+                "evidence": [{"type": "calendar_invitation", "details": "google_service"}]
             }
     
     # Check 2: Trusted domain senders
@@ -105,7 +105,7 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
             "is_business": True,
             "reason": f"Email from trusted domain: {sender_domain}",
             "confidence_boost": 20,
-            "evidence": ["trusted_domain"]
+            "evidence": [{"type": "trusted_domain", "domain": sender_domain}]
         }
     
     # Check 3: Internal business communication patterns
@@ -117,7 +117,7 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
             "is_business": True,
             "reason": f"Multiple business communication patterns detected ({business_pattern_count})",
             "confidence_boost": 15,
-            "evidence": ["business_patterns"]
+            "evidence": [{"type": "business_patterns", "count": business_pattern_count}]
         }
     
     # Check 4: Meeting/Event specific patterns
@@ -132,7 +132,7 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
             "is_business": True,
             "reason": f"Meeting/conference communication ({meeting_count} indicators)",
             "confidence_boost": 10,
-            "evidence": ["meeting_communication"]
+            "evidence": [{"type": "meeting_communication", "indicators": meeting_count}]
         }
     
     # Check 5: Corporate email patterns (multiple recipients, professional language)
@@ -146,7 +146,7 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
                 "is_business": True,
                 "reason": "All links point to trusted business domains",
                 "confidence_boost": 15,
-                "evidence": ["trusted_links"]
+                "evidence": [{"type": "trusted_links", "count": legitimate_links}]
             }
     
     return {"is_business": False}
