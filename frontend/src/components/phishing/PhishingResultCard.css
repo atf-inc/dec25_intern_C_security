@@ -1,107 +1,30 @@
-/* Animation keyframes */
-@keyframes cardEnter {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes dangerPulse {
-
-    0%,
-    100% {
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 1;
-    }
-
-    50% {
-        transform: translate(-50%, -50%) scale(2);
-        opacity: 0;
-    }
-}
-
-@keyframes gentleGlow {
-
-    0%,
-    100% {
-        box-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
-    }
-
-    50% {
-        box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-    }
-}
+/* ================================================
+   🎨 OPTIMIZED RESULT CARD DESIGN - PERFORMANCE FIRST
+   ================================================ */
 
 .result-card {
-    background: var(--card-bg) !important;
-    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     max-width: 100%;
     width: 100%;
-    margin: 1rem auto;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    /* 🎴 Glassmorphism with Fallback */
-    @supports (backdrop-filter: blur(20px)) {
-        background: rgba(255, 255, 255, 0.7) !important;
-        backdrop-filter: blur(20px) saturate(180%);
-    }
-
-    /* Modern entrance animation */
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    animation: cardEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    margin: 1.5rem auto;
+    position: relative;
+    /* PERFORMANCE: Removed all backdrop-filter effects */
 }
 
-/* 🌙 Dark Mode Glassmorphism (More Opaque) */
-:root.dark .result-card {
-    background: rgba(30, 41, 59, 0.85) !important;
-    /* Less transparent */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
+/* PERFORMANCE: Removed glassmorphism effects entirely for smooth scrolling */
 
+/* PERFORMANCE: Simplified hover effect - no transform */
 .result-card:hover {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-    .result-card,
-    .result-card:hover {
-        animation: none;
-        transform: none;
-        transition: none;
-    }
-}
-
-/* Container for better responsive layout */
-@media (min-width: 640px) {
-    .result-card {
-        padding: 2rem;
-        margin: 2rem auto;
-        max-width: 900px;
-    }
-}
+/* ================================================
+   📊 OPTIMIZED RESULT SUMMARY
+   ================================================ */
 
 .result-header {
     display: flex;
@@ -130,7 +53,6 @@
     }
 }
 
-/* Enhanced Result Summary - Modern Card Design */
 .result-summary {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -161,38 +83,16 @@
     gap: 1rem;
     padding: 1.25rem;
     background: var(--card-bg);
-    border-radius: 16px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease; /* Simplified transition */
     min-width: 0;
-
-    /* Staggered entrance animation */
-    opacity: 0;
-    transform: translateY(15px) scale(0.98);
-    animation: cardEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.summary-item:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.summary-item:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.summary-item:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.summary-item:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
+/* PERFORMANCE: Simplified hover effect - no transform */
 .summary-item:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: var(--text-muted);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .summary-icon {
@@ -253,17 +153,143 @@
     }
 }
 
+/* ================================================
+   📱 RESPONSIVE DESIGN & ACCESSIBILITY
+   ================================================ */
+
+/* ================================================
+   ⚡ PERFORMANCE OPTIMIZATIONS - SMOOTH SCROLLING
+   ================================================ */
+
+/* PERFORMANCE: Removed hardware acceleration properties that cause lag */
+.result-card,
+.evidence-card,
+.summary-item,
+.ai-explanation-card {
+    /* Removed will-change and transform3d for better scrolling performance */
+}
+
+/* PERFORMANCE: Disable all animations for smooth scrolling */
+@media (prefers-reduced-motion: reduce) {
+    .result-card,
+    .result-card:hover,
+    .summary-item,
+    .summary-item:hover,
+    .ai-explanation-card,
+    .ai-explanation-card:hover,
+    .evidence-card,
+    .evidence-card:hover,
+    .pattern-card,
+    .pattern-card:hover,
+    .indicator-category,
+    .indicator-category:hover {
+        animation: none !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* PERFORMANCE: Simplified scrolling - removed heavy effects */
+.evidence-professional-grid {
+    /* Removed transform3d for better performance */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* PERFORMANCE: Removed backface-visibility to reduce paint complexity */
+
+/* PERFORMANCE: Simplified dark mode - no heavy effects */
+:root.dark .result-card,
+:root.dark .evidence-card,
+:root.dark .summary-item,
+:root.dark .ai-explanation-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .result-card,
+    .result-card:hover,
+    .summary-item,
+    .ai-explanation-card,
+    .evidence-card {
+        animation: none !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* Container for better responsive layout */
+@media (min-width: 640px) {
+    .result-card {
+        padding: 3rem;
+        margin: 2.5rem auto;
+        max-width: 1000px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .result-card {
+        max-width: 1200px;
+        padding: 3.5rem;
+    }
+}
+
 /* Mobile responsive adjustments */
 @media (max-width: 480px) {
+    .result-card {
+        margin: 1rem;
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    .result-header h2 {
+        font-size: 1.5rem;
+    }
+
     .summary-item {
         flex-direction: column;
         text-align: center;
-        gap: 0.75rem;
-        padding: 1rem;
+        gap: 1rem;
+        padding: 1.5rem;
     }
 
     .summary-content {
         align-items: center;
+    }
+
+    .ai-explanation-section {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .ai-explanation-card {
+        padding: 1.25rem;
+    }
+
+    .explanation-header h4 {
+        font-size: 1rem;
+    }
+
+    .explanation-content {
+        font-size: 0.9rem;
+    }
+}
+
+/* Focus states for keyboard navigation */
+.ai-explanation-card:focus-visible,
+.summary-item:focus-visible,
+.evidence-card:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .result-card,
+    .ai-explanation-card,
+    .summary-item {
+        border-width: 2px;
     }
 }
 
@@ -281,34 +307,8 @@
 
 .result-section {
     margin-bottom: 1.5rem;
-
-    /* Progressive reveal animation */
-    opacity: 0;
-    transform: translateY(20px);
-    animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    /* Optimized: Removed heavy progressive reveal animations for performance */
 }
-
-/* Staggered section animations */
-.result-section:nth-of-type(1) {
-    animation-delay: 0.1s;
-}
-
-/* AI Explanation */
-.result-section:nth-of-type(2) {
-    animation-delay: 0.3s;
-}
-
-/* Threat Analysis */
-.result-section:nth-of-type(3) {
-    animation-delay: 0.5s;
-}
-
-/* Security Indicators */
-.result-section:nth-of-type(4) {
-    animation-delay: 0.7s;
-}
-
-/* Analysis Insights */
 
 .result-section h3 {
     margin-bottom: 0.75rem;
@@ -938,49 +938,14 @@
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 0.2s ease; /* Simplified transition */
     min-width: 0;
-    /* Prevent overflow */
-
-    /* Staggered entrance animation */
-    opacity: 0;
-    transform: translateY(15px) scale(0.98);
-    animation: cardEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    /* Optimized: Removed heavy transform animations for performance */
 }
 
-.evidence-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.evidence-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.evidence-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.evidence-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-.evidence-card:nth-child(5) {
-    animation-delay: 0.5s;
-}
-
-.evidence-card:nth-child(6) {
-    animation-delay: 0.6s;
-}
-
-@media (min-width: 640px) {
-    .evidence-card {
-        padding: 1.25rem;
-    }
-}
-
+/* PERFORMANCE: Simplified hover effect - no transform for smooth scrolling */
 .evidence-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .evidence-card.evidence-string-card {
@@ -1047,17 +1012,18 @@
     box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2);
 }
 
-/* Hover effects for severity dots */
+/* PERFORMANCE: Removed hover transform effects for smooth scrolling */
 .evidence-card:hover .evidence-severity-dot {
-    transform: scale(1.2);
+    /* Removed transform scale for performance */
 }
 
 .evidence-card:hover .evidence-severity-dot.severity-critical {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    /* Simplified glow effect */
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
 }
 
 .evidence-card:hover .evidence-severity-dot.severity-high {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
 }
 
 .evidence-type-label {
@@ -1296,7 +1262,7 @@
 .pattern-card:hover {
     background: var(--bg-secondary);
     border-color: var(--border-color);
-    transform: translateY(-1px);
+    /* PERFORMANCE: Removed transform for smooth scrolling */
 }
 
 .pattern-header {
@@ -1381,120 +1347,43 @@
     border-left: 3px solid #06b6d4;
 }
 
-/* 🚀 AI Explanation Section Styles */
+/* ================================================
+   🔍 OPTIMIZED AI EXPLANATION SECTION
+   ================================================ */
+
 .ai-explanation-section {
     background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
     border: 1px solid var(--border-color);
-    box-shadow: var(--card-shadow);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .ai-explanation-section h3 {
     color: var(--text-primary);
     font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 20px;
+    font-weight: 700;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .ai-explanation-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
     border-left-width: 4px;
-    /* Ensure left border is prominent */
-    box-shadow: var(--card-shadow);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-
-    /* Staggered entrance animation */
-    opacity: 0;
-    transform: translateY(15px) scale(0.98);
-    animation: cardEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Optimized: Removed heavy hover transforms for performance */
 }
 
-/* 🌞 Light Mode Contrast Boost */
-:root:not(.dark) .ai-explanation-card {
-    background: #f9fafb;
-    /* Light gray - distinguishes from white page */
-    border-color: #d1d5db;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.06);
-    /* Layered shadow */
-}
-
-:root:not(.dark) .ai-explanation-section {
-    background: #ffffff;
-    border-color: #e5e7eb;
-}
-
-:root:not(.dark) .ai-explanation-card:hover {
-    background: #f3f4f6;
-    /* Slightly darker on hover */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15),
-        0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.ai-explanation-card:nth-child(2) {
-    animation-delay: 0.1s;
-}
-
-.ai-explanation-card:nth-child(3) {
-    animation-delay: 0.2s;
-}
-
-.ai-explanation-card:nth-child(4) {
-    animation-delay: 0.3s;
-}
-
-.ai-explanation-card:nth-child(5) {
-    animation-delay: 0.4s;
-}
-
-.ai-explanation-card:nth-child(6) {
-    animation-delay: 0.5s;
-}
-
-.ai-explanation-card:nth-child(7) {
-    animation-delay: 0.6s;
-}
-
+/* PERFORMANCE: Simplified hover effect for smooth scrolling */
 .ai-explanation-card:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-2px) scale(1.01);
-    border-color: var(--border-color);
-}
-
-/* 🌞 Light Mode Hover Feedback */
-:root:not(.dark) .ai-explanation-card.summary-card:hover {
-    border-left-color: #1d4ed8;
-}
-
-:root:not(.dark) .ai-explanation-card.indicators-card:hover {
-    border-left-color: #b91c1c;
-}
-
-:root:not(.dark) .ai-explanation-card.reasoning-card:hover {
-    border-left-color: #6d28d9;
-}
-
-:root:not(.dark) .ai-explanation-card.technical-card:hover {
-    border-left-color: #047857;
-}
-
-:root:not(.dark) .ai-explanation-card.assessment-card:hover {
-    border-left-color: #b45309;
-}
-
-:root:not(.dark) .ai-explanation-card.action-card:hover {
-    border-left-color: #0369a1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .ai-explanation-card:last-child {
@@ -1504,8 +1393,8 @@
 .explanation-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .explanation-icon {
@@ -1521,12 +1410,6 @@
     flex-shrink: 0;
 }
 
-/* 🌞 Light Mode Icon Visibility */
-:root:not(.dark) .explanation-icon {
-    background: #e5e7eb;
-    border-color: #cbd5e1;
-}
-
 .explanation-header h4 {
     color: var(--text-primary);
     font-size: 1.1rem;
@@ -1539,6 +1422,7 @@
     line-height: 1.6;
     margin: 0;
     font-size: 0.95rem;
+    font-weight: 500;
 }
 
 /* Clean Indicators Summary */
@@ -1581,7 +1465,7 @@
 
 .indicator-category:hover {
     background: var(--bg-secondary);
-    transform: translateY(-1px);
+    /* PERFORMANCE: Removed transform for smooth scrolling */
     border-color: var(--border-color);
     box-shadow: var(--card-shadow-hover);
 }
