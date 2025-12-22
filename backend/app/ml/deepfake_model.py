@@ -48,12 +48,12 @@ class DeepfakeDetector:
         self.is_loaded = False
         
         logger.info(f"DeepfakeDetector v2.1 initialized (device: {self.device})")
-    
+        
     def _ensure_loaded(self):
         """Lazy load model and extractors on first use."""
         if self.is_loaded:
             return
-        
+
         logger.info("Loading v2.1 Fusion Deepfake Model components...")
         
         # 1. Load Feature Extractors
@@ -67,7 +67,7 @@ class DeepfakeDetector:
         self.dsp_ext = DSPExtractor()
         
         # 2. Load Fusion Model (dsp_dim=246 for v2.1)
-        self.model = FusionDeepfakeDetector(dsp_dim=246, shared_dim=256)
+        self.model = FusionDeepfakeDetector(dsp_dim=246, shared_dim=256) 
         
         # 3. Load trained weights
         try:
@@ -103,7 +103,7 @@ class DeepfakeDetector:
         
         self.is_loaded = True
         logger.info("✅ v2.1 DeepfakeDetector fully loaded")
-    
+
     def predict(self, waveform: np.ndarray, sample_rate: int = 16000) -> Dict[str, Any]:
         """
         End-to-end prediction: Audio -> Features -> Fusion Model -> Result
@@ -174,7 +174,7 @@ class DeepfakeDetector:
                 'artifacts': {},
                 'error': str(e)
             }
-    
+
     def _generate_explanation(self, is_deepfake: bool, confidence: float, expert_scores: Dict) -> str:
         """Generate professional forensic explanation."""
         if is_deepfake:

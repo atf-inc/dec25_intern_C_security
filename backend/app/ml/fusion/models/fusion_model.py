@@ -138,14 +138,14 @@ class FusionDeepfakeDetector(nn.Module):
                 else:
                     # Fallback: equal contributions
                     attention_received = torch.ones(3) / 3.0
-                
-                # Normalize to get contribution percentages
+            
+            # Normalize to get contribution percentages
                 attention_received = attention_received / (attention_received.sum() + 1e-8)
-                
+            
                 # Convert to list for indexing
                 attn_list = attention_received.cpu().numpy().flatten()
-                
-                # Expert scores: blend of attention weight and confidence
+            
+            # Expert scores: blend of attention weight and confidence
                 acoustic_score = float(attn_list[0]) * conf_val
                 semantic_score = float(attn_list[1]) * conf_val  
                 signal_score = float(attn_list[2]) * conf_val

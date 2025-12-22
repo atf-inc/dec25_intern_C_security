@@ -46,7 +46,7 @@ class VoiceAnalysisService:
         except Exception as e:
             logger.error(f"Failed to initialize DeepfakeDetector: {e}")
             raise
-    
+        
     def _check_audio_quality(self, waveform: np.ndarray, sample_rate: int) -> Tuple[bool, Optional[str], Dict[str, Any]]:
         """
         Check audio quality before analysis.
@@ -214,7 +214,7 @@ class VoiceAnalysisService:
         # Step 8: Save file to disk
         file_path = None
         if db is not None:
-            try:
+             try:
                 # Create uploads directory if not exists
                 upload_dir = "uploads/voice"
                 os.makedirs(upload_dir, exist_ok=True)
@@ -229,8 +229,8 @@ class VoiceAnalysisService:
                     f.write(file_bytes)
                     
                 logger.info(f"Saved audio file to {file_path}")
-            except Exception as e:
-                logger.error(f"Failed to save audio file: {e}")
+             except Exception as e:
+                 logger.error(f"Failed to save audio file: {e}")
 
         # Step 9: Save to database if provided
         if db is not None:
