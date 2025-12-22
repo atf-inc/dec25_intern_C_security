@@ -423,9 +423,22 @@ export function PhishingResultCard({ result: initialResult }: PhishingResultCard
                             const getTypeLabel = (type: string) => {
                                 switch (type) {
                                     case 'urgency': return getText('phishing.urgencyTactics', 'Urgency Tactics')
+                                    case 'high_urgency': return getText('phishing.urgencyTactics', 'Urgency Tactics')
+                                    case 'technical_urgency': return getText('phishing.technicalUrgency', 'Technical Urgency')
                                     case 'credential_request': return getText('phishing.credentialPhishing', 'Credential Phishing')
+                                    case 'brand_impersonation': return getText('phishing.brandImpersonation', 'Brand Impersonation')
                                     case 'link_mismatch': return getText('phishing.deceptiveLinks', 'Deceptive Links')
+                                    case 'suspicious_anchor_trusted_domain': return getText('phishing.suspiciousAnchor', 'Suspicious Link Text')
                                     case 'high_entropy_uri': return getText('phishing.obfuscatedUrl', 'Obfuscated URL')
+                                    case 'high_entropy_trusted_uri': return getText('phishing.obfuscatedUrl', 'Obfuscated URL')
+                                    case 'hidden_ip': return getText('phishing.hiddenIpAddress', 'Hidden IP Address')
+                                    case 'suspicious_tld': return getText('phishing.suspiciousDomain', 'Suspicious Domain')
+                                    case 'shortened_link': return getText('phishing.shortenedLink', 'Shortened Link')
+                                    case 'character_substitution': return getText('phishing.characterSubstitution', 'Character Substitution')
+                                    case 'typosquatting': return getText('phishing.typosquatting', 'Typosquatting')
+                                    case 'similar_domain': return getText('phishing.similarDomain', 'Similar Domain')
+                                    case 'grammar_errors': return getText('phishing.grammarErrors', 'Grammar Errors')
+                                    case 'suspicious_sender': return getText('phishing.suspiciousSender', 'Suspicious Sender')
                                     default: return getText('phishing.suspiciousPattern', 'Suspicious Pattern')
                                 }
                             }
@@ -438,7 +451,15 @@ export function PhishingResultCard({ result: initialResult }: PhishingResultCard
                                     </div>
                                     <div className="evidence-description">
                                         {evidence.type === 'urgency' && `${evidence.count} ${getText('phishing.urgencyIndicatorsDetected', 'urgency indicators detected')}`}
+                                        {evidence.type === 'high_urgency' && `${evidence.count} ${getText('phishing.highUrgencyIndicators', 'high urgency indicators detected')}`}
+                                        {evidence.type === 'technical_urgency' && `${evidence.count} ${getText('phishing.technicalUrgencyContext', 'technical urgency indicators in context')}`}
                                         {evidence.type === 'credential_request' && getText('phishing.attemptsToHarvestCredentials', 'Attempts to harvest user credentials')}
+                                        {evidence.type === 'brand_impersonation' && (
+                                            <div className="brand-impersonation-details">
+                                                <div>{getText('phishing.impersonatingBrand', 'Impersonating brand')}: <strong>{evidence.brand}</strong></div>
+                                                {evidence.sender && <div>{getText('phishing.suspiciousSender', 'Suspicious sender')}: {evidence.sender}</div>}
+                                            </div>
+                                        )}
                                         {evidence.type === 'link_mismatch' && (
                                             <div className="link-mismatch-details">
                                                 <div className="link-detail">
@@ -453,7 +474,54 @@ export function PhishingResultCard({ result: initialResult }: PhishingResultCard
                                                 </div>
                                             </div>
                                         )}
+                                        {evidence.type === 'suspicious_anchor_trusted_domain' && (
+                                            <div className="suspicious-anchor-details">
+                                                <div>{getText('phishing.suspiciousText', 'Suspicious text')}: "{evidence.anchor}"</div>
+                                                <div>{getText('phishing.onTrustedDomain', 'On trusted domain')}: {evidence.uri}</div>
+                                            </div>
+                                        )}
                                         {evidence.type === 'high_entropy_uri' && `${getText('phishing.suspiciousUrlPattern', 'Suspicious URL pattern')} (${getText('phishing.entropy', 'entropy')}: ${evidence.entropy?.toFixed(1)})`}
+                                        {evidence.type === 'high_entropy_trusted_uri' && `${getText('phishing.highEntropyTrustedDomain', 'High entropy on trusted domain')} (${getText('phishing.entropy', 'entropy')}: ${evidence.entropy?.toFixed(1)})`}
+                                        {evidence.type === 'hidden_ip' && (
+                                            <div className="hidden-ip-details">
+                                                <div>{getText('phishing.hiddenIpAddress', 'Hidden IP address')}: <code>{evidence.uri}</code></div>
+                                            </div>
+                                        )}
+                                        {evidence.type === 'suspicious_tld' && (
+                                            <div className="suspicious-tld-details">
+                                                <div>{getText('phishing.suspiciousDomainDetected', 'Suspicious domain detected')}: {evidence.uri}</div>
+                                            </div>
+                                        )}
+                                        {evidence.type === 'shortened_link' && (
+                                            <div className="shortened-link-details">
+                                                <div>{getText('phishing.shortenedRedirectLink', 'Shortened/redirect link')}: {evidence.uri}</div>
+                                            </div>
+                                        )}
+                                        {evidence.type === 'character_substitution' && (
+                                            <div className="character-substitution-details">
+                                                <div>{getText('phishing.maliciousDomain', 'Malicious domain')}: <strong>{evidence.domain}</strong></div>
+                                                <div>{getText('phishing.targetingLegitimate', 'Targeting legitimate')}: {evidence.target}</div>
+                                                <div>{getText('phishing.substitutions', 'Substitutions')}: {evidence.substitutions?.join(', ')}</div>
+                                            </div>
+                                        )}
+                                        {evidence.type === 'typosquatting' && (
+                                            <div className="typosquatting-details">
+                                                <div>{getText('phishing.suspiciousDomain', 'Suspicious domain')}: <strong>{evidence.domain}</strong></div>
+                                                <div>{getText('phishing.similarToLegitimate', 'Similar to legitimate')}: {evidence.target}</div>
+                                            </div>
+                                        )}
+                                        {evidence.type === 'similar_domain' && (
+                                            <div className="similar-domain-details">
+                                                <div>{getText('phishing.similarDomainDetected', 'Similar domain detected')}: <strong>{evidence.domain}</strong></div>
+                                                <div>{getText('phishing.legitimateDomain', 'Legitimate domain')}: {evidence.target}</div>
+                                            </div>
+                                        )}
+                                        {evidence.type === 'grammar_errors' && `${evidence.count} ${getText('phishing.grammarSpellingErrors', 'grammar/spelling errors detected')}`}
+                                        {evidence.type === 'suspicious_sender' && (
+                                            <div className="suspicious-sender-details">
+                                                <div>{getText('phishing.genericSenderAddress', 'Generic sender address')}: {evidence.sender}</div>
+                                            </div>
+                                        )}
                                         {!evidence.type && getText('phishing.suspiciousBehaviorDetected', 'Suspicious behavior pattern detected')}
                                     </div>
                                 </div>
