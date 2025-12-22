@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ATF CyberX - Email Security Assistant",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Real-time phishing protection with AI-powered explanations for Gmail",
   
   "permissions": [
@@ -12,7 +12,7 @@
   
   "host_permissions": [
     "https://mail.google.com/*",
-    "http://localhost:8000/*"
+    "https://cyberx-atf.duckdns.org/*"
   ],
   
   "background": {

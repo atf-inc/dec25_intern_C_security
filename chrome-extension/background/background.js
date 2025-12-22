@@ -5,8 +5,8 @@ console.log('🛡️ ATF CyberX Background Service - Starting...');
 
 class EmailSecurityService {
     constructor() {
-        // ✅ TASK 1: API Endpoint
-        this.apiEndpoint = 'http://localhost:8000/analyze/';
+        // ✅ PRODUCTION: API Endpoint for Chrome Web Store
+        this.apiEndpoint = 'https://cyberx-atf.duckdns.org/analyze/';
 
         this.cache = new Map(); // Simple in-memory cache
         this.cacheTimeout = 5 * 60 * 1000; // 5 minutes cache life
@@ -165,7 +165,7 @@ class EmailSecurityService {
                 }
             };
 
-            const response = await fetch('http://localhost:8000/analyze/retranslate', {
+            const response = await fetch('https://cyberx-atf.duckdns.org/analyze/retranslate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

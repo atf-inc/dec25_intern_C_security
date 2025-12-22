@@ -70,6 +70,9 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
     Check if email is a legitimate business communication that should not be flagged.
     Returns dict with is_business, reason, confidence_boost, and evidence.
+    
+    NOTE: This function should be VERY restrictive to avoid bypassing the hybrid system.
+    Only catch emails that are DEFINITELY legitimate business communications.
     """
     subject = payload.get("subject", "").lower()
     body = payload.get("raw_text", "").lower()
@@ -81,17 +84,14 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
     if "@" in from_email:
         sender_domain = from_email.split("@")[1]
     
-    # Check 1: Google Calendar invitations
+    # Check 1: Google Calendar invitations (VERY SPECIFIC)
     if any(pattern in combined_text for pattern in [
         "google calendar", "calendar invitation", "has invited you to", 
-        "join by phone", "meeting id", "dial-in number", "event has been updated",
-        "location changed", "weekly from", "daily from", "monthly from"
+        "join by phone", "meeting id", "dial-in number"
     ]):
-        # Additional validation for Google Calendar
-        if ("google.com" in sender_domain or 
-            "calendar" in combined_text or 
-            "organizer" in combined_text or
-            "guests" in combined_text):
+        # Additional validation for Google Calendar - MUST be from Google
+        if ("google.com" in sender_domain and 
+            ("calendar" in combined_text or "organizer" in combined_text)):
             return {
                 "is_business": True,
                 "reason": "Google Calendar meeting invitation",
@@ -99,55 +99,41 @@ def _check_legitimate_business_email(payload: Dict[str, Any]) -> Dict[str, Any]:
                 "evidence": [{"type": "calendar_invitation", "details": "google_service"}]
             }
     
-    # Check 2: Trusted domain senders
-    if sender_domain in TRUSTED_DOMAINS:
-        return {
-            "is_business": True,
-            "reason": f"Email from trusted domain: {sender_domain}",
-            "confidence_boost": 20,
-            "evidence": [{"type": "trusted_domain", "domain": sender_domain}]
-        }
+    # Check 2: Trusted domain senders (ONLY for very specific cases)
+    # Only catch emails from trusted domains if they have VERY specific business patterns
+    if sender_domain in ['github.com', 'gitlab.com', 'bitbucket.org']:
+        # Only for code repository notifications
+        if any(pattern in combined_text for pattern in [
+            'pull request', 'merge request', 'commit', 'repository', 'issue opened', 'issue closed'
+        ]):
+            return {
+                "is_business": True,
+                "reason": f"Code repository notification from {sender_domain}",
+                "confidence_boost": 20,
+                "evidence": [{"type": "trusted_domain", "domain": sender_domain}]
+            }
     
-    # Check 3: Internal business communication patterns
-    business_pattern_count = sum(1 for pattern in LEGITIMATE_BUSINESS_PATTERNS 
+    # Check 3: Internal business communication patterns (MUCH MORE RESTRICTIVE)
+    # Only catch emails with MULTIPLE very specific business patterns
+    specific_business_patterns = [
+        'google calendar', 'calendar invitation', 'meeting invitation',
+        'pull request', 'merge request', 'code review',
+        'sprint planning', 'retrospective', 'standup notes'
+    ]
+    
+    business_pattern_count = sum(1 for pattern in specific_business_patterns 
                                 if pattern in combined_text)
     
-    if business_pattern_count >= 2:  # Multiple business patterns
+    if business_pattern_count >= 2:  # Need at least 2 VERY specific patterns
         return {
             "is_business": True,
-            "reason": f"Multiple business communication patterns detected ({business_pattern_count})",
+            "reason": f"Multiple specific business communication patterns detected ({business_pattern_count})",
             "confidence_boost": 15,
             "evidence": [{"type": "business_patterns", "count": business_pattern_count}]
         }
     
-    # Check 4: Meeting/Event specific patterns
-    meeting_indicators = [
-        "meeting", "conference", "webinar", "call", "standup", "sync",
-        "attendees", "participants", "agenda", "minutes", "action items"
-    ]
-    meeting_count = sum(1 for indicator in meeting_indicators if indicator in combined_text)
-    
-    if meeting_count >= 3:  # Strong meeting indicators
-        return {
-            "is_business": True,
-            "reason": f"Meeting/conference communication ({meeting_count} indicators)",
-            "confidence_boost": 10,
-            "evidence": [{"type": "meeting_communication", "indicators": meeting_count}]
-        }
-    
-    # Check 5: Corporate email patterns (multiple recipients, professional language)
-    visible_links = payload.get("visible_links", [])
-    if len(visible_links) > 0:
-        # Check if links are to legitimate business domains
-        legitimate_links = sum(1 for link in visible_links 
-                             if any(domain in link.get("uri", "") for domain in TRUSTED_DOMAINS))
-        if legitimate_links > 0 and legitimate_links == len(visible_links):
-            return {
-                "is_business": True,
-                "reason": "All links point to trusted business domains",
-                "confidence_boost": 15,
-                "evidence": [{"type": "trusted_links", "count": legitimate_links}]
-            }
+    # REMOVED: Meeting indicators check (too broad)
+    # REMOVED: Corporate email patterns check (too broad)
     
     return {"is_business": False}
 
@@ -580,7 +566,7 @@ def _llm_analyze(payload: Dict[str, Any]) -> Dict[str, Any]:
             llm_boost += 20  # Increased from 15
             llm_reasons.append("LLM: Urgency manipulation detected")
             
-        # 🚀 IMPROVED: Advanced brand impersonation with better legitimate domain checking
+        # 🚀 FIXED: Contextual brand impersonation detection - NO false brand mentions
         brand_domains = {
             'paypal': ['@paypal.com', '@paypal.net', '@paypal.org'],
             'amazon': ['@amazon.com', '@amazon.net', '@aboutamazon.com'],
@@ -595,30 +581,49 @@ def _llm_analyze(payload: Dict[str, Any]) -> Dict[str, Any]:
             'mastercard': ['@mastercard.com']
         }
         
+        # Only check for brands that are ACTUALLY mentioned in the email content
+        email_content = subject + " " + raw_text
+        actually_mentioned_brands = []
+        
         for brand, legitimate_domains in brand_domains.items():
-            if brand in subject.lower() + raw_text.lower():
-                # Check if email domain matches any legitimate domain for this brand
-                is_legitimate = any(domain in from_email for domain in legitimate_domains)
+            # More precise brand detection - must be a clear mention
+            brand_patterns = [
+                f" {brand} ",  # Surrounded by spaces
+                f"{brand}.",   # Followed by period
+                f"{brand},",   # Followed by comma
+                f"@{brand}",   # In email context
+                f"{brand}.com", # Domain context
+                f"from {brand}", # "from PayPal"
+                f"{brand} account", # "PayPal account"
+            ]
+            
+            if any(pattern in email_content.lower() for pattern in brand_patterns):
+                actually_mentioned_brands.append((brand, legitimate_domains))
+        
+        # Only flag impersonation for brands that are ACTUALLY mentioned
+        for brand, legitimate_domains in actually_mentioned_brands:
+            # Check if email domain matches any legitimate domain for this brand
+            is_legitimate = any(domain in from_email for domain in legitimate_domains)
+            
+            if not is_legitimate:
+                # Only flag if there are clear suspicious indicators
+                suspicious_context = [
+                    any(urgent in raw_text for urgent in ['urgent', 'immediately', 'suspended', 'verify', 'click here']),
+                    any(credential in raw_text for credential in ['password', 'login', 'verify your account', 'confirm your identity']),
+                    any(suspicious in from_email for suspicious in ['noreply', 'security', 'alert', 'verify', 'update']) if from_email else False
+                ]
                 
-                if not is_legitimate:
-                    # 🚀 IMPROVED: Only flag if there are clear suspicious indicators
-                    suspicious_context = [
-                        any(urgent in raw_text for urgent in ['urgent', 'immediately', 'suspended', 'verify', 'click here']),
-                        any(credential in raw_text for credential in ['password', 'login', 'verify your account', 'confirm your identity']),
-                        any(suspicious in from_email for suspicious in ['noreply', 'security', 'alert', 'verify', 'update']) if from_email else False
-                    ]
-                    
-                    # Only flag as impersonation if there are suspicious context clues
-                    if any(suspicious_context):
-                        if any(sensitive in raw_text for sensitive in ['password', 'login', 'account', 'payment', 'credit card', 'verify', 'confirm', 'update']):
-                            llm_boost += 50  # Brand impersonation + sensitive request = very suspicious
-                            llm_reasons.append(f"LLM: {brand.title()} impersonation with sensitive data request")
-                            confidence += 0.15
-                        else:
-                            llm_boost += 30
-                            llm_reasons.append(f"LLM: Potential {brand.title()} impersonation")
-                            confidence += 0.1
-                        break
+                # Only flag as impersonation if there are suspicious context clues
+                if any(suspicious_context):
+                    if any(sensitive in raw_text for sensitive in ['password', 'login', 'account', 'payment', 'credit card', 'verify', 'confirm', 'update']):
+                        llm_boost += 50  # Brand impersonation + sensitive request = very suspicious
+                        llm_reasons.append(f"LLM: {brand.title()} impersonation with sensitive data request detected")
+                        confidence += 0.15
+                    else:
+                        llm_boost += 30
+                        llm_reasons.append(f"LLM: Potential {brand.title()} impersonation detected")
+                        confidence += 0.1
+                    break  # Only flag the first detected brand to avoid multiple flags
                     
         # Sophisticated social engineering detection
         social_eng_patterns = [
@@ -730,7 +735,22 @@ Provide specific, actionable reasons."""
         res = call_gemini_raw(enhanced_prompt, api_key=os.getenv("GEMINI_API_KEY"), model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"), max_output_tokens=500, temperature=0.1)
         text = res.get("text", "")
         try:
-            parsed = json.loads(text)
+            # 🚀 FIX: Handle Gemini responses wrapped in markdown code blocks
+            json_text = text.strip()
+            
+            # Check if response is wrapped in markdown code blocks
+            if json_text.startswith('```json') and json_text.endswith('```'):
+                # Extract JSON from markdown
+                json_start = json_text.find('```json') + 7
+                json_end = json_text.rfind('```')
+                json_text = json_text[json_start:json_end].strip()
+            elif json_text.startswith('```') and json_text.endswith('```'):
+                # Handle generic code blocks
+                json_start = json_text.find('```') + 3
+                json_end = json_text.rfind('```')
+                json_text = json_text[json_start:json_end].strip()
+            
+            parsed = json.loads(json_text)
             return {
                 "label": parsed.get("label", "SUSPICIOUS"),  # Default to SUSPICIOUS if label is missing
                 "score": int(parsed.get("score", 50)),
@@ -753,22 +773,8 @@ Provide specific, actionable reasons."""
         return {"label": label, "score": base, "reasons": heur["reasons"], "evidence": heur["evidence"], "model_meta": {"llm": "error_fallback"}}
 
 def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
-    # 🚀 NEW: Check for legitimate business communications first
-    business_check = _check_legitimate_business_email(payload)
-    if business_check["is_business"]:
-        logger.info(f"Email identified as legitimate business communication: {business_check['reason']}")
-        return {
-            "label": "SAFE",
-            "score": max(0, 30 - business_check["confidence_boost"]),  # Low score for business emails
-            "reasons": [f"Legitimate business communication: {business_check['reason']}"],
-            "evidence": business_check.get("evidence", []),
-            "model_meta": {
-                "analysis_method": "business_pattern_recognition",
-                "llm_used": False,
-                "business_pattern": business_check["reason"]
-            },
-            "request_id": f"business-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-        }
+    # 🚀 DISABLED: Business pattern recognition (too aggressive for presentation)
+    # Skip business email check - go straight to hybrid system for better accuracy
     
     heur = _heuristic_signals(payload)
     
@@ -793,13 +799,19 @@ def analyze_email(payload: Dict[str, Any]) -> Dict[str, Any]:
         upper_threshold = 60  # Lower upper threshold
         llm_weight = 0.6  # Trust heuristics more for simple emails
     
-    # 🚀 ADVANCED: Complexity-aware LLM triggering
-    use_llm = (lower_threshold <= heur["score"] <= upper_threshold) and LLM_PROVIDER in ["gemini", "mock"]
+    # 🚀 FIXED: Always use LLM when available for better explanations
+    # The hybrid system should use LLM for contextual explanations, not just uncertain cases
+    use_llm = LLM_PROVIDER in ["gemini", "mock"]
     
-    # Force LLM for high-complexity emails even if heuristics are confident
-    if email_complexity > 0.8 and not use_llm:
+    # Only skip LLM for very simple, clearly safe emails (score < 10)
+    if heur["score"] < 10 and email_complexity < 0.3:
+        use_llm = False
+        combined_reasons = [f"Simple safe email (score: {heur['score']}, complexity: {email_complexity:.2f})"]
+    
+    # Always use LLM for suspicious/phishing emails to get contextual explanations
+    if heur["score"] >= 25:  # Suspicious or higher
         use_llm = True
-        combined_reasons = [f"Complex email analysis required (complexity: {email_complexity:.2f})"]
+        combined_reasons = [f"Suspicious email requires AI analysis (score: {heur['score']})"]
     
     if use_llm:
         merged = _llm_analyze(payload)
@@ -1005,35 +1017,50 @@ Your explanation:"""
         return _generate_fallback_reasoning(label, score, reasons, subject, from_email, language)
 
 def _generate_fallback_reasoning(label: str, score: int, reasons: List[str], subject: str, from_email: str, language: str = "en") -> str:
-    """Fallback reasoning when Gemini API is unavailable."""
+    """Fallback reasoning when Gemini API is unavailable - CONTEXTUAL and NO hardcoded brands."""
+    
+    # Extract actual brands mentioned in reasons (not hardcoded)
+    mentioned_brands = []
+    reasons_text = " ".join(reasons).lower()
+    
+    # Only extract brands that are actually mentioned in the analysis reasons
+    brand_keywords = ['paypal', 'amazon', 'microsoft', 'apple', 'google', 'netflix', 'chase', 'wells', 'bank']
+    for brand in brand_keywords:
+        if brand in reasons_text:
+            mentioned_brands.append(brand.title())
     
     if language == "ja":
-        # Japanese fallback reasoning
+        # Japanese fallback reasoning - CONTEXTUAL
         if label == "PHISHING":
-            if "impersonation" in " ".join(reasons).lower():
-                return f"このメールは、信頼できる組織を装ってあなたを欺こうとしています。送信者のメールアドレス（{from_email}）は、主張する企業の正当なドメインと一致しません。緊急性の戦術と機密情報の要求を組み合わせて、これはあなたの認証情報や個人データを盗むために設計された典型的なフィッシング攻撃です。"
-            elif "urgency" in " ".join(reasons).lower() and "credential" in " ".join(reasons).lower():
-                return f"このメールは、偽の緊急性を作り出して機密情報を明かすよう圧力をかける心理的操作を使用しています。正当な企業がメールでパスワードや認証情報を尋ねることはほとんどなく、即座の行動を強制するためにアカウント停止を脅すこともありません。"
+            if mentioned_brands:
+                brands_text = "、".join(mentioned_brands)
+                return f"このメールは{brands_text}を装って詐欺を行おうとしています。送信者のアドレス（{from_email}）は正当なドメインと一致せず、緊急性を装って個人情報を盗もうとする典型的なフィッシング攻撃です。"
+            elif "urgency" in reasons_text and "credential" in reasons_text:
+                return f"このメールは偽の緊急性を作り出し、パスワードや個人情報を要求する詐欺メールです。正当な企業がこのような方法で機密情報を求めることはありません。"
+            elif "link" in reasons_text or "mismatch" in reasons_text:
+                return f"このメールには欺瞞的なリンクが含まれており、表示されているテキストと実際のリンク先が異なります。これはフィッシング攻撃の典型的な手法です。"
             else:
-                return f"複数の危険信号がこれがフィッシングの試みであることを示しています。疑わしい送信者アドレス、欺瞞的なリンク、ソーシャルエンジニアリング戦術の組み合わせは、あなたのセキュリティを侵害するために設計されたサイバー犯罪活動の特徴です。"
+                return f"複数の危険信号により、このメールはフィッシング攻撃と判定されました。疑わしい送信者、不審なリンク、心理的操作の手法が検出されています。"
         elif label == "SUSPICIOUS":
-            return f"明確に悪意があるわけではありませんが、このメールにはいくつかの懸念されるパターンが見られます。リンクをクリックしたり行動を起こしたりする前に、公式チャネルを通じて送信者の身元を確認する必要があります。"
+            return f"このメールには注意が必要な要素が含まれています。送信者の確認を行い、リンクをクリックする前に公式チャネルを通じて検証することをお勧めします。"
         else:  # SAFE
-            return f"このメールは正当なビジネスコミュニケーションの特徴を示しています。送信者のドメインは本物のようで、メッセージは圧力戦術を使用せず、正当な連絡方法を提供しています。ただし、予期しないリクエストについては常に警戒し、公式チャネルを通じて確認してください。"
+            return f"このメールは正当なビジネス通信の特徴を示しています。ただし、予期しないリクエストについては常に独立して確認することをお勧めします。"
     
-    # English fallback reasoning (original)
-    
+    # English fallback reasoning - CONTEXTUAL (no hardcoded brands)
     if label == "PHISHING":
-        if "impersonation" in " ".join(reasons).lower():
-            return f"This email is impersonating a trusted organization to deceive you. The sender's email address ({from_email}) doesn't match the legitimate domain of the company they claim to represent. Combined with urgency tactics and requests for sensitive information, this is a classic phishing attack designed to steal your credentials or personal data."
-        elif "urgency" in " ".join(reasons).lower() and "credential" in " ".join(reasons).lower():
-            return f"This email uses psychological manipulation by creating a false sense of urgency to pressure you into revealing sensitive information. Legitimate companies rarely ask for passwords or credentials via email, and they don't threaten account suspension to force immediate action."
+        if mentioned_brands:
+            brands_text = " and ".join(mentioned_brands) if len(mentioned_brands) > 1 else mentioned_brands[0]
+            return f"This email appears to be impersonating {brands_text}. The sender's address ({from_email}) doesn't match the legitimate domain, and the message uses typical phishing tactics to steal your personal information."
+        elif "urgency" in reasons_text and "credential" in reasons_text:
+            return f"This email creates false urgency to pressure you into revealing sensitive information like passwords or account details. Legitimate companies don't request credentials via email in this manner."
+        elif "link" in reasons_text or "mismatch" in reasons_text:
+            return f"This email contains deceptive links where the displayed text doesn't match the actual destination. This is a common phishing technique used to trick users into visiting malicious websites."
         else:
-            return f"Multiple red flags indicate this is a phishing attempt. The combination of suspicious sender address, deceptive links, and social engineering tactics are hallmarks of cybercriminal activity designed to compromise your security."
+            return f"Multiple security indicators suggest this is a phishing attempt. The combination of suspicious sender patterns, deceptive content, and social engineering tactics are designed to compromise your security."
     elif label == "SUSPICIOUS":
-        return f"While not definitively malicious, this email exhibits several concerning patterns. You should verify the sender's identity through official channels before taking any action or clicking any links."
+        return f"This email contains some concerning elements that warrant caution. We recommend verifying the sender's identity through official channels before taking any action or clicking links."
     else:  # SAFE
-        return f"This email shows characteristics of legitimate business communication. The sender's domain appears authentic, the message doesn't employ pressure tactics, and it provides legitimate contact methods. However, always remain vigilant and verify unexpected requests through official channels."
+        return f"This email appears to be legitimate business communication. However, always verify unexpected requests independently through official channels."
 
 def _generate_human_explanation(label: str, score: int, reasons: List[str], evidence: List[Dict], payload: Dict[str, Any]) -> Dict[str, Any]:
     """Generate human-friendly AI explanation of the analysis."""
