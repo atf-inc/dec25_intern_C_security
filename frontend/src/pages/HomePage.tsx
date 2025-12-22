@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import './HomePage.css'
 
 export function HomePage() {
-    const { t, i18n } = useTranslation()
+    const { i18n } = useTranslation()
     const [stats, setStats] = useState({
         threatsDetected: 0,
         emailsAnalyzed: 0,
