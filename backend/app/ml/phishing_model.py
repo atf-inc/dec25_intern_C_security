@@ -957,18 +957,15 @@ def _generate_gemini_reasoning(label: str, score: int, reasons: List[str], subje
 
 あなたの任務: このメールが{label}として分類された理由を2-3文で説明してください。会話的で、明確で、役に立つように説明してください。
 
-ガイドライン:
+重要な指示:
+- 実際のメール内容に存在するブランド、企業、サービスのみを言及してください
+- PayPal、Chase、Amazon、Apple、Google、Duolingo、その他のブランドは、実際のメールに表示されない限り言及しないでください
+- 上記で提供された実際のメール内容のみに基づいて説明してください
 - 簡単な言葉を使い、専門用語を避ける
-- 発見された具体的な脅威や安全性の指標を説明する
 - ユーザーがなぜ心配すべきか（または心配する必要がないか）に焦点を当てる
 - 友人に話しかけるような親しみやすいセキュリティ専門家のように振る舞う
-- 丁寧で専門的な日本語を使用する
 
-例:
-- フィッシングの場合: "このメールは、PayPalを装ってあなたを騙そうとしていますが、送信者のアドレスはPayPalの本物のドメインと一致しません。また、メッセージは偽の緊急性を作り出して、考える時間を与えずに悪意のあるリンクをクリックするよう圧力をかけています。"
-- 安全な場合: "このメールは、Chaseの公式ドメインから送信され、専門的な言語を使用し、疑わしいリンクをクリックするよう圧力をかける代わりに正当な連絡方法を提供しているため、正当なものと思われます。"
-
-あなたの説明:"""
+あなたの説明（実際のメール内容のみに基づく）:"""
     else:
         explanation_prompt = f"""You are a cybersecurity expert explaining email analysis results to a non-technical user. 
 
@@ -981,17 +978,15 @@ Email Analysis Results:
 
 Your task: Explain in 2-3 sentences WHY this email was classified as {label}. Be conversational, clear, and helpful.
 
-Guidelines:
+CRITICAL INSTRUCTIONS:
+- ONLY mention brands, companies, or services that are ACTUALLY present in the email content
+- DO NOT mention PayPal, Chase, Amazon, Apple, Google, Duolingo, or any other brands unless they appear in the actual email
+- Base your explanation ONLY on the actual email content provided above
 - Use simple language, avoid technical jargon
-- Explain the specific threats or safety indicators found
 - Focus on WHY the user should be concerned (or not concerned)
 - Be like a friendly security expert talking to a friend
 
-Examples:
-- For PHISHING: "This email is trying to trick you by pretending to be from PayPal, but the sender's address doesn't match PayPal's real domain. The message also creates fake urgency to pressure you into clicking malicious links before you have time to think."
-- For SAFE: "This email appears legitimate because it comes from Chase's official domain, uses professional language, and provides legitimate contact methods instead of pressuring you to click suspicious links."
-
-Your explanation:"""
+Your explanation (based ONLY on the actual email content):"""
 
     try:
         # Only call Gemini if we have an API key, otherwise use fallback
